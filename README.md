@@ -1,159 +1,160 @@
-📚 PageTurner: Your Gamified Ebook Reader
-PageTurner is an innovative React Native ebook reader designed to transform your reading experience. Beyond standard features like adjustable fonts and night mode, PageTurner gamifies your reading journey, rewarding you for building consistent habits. In future iterations, it will leverage AI for intelligent summaries and personalized recommendations, turning every read into an adventure.
+# 📚 **PageTurner: Your Gamified Ebook Reader**
 
-🌟 Features
+**PageTurner** is an innovative React Native ebook reader designed to transform your reading experience. Beyond standard features like adjustable fonts and night mode, PageTurner gamifies your reading journey, rewarding you for building consistent habits. In future iterations, it will leverage AI for intelligent summaries and personalized recommendations, turning every read into an adventure.
+
+## 🌟 Features
+
 PageTurner is developed in phases, ensuring a robust core before expanding into advanced capabilities.
 
-Phase 1: Core Ebook Reader (MVP)
-Seamless EPUB Reading: Load and render EPUB files with rich text, images, and embedded styling.
+### Phase 1: Core Ebook Reader (MVP)
 
-Intuitive Navigation: Effortlessly swipe or tap to turn pages, or jump directly to chapters via the Table of Contents.
+* **Seamless EPUB Reading:** Load and render EPUB files with rich text, images, and embedded styling.
 
-Local Library Management: Easily scan your device's file system, import EPUBs, and organize your digital book collection.
+* **Intuitive Navigation:** Effortlessly swipe or tap to turn pages, or jump directly to chapters via the Table of Contents.
 
-Automatic Metadata Extraction: Books are automatically cataloged with their title, author, cover, publisher, and more.
+* **Local Library Management:** Easily scan your device's file system, import EPUBs, and organize your digital book collection.
 
-Customizable Reading Experience:
+* **Automatic Metadata Extraction:** Books are automatically cataloged with their title, author, cover, publisher, and more.
 
-Adjustable Font Size: Tailor the text size to your comfort.
+* **Customizable Reading Experience:**
 
-In-App Brightness Control: Adjust screen brightness without leaving the app.
+    * **Adjustable Font Size:** Tailor the text size to your comfort.
 
-Day & Night Modes: Switch between light and dark themes for optimal reading in any environment.
+    * **In-App Brightness Control:** Adjust screen brightness without leaving the app.
 
-Flexible Reading Views: Choose between continuous scroll or traditional page-by-page viewing.
+    * **Day & Night Modes:** Switch between light and dark themes for optimal reading in any environment.
 
-Reading Progress & Bookmarks: Automatically saves your last read position and allows you to set and manage multiple custom bookmarks.
+    * **Flexible Reading Views:** Choose between continuous scroll or traditional page-by-page viewing.
 
-Phase 2: Gamification & Enhanced Features
-Reading Progress Tracking: Monitor your pages read, total reading time, and build impressive reading streaks.
+* **Reading Progress & Bookmarks:** Automatically saves your last read position and allows you to set and manage multiple custom bookmarks.
 
-Achievement System: Earn badges and points for hitting reading milestones, motivating you to read more consistently.
+### Phase 2: Gamification & Enhanced Features
 
-Text-to-Speech (TTS): Have your books read aloud with adjustable speech rate, pitch, and voice selection.
+* **Reading Progress Tracking:** Monitor your pages read, total reading time, and build impressive reading streaks.
 
-In-Book Search: Quickly find specific words or phrases within the current book.
+* **Achievement System:** Earn badges and points for hitting reading milestones, motivating you to read more consistently.
 
-Phase 3: Premium & Social Features (Future Renditions)
-AI-Powered Summaries: (Premium) Instantly generate concise summaries of chapters or entire books.
+* **Text-to-Speech (TTS):** Have your books read aloud with adjustable speech rate, pitch, and voice selection.
 
-AI-Driven Key Lessons: (Premium) Extract the most important takeaways from any text selection.
+* **In-Book Search:** Quickly find specific words or phrases within the current book.
 
-Personalized AI Recommendations: (Premium) Discover your next favorite book based on your reading history, preferred authors, and themes.
+### Phase 3: Premium & Social Features (Future Renditions)
 
-User Accounts & Cloud Sync: Create a profile, synchronize your library and progress across multiple devices, and unlock social features.
+* **AI-Powered Summaries:** (Premium) Instantly generate concise summaries of chapters or entire books.
 
-Social & Community: Connect with friends, share your reading progress, achievements, and exchange book recommendations.
+* **AI-Driven Key Lessons:** (Premium) Extract the most important takeaways from any text selection.
 
-Leaderboards: Compete with other users and see who reads the most!
+* **Personalized AI Recommendations:** (Premium) Discover your next favorite book based on your reading history, preferred authors, and themes.
 
-🛠️ Technical Stack
+* **User Accounts & Cloud Sync:** Create a profile, synchronize your library and progress across multiple devices, and unlock social features.
+
+* **Social & Community:** Connect with friends, share your reading progress, achievements, and exchange book recommendations.
+
+* **Leaderboards:** Compete with other users and see who reads the most!
+
+## 🛠️ Technical Stack
+
 PageTurner is built with modern, robust technologies to ensure a smooth and scalable experience:
 
-Development Framework: React Native
+* **Development Framework:** React Native
 
-EPUB Rendering: @epubjs-react-native/core and react-native-webview
+* **EPUB Rendering:** [`@epubjs-react-native/core`](https://www.npmjs.com/package/@epubjs-react-native/core) and [`react-native-webview`](https://github.com/react-native-webview/react-native-webview)
 
-File System Access: react-native-fs
+* **File System Access:** [`react-native-fs`](https://github.com/itinab/react-native-fs)
 
-Local Data Storage: MMKV (for fast key-value) or WatermelonDB / Realm (for structured data and persistence)
+* **Local Data Storage:** [`MMKV`](https://github.com/mrousavy/react-native-mmkv) (for fast key-value) or [`WatermelonDB`](https://nozbe.github.io/WatermelonDB/) / [`Realm`](https://realm.io/) (for structured data and persistence)
 
-Text-to-Speech: react-native-tts
+* **Text-to-Speech:** [`react-native-tts`](https://github.com/ak1394/react-native-tts)
 
-Brightness Control: @reeq/react-native-device-brightness
+* **Brightness Control:** [`@reeq/react-native-device-brightness`](https://github.com/reeq-dev/react-native-device-brightness)
 
-State Management: Zustand or React Context API
+* **State Management:** [Zustand](https://zustand-demo.pmnd.rs/) or [React Context API](https://react.dev/learn/managing-state#passing-props-with-a-context)
 
-AI Integration (Premium): Gemini API
+* **AI Integration (Premium):** [Gemini API](https://ai.google.dev/docs/gemini_api_overview)
 
-Authentication (Future): Firebase Authentication
+* **Authentication (Future):** [Firebase Authentication](https://firebase.google.com/docs/auth)
 
-Cloud Database (Future): Firestore
+* **Cloud Database (Future):** [Firestore](https://firebase.google.com/docs/firestore)
 
-Styling: React Native's StyleSheet API, potentially with React Native Paper or NativeBase.
+* **Styling:** React Native's [StyleSheet API](https://reactnative.dev/docs/stylesheet), potentially with [React Native Paper](https://reactnativepaper.com/) or [NativeBase](https://nativebase.io/).
 
-🚀 Installation
+## 🚀 Installation
+
 To get a local copy up and running, follow these simple steps.
 
-Clone the repository:
+1.  **Clone the repository:**
 
-git clone https://github.com/your-username/pageturner.git
-cd pageturner
+    ```bash
+    git clone [https://github.com/your-username/pageturner.git](https://github.com/your-username/pageturner.git)
+    cd pageturner
+    ```
 
-Install dependencies:
+2.  **Install dependencies:**
 
-npm install
-# or
-yarn install
+    ```bash
+    npm install
+    # or
+    yarn install
+    ```
 
-Install iOS pods (if developing for iOS):
+3.  **Install iOS pods (if developing for iOS):**
 
-cd ios
-pod install
-cd ..
+    ```bash
+    cd ios
+    pod install
+    cd ..
+    ```
 
-Run the app:
+4.  **Run the app:**
 
-For Android:
+    * **For Android:**
 
-npx react-native run-android
+        ```bash
+        npx react-native run-android
+        ```
 
-For iOS:
+    * **For iOS:**
 
-npx react-native run-ios
+        ```bash
+        npx react-native run-ios
+        ```
 
-Make sure you have a device or emulator running.
+    *Make sure you have a device or emulator running.*
 
-📖 Usage
-Launch the app on your device or emulator.
+## 📖 Usage
 
-Grant file system access permissions when prompted.
+1.  Launch the app on your device or emulator.
 
-Navigate to the "Import Books" section to scan your device for EPUB files.
+2.  Grant file system access permissions when prompted.
 
-Select books to add them to your library.
+3.  Navigate to the "Import Books" section to scan your device for EPUB files.
 
-Tap on a book cover in your library to start reading!
+4.  Select books to add them to your library.
 
-Explore the settings within the reader to adjust font size, toggle night mode, and control brightness.
+5.  Tap on a book cover in your library to start reading!
 
-📁 Project Structure
-pageturner/
-├── android/              # Android native code
-├── ios/                  # iOS native code
-├── assets/               # Static assets (images, fonts, etc.)
-├── src/
-│   ├── api/              # API service integrations (e.g., Gemini)
-│   ├── components/       # Reusable UI components
-│   ├── config/           # App configurations (e.g., Firebase, AI keys)
-│   ├── contexts/         # React Contexts for global state
-│   ├── data/             # Local storage wrappers, data models
-│   ├── hooks/            # Custom React hooks
-│   ├── navigation/       # React Navigation setup
-│   ├── screens/          # Main application screens (Library, Reader, Settings, etc.)
-│   ├── services/         # Business logic, utilities (e.g., EPUB parser, gamification logic)
-│   └── App.js            # Main application entry point
-├── .env                  # Environment variables
-├── package.json          # Project dependencies and scripts
-└── README.md             # This file
+6.  Explore the settings within the reader to adjust font size, toggle night mode, and control brightness.
 
-🤝 Contributing
-Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are greatly appreciated.
 
-Fork the Project
+## 🤝 Contributing
 
-Create your Feature Branch (git checkout -b feature/AmazingFeature)
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
-Commit your Changes (git commit -m 'Add some AmazingFeature')
+1.  Fork the Project
 
-Push to the Branch (git push origin feature/AmazingFeature)
+2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
 
-Open a Pull Request
+3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
 
-📄 License
-Distributed under the MIT License. See LICENSE for more information.
+4.  Push to the Branch (`git push origin feature/AmazingFeature`)
 
-📞 Contact
-Karabo Sambo - karabosambo@outlook.com 
+5.  Open a Pull Request
 
-PageTurner: https://github.com/blaqbox-prime/pageturner
+## 📄 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+## 📞 Contact
+
+Karabo Sambo - [karabosambo@outlook.com](mailto:karabosambo@outlook.com)
+PageTurner: [https://github.com/blaqbox-prime/pageturner](https://github.com/blaqbox-prime/pageturner)
