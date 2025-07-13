@@ -41,7 +41,7 @@ const Library = () => {
     <SafeAreaView className='flex flex-1 p-5'>
 
       <View className='flex flex-row items-center justify-between'>
-        <Text className='text-3xl font-bold'>Library</Text>
+        <Text className='text-3xl font-lato-bold'>Library</Text>
         <TouchableOpacity onPress={handleSelectFolder}>
           <Text className='text-primary'>Select books folder</Text>
         </TouchableOpacity>
