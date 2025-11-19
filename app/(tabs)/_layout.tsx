@@ -8,22 +8,22 @@ const _layout = () => {
     <Tabs 
      screenOptions={{
         headerShown: false,
-        tabBarLabelPosition:'beside-icon',
-        tabBarShowLabel:false,
+        tabBarShowLabel: false,
         tabBarActiveTintColor: colors.secondary,
         tabBarInactiveTintColor: colors.light,
         tabBarItemStyle: {
+          marginTop: 10,
           alignItems: "center",
           justifyContent: "center",
-          width: "100%",
-          height: "100%",  
         },
         tabBarStyle: {
           backgroundColor: colors.dark,
           borderRadius: 50,
-          marginHorizontal: 16,
-          marginBottom: 16,
-          position: "absolute"
+          marginHorizontal: 24,
+          marginBottom: 24,
+          position: "absolute",
+          paddingVertical: 10,
+          height: 60, // Ensures proper vertical alignment
         }
 
       }}
