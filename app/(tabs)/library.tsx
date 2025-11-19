@@ -1,70 +1,90 @@
-import { filterDuplicateBookFiles } from '@/lib/utils';
-import { useFileSystem } from '@epubjs-react-native/expo-file-system'; // for Expo project
-import * as DocumentPicker from 'expo-document-picker';
+import { colors } from '@/constants/constants';
+import { useLibraryStore } from '@/lib/libraryStore';
+import { ReaderProvider, useReader } from '@epubjs-react-native/core';
 import { Link } from 'expo-router';
-import React, { useCallback, useState } from 'react';
-import { Alert, Animated, Text, TouchableOpacity, View } from 'react-native';
+import React from 'react';
+import { Animated, Image, Text, TouchableOpacity, View } from 'react-native';
+import { PulseIndicator } from 'react-native-indicators';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+const library = () => {
+  const {
+    books,
+    isLoading,
+    isScanning,
+    loadCachedData,
+    handleSelectBooks,
+    scanAppDirectoryForBooks,
+    handleClearLibrary,
+    removeBook
+  } = useLibraryStore();
 
-const Library = () => {
+  const reader = useReader();
 
-  const filesystem = useFileSystem();
+  // // Load cached data on component mount
+  // useEffect(() => {
+  //   scanAppDirectoryForBooks;
+  // }, []);
 
-  console.log(filesystem.documentDirectory)
-  const [books, setBooks] = useState<BookFile[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  const handleSelectFolder = useCallback(
-   async () => {
-      console.log("clicked")
-      const result = await DocumentPicker.getDocumentAsync({ copyToCacheDirectory: true, multiple: true, type: "application/epub+zip" })
-
-      if(result.canceled === false && result.assets && result.assets.length > 0){
-        const newBooks: BookFile[] = result.assets.map(bookFile => ({name: bookFile.name, uri: bookFile.uri, lastModified:bookFile.lastModified, size: bookFile.size}))
-        const uniqueBookFiles: BookFile[] = filterDuplicateBookFiles(books, newBooks);
-        setBooks((prevBookFiles) => [...prevBookFiles, ...uniqueBookFiles])
-        Alert.alert('Books Added', `Successfully added ${uniqueBookFiles.length} new books to your library!`);
-      }
-      else {
-        console.log('Document picking cancelled or no files selected.');
-        Alert.alert('Selection Cancelled', 'No EPUB files were selected.');
-      }
-
-    },
-    [books],
-  )
-
+  if (isLoading || isScanning) {
+    return (
+      <SafeAreaView className="flex flex-1 items-center justify-center gap-4">
+        <View>
+          <PulseIndicator color={colors.primary} />
+          <Text className='text-primary'>Loading Library</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
-    <SafeAreaView className='flex flex-1 p-5'>
+      <ReaderProvider>
 
-      <View className='flex flex-row items-center justify-between'>
-        <Text className='text-3xl font-lato-bold'>Library</Text>
-        <TouchableOpacity onPress={handleSelectFolder}>
-          <Text className='text-primary'>Select books folder</Text>
+    <SafeAreaView className="flex flex-1 px-8 py-6">
+      <View className="flex flex-row items-center justify-between">
+        <Text className="text-3xl font-lato-bold">Library</Text>
+        <TouchableOpacity onPress={handleSelectBooks}>
+          <Text className="text-primary">Add books</Text>
         </TouchableOpacity>
       </View>
 
-      <Animated.FlatList
+    <View className='flex flex-col flex-1 mt-6'>
+        <Animated.FlatList
         data={books}
+        numColumns={2}
+        columnWrapperStyle={{ justifyContent: 'space-between' }}
+        keyExtractor={(bookfile) => bookfile.uri}
+        showsVerticalScrollIndicator={false}
         renderItem={({ item }) => {
+          
           return (
-            <TouchableOpacity>
-          <Link href={{pathname:"/reader/[uri]", params: {uri: item.uri}}} >
-              <View className='flex gap-2'>
-            <Text className='text-2xl font-bold text-dark'>{item.name}</Text>
-            <Text className='text-light'>{item.uri}</Text>
-          </View>
-          </Link>
+            <TouchableOpacity className="w-[48%] mb-6">
+              <Link
+                href={{ pathname: '/reader/[uri]', params: { uri: item.uri } }}
+                asChild
+              >
+                <View className='mb-4 w-full p-2'>
+                  <Image source={{uri: item.coverImage as string}}
+                  resizeMode='cover'
+                  className='h-[290px] w-full bg-slate-400 rounded-3xl shadow-lg shadow-slate-400'
+                />
+
+                <View className='mt-6 px-4'>
+                  <Text className='font-lato-black line-clamp-2 leading-snug tracking-wide'>{item.title}</Text>
+                <Text className='text-sm line-clamp-1 text-gray-600 leading-relaxed tracking-wide mt-2'>{item.author}</Text>
+                </View>
+                </View>
+
+              </Link>
             </TouchableOpacity>
-          )
+          );
         }}
-      />
-
+      /> 
+    </View>
+    
     </SafeAreaView>
-  )
-}
+    </ReaderProvider>
+  );
+};
 
-export default Library
+export default library;
