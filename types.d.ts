@@ -1,11 +1,11 @@
-type BookFile = {
-    uri: string,
-    name: string,
-    size?: number,
-    lastModified?: number,
-    coverImage?: string | null,
-    author?: string,
-    title?: string 
+interface BookFile {
+  name: string;
+  uri: string;
+  lastModified: number;
+  size: number;
+  author?: string;
+  title? : string;
+  coverImage?: string | null;
 }
 
 interface EPUBMetadata {
