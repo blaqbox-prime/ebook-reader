@@ -1,0 +1,84 @@
+# File: azure-pipelines.yaml
+# CI/CD Pipeline for the PageTurner React Native Ebook Reader (Optimized for EXPO EAS Build).
+# This pipeline uses EAS CLI to compile both Android and iOS binaries in the cloud.
+
+# --- 1. Global Configuration ---
+variables:
+  APP_NAME: 'PageTurner'
+  NODE_VERSION: '18.x'
+  
+  # EAS Environment Variables (REQUIRED SECRETS)
+  # NOTE: These must be configured securely as secret variables in Azure Pipeline variable groups.
+  # EAS_BUILD_TOKEN: Your generated EAS CLI token (required for authentication)
+  EAS_BUILD_TOKEN: '$(EAS_BUILD_TOKEN_SECRET)'
+  
+trigger:
+  branches:
+    include:
+      - main
+      - develop
+  paths:
+    exclude:
+      - '*.md'
+
+pr:
+  branches:
+    include:
+      - '*'
+
+# --- 2. Build Stage (Unified EAS Build) ---
+stages:
+- stage: Build
+  displayName: 'Build Mobile Applications via EAS'
+  jobs:
+  
+  # ----------------------------------------
+  # A. EAS Build Job (Unified Android & iOS)
+  # ----------------------------------------
+  - job: EASBuild
+    displayName: 'EAS Build for Android and iOS'
+    # EAS build orchestration can run on Linux/Ubuntu
+    pool:
+      vmImage: 'ubuntu-latest' 
+
+    steps:
+    - task: NodeTool@0
+      displayName: 'Install Node.js'
+      inputs:
+        versionSpec: $(NODE_VERSION)
+
+    - script: |
+        npm install
+        # Install EAS CLI globally
+        npm install -g eas-cli
+      displayName: 'Install Dependencies and EAS CLI'
+      
+    # Set the EAS CLI token for authentication
+    - script: |
+        eas login --token $(EAS_BUILD_TOKEN)
+      displayName: 'EAS Login'
+      env:
+        # Use the variable defined in Azure Pipelines secrets
+        EAS_BUILD_TOKEN: $(EAS_BUILD_TOKEN)
+        
+    # Start the Android EAS Build
+    - script: |
+        eas build --platform android --profile production --non-interactive --output output-android.apk
+      displayName: 'Start Android EAS Build'
+      
+    # Start the iOS EAS Build
+    - script: |
+        eas build --platform ios --profile production --non-interactive --output output-ios.ipa
+      displayName: 'Start iOS EAS Build'
+      
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Android Artifact (APK)'
+      inputs:
+        pathToPublish: 'output-android.apk'
+        artifactName: 'android-apk-release'
+        
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish iOS Artifact (IPA)'
+      inputs:
+        pathToPublish: 'output-ios.ipa'
+        artifactName: 'ios-ipa-release'
