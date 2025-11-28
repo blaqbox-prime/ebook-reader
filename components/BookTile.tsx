@@ -1,13 +1,30 @@
 import { images } from "@/assets";
+import { EPUBParser } from "@/lib/EPUBParser";
 import { Link } from "expo-router";
-import React from "react";
+import React, { useLayoutEffect, useState } from "react";
 import { Image, Text, TouchableWithoutFeedback, View } from "react-native";
 
 type BookTileProps = {
   book: BookFile;
 };
 
+
+
 const BookTile = ({ book }: BookTileProps) => {
+
+  const [cover, setCover] = useState(book.coverImage)
+
+  useLayoutEffect(() => {
+    const fetchCover = async ()=>{
+      const parser = new EPUBParser(book.uri)
+      const bookCover = await parser.getCoverImage()
+      setCover(bookCover)
+    }
+  
+    fetchCover()
+  }, [cover])
+  
+
   return (
     <Link
       href={{
@@ -21,8 +38,8 @@ const BookTile = ({ book }: BookTileProps) => {
         <View className="mb-4 w-full p-2">
           <Image
             source={
-              book.coverImage
-                ? { uri: book.coverImage as string }
+              cover
+                ? { uri: cover as string }
                 : images.COVER
             }
             resizeMode="cover"

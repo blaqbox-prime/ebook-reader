@@ -3,9 +3,10 @@ import BookTile from "@/components/BookTile";
 import EmptyStateView from "@/components/EmptyStateView";
 import SearchBox from "@/components/SearchBox";
 import { colors } from "@/constants/constants";
-import { STORAGE_KEYS, useLibraryStore } from "@/zustand/libraryStore";
+import { fetchBooks } from "@/lib/storageUtils";
+import { handleSelectBooks, scanAppDirectoryForBooks } from "@/lib/utils";
+import { useLibraryStore } from "@/zustand/libraryStore";
 import { ReaderProvider } from "@epubjs-react-native/core";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useState } from "react";
 import {
   Animated,
@@ -23,24 +24,29 @@ const library = () => {
     books,
     isLoading,
     isScanning,
-    handleSelectBooks,
-    scanAppDirectoryForBooks,
-    handleClearLibrary,
-    removeBook,
+      setLoading,
+    addBooks
   } = useLibraryStore();
 
-  const [filteredBooks, setFilteredBooks] = useState<BookFile[]>(books || []);
+  const [filteredBooks, setFilteredBooks] = useState<any[]>([]);
 
   useEffect(() => {
-    setFilteredBooks(books);
-    const viewStorage = async () => {
-      const item = await AsyncStorage.getItem(STORAGE_KEYS.LIBRARY)
-      console.log("stored books:",item)
+    
+    const init = async () => {
+      setLoading(true)
+      const storedBooks = await fetchBooks()
+      if(storedBooks.length > 0){
+        addBooks(storedBooks)
+      } else {
+        await scanAppDirectoryForBooks()
+      }
+      setFilteredBooks(books)
+      setLoading(false)
     }
 
-    viewStorage();
+    init()
 
-  }, [books]);
+  }, []);
 
   const handleSearch = (text: string) => {
     if (text.trim().length == 0) {
@@ -60,7 +66,7 @@ const library = () => {
       <SafeAreaView className="flex flex-1 items-center justify-center gap-4">
         <View>
           <PulseIndicator color={colors.primary} />
-          <Text className="text-primary">Loading Library</Text>
+          <Text className="text-dark">Loading Library</Text>
         </View>
       </SafeAreaView>
     );

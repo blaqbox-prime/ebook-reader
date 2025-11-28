@@ -2,7 +2,7 @@ interface BookFile {
   name: string;
   uri: string;
   lastModified: number;
-  size: number;
+  size?: number;
   author?: string;
   title? : string;
   coverImage?: string | null;
