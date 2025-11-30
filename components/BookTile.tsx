@@ -34,8 +34,8 @@ const BookTile = ({ book }: BookTileProps) => {
       asChild
       key={book.uri}
     >
-      <TouchableWithoutFeedback className="w-[50%] mb-6">
-        <View className="mb-4 w-full p-2">
+      <TouchableWithoutFeedback className="">
+        <View className="mb-4 w-full p-1">
           <Image
             source={
               cover

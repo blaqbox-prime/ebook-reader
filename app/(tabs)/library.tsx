@@ -3,8 +3,9 @@ import BookTile from "@/components/BookTile";
 import EmptyStateView from "@/components/EmptyStateView";
 import SearchBox from "@/components/SearchBox";
 import { colors } from "@/constants/constants";
-import { fetchBooks } from "@/lib/storageUtils";
-import { handleSelectBooks, scanAppDirectoryForBooks } from "@/lib/utils";
+import { fetchAllBooks } from "@/db/queries";
+import { storeBooks } from "@/lib/storageUtils";
+import { handleSelectBooks } from "@/lib/utils";
 import { useLibraryStore } from "@/zustand/libraryStore";
 import { ReaderProvider } from "@epubjs-react-native/core";
 import React, { useEffect, useState } from "react";
@@ -24,29 +25,11 @@ const library = () => {
     books,
     isLoading,
     isScanning,
-      setLoading,
+    setLoading,
     addBooks
   } = useLibraryStore();
 
   const [filteredBooks, setFilteredBooks] = useState<any[]>([]);
-
-  useEffect(() => {
-    
-    const init = async () => {
-      setLoading(true)
-      const storedBooks = await fetchBooks()
-      if(storedBooks.length > 0){
-        addBooks(storedBooks)
-      } else {
-        await scanAppDirectoryForBooks()
-      }
-      setFilteredBooks(books)
-      setLoading(false)
-    }
-
-    init()
-
-  }, []);
 
   const handleSearch = (text: string) => {
     if (text.trim().length == 0) {
@@ -59,6 +42,33 @@ const library = () => {
       )
     );
   };
+
+
+  const handleAddBooks = async () => {
+    setLoading(true)
+    const selectedBooks = await handleSelectBooks()
+    await storeBooks(selectedBooks || []);
+    const dbBooks = await fetchAllBooks()
+    setFilteredBooks(dbBooks)
+    setLoading(false)
+  }
+
+  useEffect(() => {
+    
+    const init = async () => {
+      const dbBooks = await fetchAllBooks()
+    setFilteredBooks(dbBooks)
+    }
+
+    init();
+    
+  }, [])
+  
+
+  const handleRefresh = async () => {
+    const dbBooks = await fetchAllBooks()
+    setFilteredBooks(dbBooks)
+  }
 
 
   if (isLoading || isScanning) {
@@ -77,7 +87,7 @@ const library = () => {
       <SafeAreaView className="flex flex-1 px-8 py-6">
         <View className="flex flex-row items-center justify-between">
           <Text className="text-3xl font-lato-bold">Library</Text>
-          <TouchableOpacity onPress={handleSelectBooks}>
+          <TouchableOpacity onPress={handleAddBooks}>
             <Text className="text-primary">Add books</Text>
           </TouchableOpacity>
         </View>
@@ -87,11 +97,14 @@ const library = () => {
             data={filteredBooks}
             extraData={filteredBooks}
             numColumns={2}
+            horizontal={false}
             keyExtractor={(bookfile) => bookfile.uri}
             showsVerticalScrollIndicator={false}
             renderItem={({ item }) => {
               return (
-               <BookTile book={item} />
+               <View className="w-1/2 p-2"> 
+                  <BookTile book={item} />
+                </View>
               );
             }}
             ListHeaderComponent={
@@ -104,7 +117,7 @@ const library = () => {
               <EmptyStateView image={images.BOOKSHELF} message={"No books available."} />
             }
             refreshing={isScanning}
-            onRefresh={scanAppDirectoryForBooks}
+            onRefresh={handleRefresh}
           />
         </View>
       </SafeAreaView>
