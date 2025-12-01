@@ -21,7 +21,7 @@ module.exports = {
         'lato-thin': ['Lato-Thin'],
         
         // Secondary - Lora
-        "serif": ['Lora'],
+        "lora": ['Lora'],
                 
         // Optional: Set default font families
         'primary': ['Lato-Regular'],

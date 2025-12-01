@@ -1,33 +1,22 @@
 import '@/app/global.css';
 import { fonts } from '@/assets';
 import { ReaderProvider } from '@epubjs-react-native/core';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
 import { Stack } from "expo-router";
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
+import {startLibrarySync} from "@/zustand/libraryStore";
 
 export default function RootLayout() {
 
    const [loaded, error] = useFonts(fonts);
 
   useEffect(() => {
+
+    startLibrarySync()
+
     if (loaded || error) {
       SplashScreen.hideAsync();
-       async function checkStorage() {
-        const keys = await AsyncStorage.getAllKeys();
-        keys.forEach(async (key) => {
-          if(!await AsyncStorage.getItem(key)){
-            await AsyncStorage.setItem(key, "NO ITEM FOUND HERE")
-          }
-          const item = await AsyncStorage.getItem(key);
-          console.log(key, ":", item + "\n");
-        });
-        console.log(keys);
-      }
-
-      checkStorage()
-      
     }
   }, [loaded, error]);
 
