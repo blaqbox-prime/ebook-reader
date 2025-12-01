@@ -31,7 +31,7 @@ const _layout = () => {
         <Tabs.Screen name='index' options={{
           tabBarIcon: ({color, size}) => (<Feather name="home" size={size} color={color} />),         
         }}/>
-        <Tabs.Screen name='library' options={{
+        <Tabs.Screen name='(books)' options={{
           tabBarIcon: ({color, size}) => (<Feather name="book-open" size={size} color={color} />)
         }}/>
         <Tabs.Screen name='bookmarks' options={{

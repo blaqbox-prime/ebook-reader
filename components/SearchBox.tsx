@@ -9,8 +9,8 @@ type SearchBoxProps = {
 
 const SearchBox = ({onChangeText, className}: SearchBoxProps) => {
   return (
-    <View className={`bg-primary/25 w-full p-4 rounded-full flex-row gap-3 items-center ${className}`}>
-                    <Feather name="search" size={24} color="black" />
+    <View className={`bg-primary/15 w-full py-2 px-4 rounded-full flex-row gap-3 items-center ${className}`}>
+                    <Feather name="search" size={22} color="black" />
                     <TextInput
                       placeholder="Search book title..."
                       className=""
