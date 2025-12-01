@@ -11,4 +11,5 @@ export default class Book extends Model {
     @text('title') title
     @text('author') creator
     @text('cover_image') coverImage
+
 }

@@ -1,7 +1,7 @@
 import { appSchema, tableSchema } from '@nozbe/watermelondb'
 
 export default appSchema({
-  version: 2,
+  version: 3,
   tables: [
     tableSchema({
         name: 'books',
@@ -9,7 +9,9 @@ export default appSchema({
             {name: 'uri', type: 'string', isIndexed: true},
             {name: 'title', type: "string"},
             {name: 'author', type: 'string'},
-            {name: 'cover_image', type: 'string', isOptional: true}
+            {name: 'cover_image', type: 'string', isOptional: true},
+            { name: 'created_at', type: 'number' },
+            { name: 'updated_at', type: 'number' },
         ]
     }),
     tableSchema({
@@ -23,6 +25,8 @@ export default appSchema({
             {name: 'date', type: 'string', isOptional: true},
             {name: 'description', type: 'string', isOptional: true},
             {name: 'rights', type: 'string', isOptional: true},
+            { name: 'created_at', type: 'number' },
+            { name: 'updated_at', type: 'number' },
         ]
     })
   ]

@@ -1,85 +1,42 @@
-// store/libraryStore.ts
-import { STORAGE_KEYS } from '@/lib/storageUtils';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as FileSystem from 'expo-file-system';
-import { Alert } from 'react-native';
-import { create } from 'zustand';
-import { BOOKS_DIR, filterDuplicateBookFiles } from '../lib/utils';
 
+import { create } from 'zustand';
+import Book from "@/db/models/Book";
+import {Q} from "@nozbe/watermelondb";
+import db from "@/db/index.native"
 
 interface LibraryState {
-  books: BookFile[];
-  isLoading: boolean;
-  isScanning: boolean;
-  lastScanTime: number | null;
-  setLoading: (value: boolean) => void
-  addBooks: (books: BookFile[]) => void;
-  handleClearLibrary: () => Promise<void>;
-  removeBook: (bookToRemove: BookFile) => Promise<void>;
+    books: Book[];
+    isLoading: boolean;
+    setBooks: (books: Book[]) => void;
+    // ... other state properties
 }
 
+export const useLibraryStore = create<LibraryState>((set) => ({
+    books: [],
+    isLoading: true,
+    setBooks: (books) => set({ books, isLoading: false }),
+    // ...
+}));
 
-export const useLibraryStore = create<LibraryState>()(
-  
-    (set, get) => ({
-      books: [],
-      isLoading: false,
-      isScanning: false,
-      lastScanTime: null,
 
-      addBooks: async (newBooks) => {
-         const uniqueBooks = filterDuplicateBookFiles(get().books, newBooks);
-        set((state) => ({books: [...state.books, ...uniqueBooks], lastScanTime: Date.now()}));
-      },
+// --- UTILITY TO SUBSCRIBE TO THE DATABASE ---
 
-      setLoading: (value: boolean) => {
-        set({isLoading: value})
-      },
+/**
+ * Sets up a live synchronization between WatermelonDB and the Zustand store.
+ */
+export const startLibrarySync = () => {
+    // 1. Define the live query
+    const booksObservable = db.get<Book>('books')
+        .query(Q.sortBy('updated_at', Q.desc)) // Sort by when the book was last modified
+        .observe(); // .observe() returns the Observable
 
-      handleClearLibrary: async () => {
-        Alert.alert('Clear Library', 'Are you sure you want to clear your library?', [
-          { text: 'Cancel', style: 'cancel' },
-          {
-            text: 'Clear',
-            style: 'destructive',
-            onPress: async () => {
-              try {
-                await AsyncStorage.multiRemove([STORAGE_KEYS.BOOKS_CACHE, STORAGE_KEYS.LAST_SCAN]);
-                const dirInfo = await FileSystem.getInfoAsync(BOOKS_DIR);
-                if (dirInfo.exists) await FileSystem.deleteAsync(BOOKS_DIR);
-                set({ books: [], lastScanTime: null });
-                Alert.alert('Library Cleared', 'Your library has been cleared.');
-              } catch (error) {
-                console.error('Error clearing library:', error);
-                Alert.alert('Error', 'Failed to clear library.');
-              }
-            },
-          },
-        ]);
-      },
+    // 2. Subscribe to the observable
+    const subscription = booksObservable.subscribe((latestBooks: Book[]) => {
+        // This callback fires immediately with current data, and again every time data changes
+        console.log(`WatermelonDB detected ${latestBooks.length} books. Updating store.`);
+        useLibraryStore.getState().setBooks(latestBooks);
+    });
 
-      removeBook: async (bookToRemove) => {
-        Alert.alert('Remove Book', `Remove "${bookToRemove.name}" from your library?`, [
-          { text: 'Cancel', style: 'cancel' },
-          {
-            text: 'Remove',
-            style: 'destructive',
-            onPress: async () => {
-              try {
-                await FileSystem.deleteAsync(bookToRemove.uri);
-                const updatedBooks = get().books.filter((b) => b.uri !== bookToRemove.uri);
-                set({ books: updatedBooks });
-
-                Alert.alert('Book Removed', `"${bookToRemove.name}" has been removed.`);
-              } catch (error) {
-                console.error('Error removing book:', error);
-                Alert.alert('Error', 'Failed to remove book.');
-              }
-            },
-          },
-        ]);
-      },
-    }),
-
-);
-
+    // Return the unsubscribe function so we can clean up the listener later
+    return () => subscription.unsubscribe();
+};

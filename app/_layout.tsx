@@ -1,20 +1,22 @@
 import '@/app/global.css';
 import { fonts } from '@/assets';
-import { fetchBooks } from '@/lib/storageUtils';
 import { ReaderProvider } from '@epubjs-react-native/core';
 import { useFonts } from 'expo-font';
 import { Stack } from "expo-router";
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
+import {startLibrarySync} from "@/zustand/libraryStore";
 
 export default function RootLayout() {
 
    const [loaded, error] = useFonts(fonts);
 
   useEffect(() => {
+
+    startLibrarySync()
+
     if (loaded || error) {
       SplashScreen.hideAsync();
-      console.log(fetchBooks())
     }
   }, [loaded, error]);
 
