@@ -7,6 +7,8 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import {startLibrarySync} from "@/zustand/libraryStore";
 
+import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
+
 export default function RootLayout() {
 
    const [loaded, error] = useFonts(fonts);
@@ -25,11 +27,15 @@ export default function RootLayout() {
   }
 
   return (
-  <ReaderProvider>
+  
+    <GluestackUIProvider mode="dark">
+      <ReaderProvider>
     <Stack screenOptions={{statusBarHidden: true}}>
     <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
     <Stack.Screen name="reader/[uri]" options={{headerShown: false}}/>
   </Stack>
   </ReaderProvider>
+    </GluestackUIProvider>
+  
   );
 }
