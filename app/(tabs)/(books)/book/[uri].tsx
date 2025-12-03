@@ -2,12 +2,13 @@ import {View, Text, ScrollView, TouchableOpacity, Image} from 'react-native'
 import React, {useEffect, useState} from 'react'
 import {Link, useLocalSearchParams, useNavigation} from "expo-router";
 import Book from "@/db/models/Book";
-import {fetchBookByUri} from "@/db/queries";
+import {createNewMetadata, fetchBookByUri, fetchMetadataByUri} from "@/db/queries";
 import {SafeAreaView} from "react-native-safe-area-context";
 import Feather from '@expo/vector-icons/Feather';
 import {images} from "@/assets";
 import {colors} from "@/constants/constants";
 import {fetchGoogleBookMetadata} from "@/api";
+import Metadata from "@/db/models/Metadata";
 
 
 
@@ -22,9 +23,20 @@ const BookDetails = () => {
         const getBookDetails = async () => {
            let bookInfo = await fetchBookByUri(uri as string);
            if(bookInfo[0]){
-               const metadata = await fetchGoogleBookMetadata("",bookInfo[0].title)
                setBook(bookInfo[0])
-               setMetadata(metadata)
+
+               let metaInfo: Metadata[] = await fetchMetadataByUri(uri as string)
+               let googleBooksMetaInfo: MetadataInfo | null;
+               if(metaInfo.length === 0){
+                   googleBooksMetaInfo = await fetchGoogleBookMetadata("",bookInfo[0].title)
+                   if(googleBooksMetaInfo){
+                       const metadata = await createNewMetadata(uri as string, googleBooksMetaInfo)
+                       setMetadata(metadata)
+                   }
+               }
+               else {
+                   setMetadata(metaInfo[0])
+               }
            }
            else {
                navigator.goBack()

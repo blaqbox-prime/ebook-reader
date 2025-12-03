@@ -11,7 +11,7 @@ export const fetchGoogleBookMetadata = async (author: string, title: string) => 
 
         const book = body.items[0]
 
-        const metadata = {
+        const metadata: MetadataInfo = {
             title: book.volumeInfo.title,
             subtitle: book.volumeInfo.subtitle,
             author: book.volumeInfo.authors[0],

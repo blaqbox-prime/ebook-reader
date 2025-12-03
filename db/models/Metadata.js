@@ -1,5 +1,5 @@
 import { Model } from "@nozbe/watermelondb";
-import { date, relation, text } from '@nozbe/watermelondb/decorators';
+import {date, field, relation, text} from '@nozbe/watermelondb/decorators';
 
 export default class Metadata extends Model {
     static table = 'metadata'
@@ -7,16 +7,21 @@ export default class Metadata extends Model {
         books: {type: 'belongs_to', key: 'book_uri'}
     }
 
-
-
     @text('book_uri') bookUri
     @text('title') title
-    @text('creator') creator
+    @text('subtitle') subtitle
+    @text('author') author
     @text('publisher') publisher
+    @text('cover_image') coverImage
     @text('language') language
-    @date('date') date
+    @date('published_date') publishedDate
     @text('description') description
-    @text('rights') rights
+    @field('page_count') pageCount
+    @text('categories') categories
+    @field('average_rating') averageRating
+
+
+
 
     @relation('books','book_uri') book
 
