@@ -1,9 +1,12 @@
 import db from './index.native'
 import Book from './models/Book'
+import {Q} from "@nozbe/watermelondb";
 
 export const fetchAllBooks = async () => await db.get<Book>('books').query().fetch()
 
 export const fetchBookById = async (id: string) => db.get<Book>('books').find(id) 
+
+export const fetchBookByUri = async (uri: string) => db.get<Book>('books').query(Q.where("uri", uri)).fetch()
 
 export const createNewBook = async (bookFile: BookFile) => {
   const newBook = await db.write(
