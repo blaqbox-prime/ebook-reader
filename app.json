@@ -25,11 +25,16 @@
     },
     "web": {
       "bundler": "metro",
-      "output": "static",
+      "output": "server",
       "favicon": "./assets/images/logo.png"
     },
     "plugins": [
-      "expo-router",
+      [
+        "expo-router",
+        {
+          "origin": "https://pageturner.dev/"
+        }
+      ],
       [
         "expo-splash-screen",
         {

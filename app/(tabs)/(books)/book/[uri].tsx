@@ -7,10 +7,14 @@ import {SafeAreaView} from "react-native-safe-area-context";
 import Feather from '@expo/vector-icons/Feather';
 import {images} from "@/assets";
 import {colors} from "@/constants/constants";
+import {fetchGoogleBookMetadata} from "@/api";
+
+
 
 const BookDetails = () => {
     const [book, setBook] = useState<Book | null>(null)
     const [loading, setLoading] = useState(true)
+    const [metadata, setMetadata] = useState<any>(null)
     const {uri} = useLocalSearchParams()
     const navigator = useNavigation()
 
@@ -18,15 +22,19 @@ const BookDetails = () => {
         const getBookDetails = async () => {
            let bookInfo = await fetchBookByUri(uri as string);
            if(bookInfo[0]){
+               const metadata = await fetchGoogleBookMetadata("",bookInfo[0].title)
                setBook(bookInfo[0])
+               setMetadata(metadata)
            }
            else {
                navigator.goBack()
            }
         }
+
         getBookDetails()
         setLoading(false)
     }, [uri, navigator])
+
 
     if(loading) return <Text>Loading...</Text>
 
@@ -46,12 +54,12 @@ const BookDetails = () => {
                 </View>
 
             {/*  Image  */}
-                <View className="mt-20 pb-4">
+                <View className="mt-12 pb-4">
                     <Image
                         source={
                             book?.coverImage
                                 ? { uri: book?.coverImage as string }
-                                : images.COVER
+                                : metadata?.coverImage ? {uri: metadata?.coverImage} : images.COVER
                         }
                         resizeMode="cover"
                         className="h-[370px] w-[250px] rounded-lg mx-auto shadow-lg"
@@ -80,6 +88,14 @@ const BookDetails = () => {
                           </View>
                       </View>
 
+            {/*  Metadata  */}
+
+                {metadata && (<View className="mb-20">
+                    <Text className="text-2xl mb-2 font-lato-bold" style={{color: colors.dark}}>Summary</Text>
+                    <Text className="leading-8">
+                        {metadata.description}
+                    </Text>
+                </View>)}
 
             </ScrollView>
         </SafeAreaView>
