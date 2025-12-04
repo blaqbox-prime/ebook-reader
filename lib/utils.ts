@@ -3,6 +3,7 @@ import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system";
 import { Alert } from "react-native";
 import { EPUBParser } from "./EPUBParser";
+import Book from "@/db/models/Book";
 
 export const BOOKS_DIR = `${FileSystem.documentDirectory}books/`;
 export const COVERS_DIR = `${BOOKS_DIR}covers/`;
@@ -140,3 +141,27 @@ export async function saveBase64CoverImage(base64Data: string, bookId: string): 
     throw new Error(`Failed to save cover image for book ${bookId}.`);
   }
 }
+
+export const sortBooksByAuthor = (books: Book[]): Book[] => {
+    return [...books].sort((a, b) => {
+        const authorA = a.creator.toLowerCase() || '';
+        const authorB = b.creator.toLowerCase() || '';
+        return authorA.localeCompare(authorB);
+    });
+};
+
+export const sortBooksByTitle = (books: Book[]): Book[] => {
+    return [...books].sort((a, b) => {
+        const titleA = a.title.toLowerCase() || '';
+        const titleB = b.title.toLowerCase() || '';
+        return titleA.localeCompare(titleB);
+    });
+};
+
+export const sortBooksByLastRead = (books: Book[]): Book[] => {
+    return [...books].sort((a, b) => {
+        const lastReadA = a.lastRead || 0;
+        const lastReadB = b.lastRead || 0;
+        return lastReadB - lastReadA;
+    });
+};

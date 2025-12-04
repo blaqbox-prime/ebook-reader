@@ -10,7 +10,7 @@ import { storeBooks } from "@/lib/storageUtils";
 import { handleSelectBooks } from "@/lib/utils";
 import { useLibraryStore } from "@/zustand/libraryStore";
 import { ReaderProvider } from "@epubjs-react-native/core";
-import { useState } from "react";
+import {useEffect, useLayoutEffect, useState} from "react";
 import {
     Animated,
     Text,
@@ -19,15 +19,20 @@ import {
 } from "react-native";
 import { PulseIndicator } from "react-native-indicators";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Feather from "@expo/vector-icons/Feather";
+import {useLayout} from "@gluestack-ui/utils";
 
 const Library = () => {
 
     const {
         books,
         isLoading,
+        filteredBooks, setFilteredBooks,
     } = useLibraryStore();
 
-    const [filteredBooks, setFilteredBooks] = useState<Book[]>(books);
+    useLayoutEffect(() => {
+        setFilteredBooks(books)
+    }, );
 
     const handleSearch = (text: string) => {
         if (text.trim().length == 0) {
@@ -102,7 +107,13 @@ const Library = () => {
                             <View className="h-20"></View>
                         }
                         ListEmptyComponent={
-                            <EmptyStateView image={images.BOOKSHELF} message={"No books available."} />
+                            <EmptyStateView image={images.BOOKSHELF} message={"No books available."}
+                                showButton={true}
+                                            buttonText={"Add Books"}
+                                            buttonIcon={<Feather name={"plus"} size={24} color={colors.light}/>}
+                                            buttonAction={handleAddBooks}
+
+                            />
                         }
                         refreshing={isLoading}
                         onRefresh={handleRefresh}
