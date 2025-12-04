@@ -2,12 +2,15 @@ import { images } from "@/assets";
 import BookTile from "@/components/BookTile";
 import EmptyStateView from "@/components/EmptyStateView";
 import SearchBox from "@/components/SearchBox";
+import SortButton from "@/components/SortButton";
 import { colors } from "@/constants/constants";
+import Book from "@/db/models/Book";
 import { fetchAllBooks } from "@/db/queries";
 import { storeBooks } from "@/lib/storageUtils";
 import { handleSelectBooks } from "@/lib/utils";
 import { useLibraryStore } from "@/zustand/libraryStore";
 import { ReaderProvider } from "@epubjs-react-native/core";
+import { useState } from "react";
 import {
     Animated,
     Text,
@@ -16,9 +19,6 @@ import {
 } from "react-native";
 import { PulseIndicator } from "react-native-indicators";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {useState} from "react";
-import Book from "@/db/models/Book";
-import SortButton from "@/components/SortButton";
 
 const Library = () => {
 
@@ -68,7 +68,7 @@ const Library = () => {
         <ReaderProvider>
             <SafeAreaView className="flex flex-1 px-8 py-6">
                 <View className="flex flex-row items-center justify-between">
-                    <Text className="text-3xl font-lora ">Library</Text>
+                    <Text className="text-3xl font-lato-regular ">Library</Text>
                     <View className="flex flex-row items-center gap-4">
                         <TouchableOpacity onPress={handleAddBooks}>
                             <Text className="text-primary">Add books</Text>

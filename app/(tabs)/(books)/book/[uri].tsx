@@ -1,14 +1,14 @@
-import {View, Text, ScrollView, TouchableOpacity, Image} from 'react-native'
-import React, {useEffect, useState} from 'react'
-import {Link, useLocalSearchParams, useNavigation} from "expo-router";
+import { fetchGoogleBookMetadata } from "@/api";
+import { images } from "@/assets";
+import { colors } from "@/constants/constants";
 import Book from "@/db/models/Book";
-import {createNewMetadata, fetchBookByUri, fetchMetadataByUri} from "@/db/queries";
-import {SafeAreaView} from "react-native-safe-area-context";
-import Feather from '@expo/vector-icons/Feather';
-import {images} from "@/assets";
-import {colors} from "@/constants/constants";
-import {fetchGoogleBookMetadata} from "@/api";
 import Metadata from "@/db/models/Metadata";
+import { createNewMetadata, fetchBookByUri, fetchMetadataByUri } from "@/db/queries";
+import Feather from '@expo/vector-icons/Feather';
+import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import React, { useEffect, useState } from 'react';
+import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from "react-native-safe-area-context";
 
 
 
@@ -18,6 +18,7 @@ const BookDetails = () => {
     const [metadata, setMetadata] = useState<any>(null)
     const {uri} = useLocalSearchParams()
     const navigator = useNavigation()
+    const router = useRouter()
 
     useEffect(() => {
         const getBookDetails = async () => {
@@ -90,13 +91,19 @@ const BookDetails = () => {
                 </View>
 
                       <View className="my-8">
-                          <View className="mx-auto p-4 bg-primary-100 w-1/2 rounded-full">
-                              <Link href={`/reader/${uri}`} className="mx-auto">
-                                  <TouchableOpacity className="flex-row items-center justify-center gap-4">
+                          <View className="mx-auto p-4 bg-amber-900 w-1/2 rounded-full">
+                              <View className="mx-auto">
+                                  <TouchableOpacity className="flex-row items justify-center gap-4" onPress={() => {
+                                    router.push({
+                                        pathname: `/reader/[uri]`,
+                                        params: {uri: uri as string}
+                                    })
+                                  }}>
                                       <Text className="text-white font-lato-bold text-xl">Read Book</Text>
                                       <Feather name="book-open" size={24} color={colors.light} />
                                   </TouchableOpacity>
-                              </Link>
+
+                              </View>
                           </View>
                       </View>
 

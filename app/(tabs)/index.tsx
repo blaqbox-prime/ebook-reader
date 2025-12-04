@@ -1,7 +1,5 @@
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {Button, ButtonText} from "@/components/ui/button";
-import {fetchGoogleBookMetadata} from "@/api";
 
 export default function Index() {
 
@@ -10,9 +8,9 @@ export default function Index() {
 
   
   return (
-    <SafeAreaView className='mx-4'>
+    <SafeAreaView className='mx-8'>
       <View>
-          <Text>List of Books</Text>
+          <Text className="text-blue-600">List of Books</Text>
       </View>
 
        {/*<Button onPress={() => fetchGoogleBooksMetadata()}>*/}

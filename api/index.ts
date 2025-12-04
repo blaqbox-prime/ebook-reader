@@ -26,8 +26,6 @@ export const fetchGoogleBookMetadata = async (author: string, title: string) => 
             language: book.volumeInfo.language,
         }
 
-        console.log(metadata)
-
         return metadata;
     }catch (e) {
         console.error(e)
