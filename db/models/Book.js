@@ -1,5 +1,5 @@
 import { Model } from "@nozbe/watermelondb";
-import { text } from "@nozbe/watermelondb/decorators";
+import {field, text, writer} from "@nozbe/watermelondb/decorators";
 
 export default class Book extends Model {
     static table = 'books'
@@ -11,5 +11,9 @@ export default class Book extends Model {
     @text('title') title
     @text('author') creator
     @text('cover_image') coverImage
+    @field('last_read') lastRead
 
+    @writer async updateLastRead(){
+        await this.update(book => book.lastRead = Date.now())
+    }
 }

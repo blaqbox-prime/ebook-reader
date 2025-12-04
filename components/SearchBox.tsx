@@ -13,7 +13,7 @@ const SearchBox = ({onChangeText, className}: SearchBoxProps) => {
                     <Feather name="search" size={22} color="black" />
                     <TextInput
                       placeholder="Search book title..."
-                      className="text-typography-black placeholder:text-typography-black"
+                      className="text-black placeholder:text-black"
                       onChangeText={(text) => onChangeText(text)}
                     />
                   </View>

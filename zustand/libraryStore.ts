@@ -7,6 +7,8 @@ import db from "@/db/index.native"
 interface LibraryState {
     books: Book[];
     isLoading: boolean;
+    filteredBooks: Book[];
+    setFilteredBooks: (books: Book[]) => void;
     setBooks: (books: Book[]) => void;
     // ... other state properties
 }
@@ -14,8 +16,9 @@ interface LibraryState {
 export const useLibraryStore = create<LibraryState>((set) => ({
     books: [],
     isLoading: true,
+    filteredBooks: [],
     setBooks: (books) => set({ books, isLoading: false }),
-    // ...
+    setFilteredBooks: (books) => set({ filteredBooks: books }),
 }));
 
 

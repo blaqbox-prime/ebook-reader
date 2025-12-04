@@ -1,29 +1,29 @@
-import { Reader, useReader } from '@epubjs-react-native/core';
-import { useFileSystem } from '@epubjs-react-native/expo-file-system';
-import { usePathname } from 'expo-router';
-import React from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Reader, ReaderProvider, useReader } from "@epubjs-react-native/core";
+import { useFileSystem } from "@epubjs-react-native/expo-file-system";
+import { useLocalSearchParams, usePathname } from "expo-router";
+import React from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const BookReader = () => {
-
-  const bookUri = usePathname().replace("/reader/",'').trim();
-  const readerProps = useReader();
+const { uri } = useLocalSearchParams();  
+const readerProps = useReader();
 
   // readerProps.changeFontSize("24px")
 
-
   return (
-    <SafeAreaView className='flex flex-1'>
-      <Reader
-      src={bookUri} 
-      fileSystem={useFileSystem} 
-      allowPopups
-      enableSelection
-      flow='scrolled-continuous'
-      snap
-      />
+    <SafeAreaView className="flex flex-1">
+      <ReaderProvider>
+        <Reader
+          src={uri as string}
+          fileSystem={useFileSystem}
+          allowPopups
+          enableSelection
+          flow="scrolled-continuous"
+          snap
+        />
+      </ReaderProvider>
     </SafeAreaView>
-  )
-}
+  );
+};
 
-export default BookReader
+export default BookReader;

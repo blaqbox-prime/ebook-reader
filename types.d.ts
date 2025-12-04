@@ -8,6 +8,21 @@ interface BookFile {
   coverImage?: string | null;
 }
 
+interface MetadataInfo {
+    title: string;
+    subtitle: string;
+    author: string;
+    coverImage?: string;
+    googleBooksId: string;
+    publisher?: string;
+    publishedDate?: string;
+    pageCount?: number;
+    categories?: string;
+    averageRating?: number;
+    description?: string;
+    language?: string;
+}
+
 interface EPUBMetadata {
   title?: string;
   creator?: string;

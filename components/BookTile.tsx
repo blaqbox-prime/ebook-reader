@@ -1,9 +1,8 @@
 import { images } from "@/assets";
-import { EPUBParser } from "@/lib/EPUBParser";
-import { Link } from "expo-router";
-import React, { useLayoutEffect, useState } from "react";
-import { Image, Text, TouchableWithoutFeedback, View } from "react-native";
 import Book from "@/db/models/Book";
+import { Link } from "expo-router";
+import React, { useState } from "react";
+import { Image, Text, TouchableWithoutFeedback, View } from "react-native";
 
 type BookTileProps = {
   book: Book;
