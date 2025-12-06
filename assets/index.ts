@@ -12,6 +12,7 @@ export const fonts = {
 
 export const images = {
     LOGO: require("./images/logo.png"),
+    LOGO_TRANSPARENT: require("./images/logo-transparent.png"),
     BOOKSHELF: require("./images/bookshelf.png"),
     COVER: require('./images/cover.png')
 }
