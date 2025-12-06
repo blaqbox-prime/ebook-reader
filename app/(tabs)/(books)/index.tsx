@@ -30,9 +30,9 @@ const Library = () => {
         filteredBooks, setFilteredBooks,
     } = useLibraryStore();
 
-    useLayoutEffect(() => {
-        setFilteredBooks(books)
-    }, );
+    // useEffect(() => {
+    //     setFilteredBooks(books)
+    // }, [books]);
 
     const handleSearch = (text: string) => {
         if (text.trim().length == 0) {

@@ -8,15 +8,11 @@ export default function Index() {
 
   
   return (
-    <SafeAreaView className='mx-8'>
+    <SafeAreaView className='mx-8 bg-white'>
       <View>
           <Text className="text-blue-600">List of Books</Text>
       </View>
-
-       {/*<Button onPress={() => fetchGoogleBooksMetadata()}>*/}
-       {/*    <ButtonText >Do something Here</ButtonText>*/}
-       {/*</Button>*/}
-
+        <Text>Stuff Here</Text>
       <View>
       </View>
     </SafeAreaView>
