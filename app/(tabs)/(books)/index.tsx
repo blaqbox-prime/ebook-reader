@@ -20,19 +20,19 @@ import {
 import { PulseIndicator } from "react-native-indicators";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Feather from "@expo/vector-icons/Feather";
-import {useLayout} from "@gluestack-ui/utils";
 
 const Library = () => {
 
     const {
         books,
         isLoading,
+        setLoading,
         filteredBooks, setFilteredBooks,
     } = useLibraryStore();
 
-    useLayoutEffect(() => {
-        setFilteredBooks(books)
-    }, );
+    // useEffect(() => {
+    //     setFilteredBooks(books)
+    // }, [books]);
 
     const handleSearch = (text: string) => {
         if (text.trim().length == 0) {
@@ -47,9 +47,10 @@ const Library = () => {
     };
 
     const handleAddBooks = async () => {
-
+        setLoading(true);
         const selectedBooks = await handleSelectBooks()
         await storeBooks(selectedBooks || []);
+        setLoading(false);
     }
 
     const handleRefresh = async () => {

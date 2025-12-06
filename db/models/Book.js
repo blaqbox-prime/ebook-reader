@@ -12,8 +12,13 @@ export default class Book extends Model {
     @text('author') creator
     @text('cover_image') coverImage
     @field('last_read') lastRead
+    @field('progress') progress
 
     @writer async updateLastRead(){
         await this.update(book => book.lastRead = Date.now())
+    }
+
+    @writer async updateProgress(value){
+        await this.update(book => book.progress = value)
     }
 }

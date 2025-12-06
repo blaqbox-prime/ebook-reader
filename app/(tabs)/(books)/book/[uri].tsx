@@ -29,7 +29,7 @@ const BookDetails = () => {
                let metaInfo: Metadata[] = await fetchMetadataByUri(uri as string)
                let googleBooksMetaInfo: MetadataInfo | null;
                if(metaInfo.length === 0){
-                   googleBooksMetaInfo = await fetchGoogleBookMetadata("",bookInfo[0].title)
+                   googleBooksMetaInfo = await fetchGoogleBookMetadata(bookInfo[0].creator,bookInfo[0].title)
                    if(googleBooksMetaInfo){
                        const metadata = await createNewMetadata(uri as string, googleBooksMetaInfo)
                        setMetadata(metadata)
@@ -47,6 +47,14 @@ const BookDetails = () => {
         getBookDetails()
         setLoading(false)
     }, [uri, navigator])
+
+    const handleReadBook = () => {
+        book?.updateLastRead()
+        router.push({
+            pathname: `/reader/[uri]`,
+            params: {uri: uri as string}
+        })
+    }
 
 
     if(loading) return <Text>Loading...</Text>
@@ -80,25 +88,30 @@ const BookDetails = () => {
                     <Text className="text-center mt-8 line-clamp-2 font-lato-bold text-3xl">
                         {book?.title}
                     </Text>
+                    {metadata?.subtitle &&( <Text className="text-center mt-2 line-clamp-2 font-lato-light text-lg text-slate-400 ">
+                        {metadata?.subtitle}
+                    </Text>)}
                     <Text className="text-center mt-4 font-body text-xl text-secondary-100">
                         {book?.creator}
                     </Text>
                 {/*  progress indicator  */}
-                    <View className="w-7/12 h-[4px] rounded-full bg-slate-300 mx-auto mt-4">
-                        <View className="bg-background-dark h-1 rounded-full origin-left w-[24%]"></View>
-                    </View>
-                    <Text className="text-center mt-2 text-typography-500">24% completed</Text>
+                    {book && (
+                        <>
+                            <View className="w-7/12 h-[4px] rounded-full bg-slate-300 mx-auto mt-4">
+                                <View
+                                    className="bg-background-dark h-1 rounded-full"
+                                    style={{ width: `${book.progress * 100}%` }}
+                                ></View>
+                            </View>
+                            <Text className="text-center mt-2 text-typography-500">{`${Math.round(book.progress * 100)}% completed`}</Text>
+                        </>
+                    )}
                 </View>
 
                       <View className="my-8">
                           <View className="mx-auto p-4 bg-amber-900 w-1/2 rounded-full">
                               <View className="mx-auto">
-                                  <TouchableOpacity className="flex-row items justify-center gap-4" onPress={() => {
-                                    router.push({
-                                        pathname: `/reader/[uri]`,
-                                        params: {uri: uri as string}
-                                    })
-                                  }}>
+                                  <TouchableOpacity className="flex-row items justify-center gap-4" onPress={handleReadBook}>
                                       <Text className="text-white font-lato-bold text-xl">Read Book</Text>
                                       <Feather name="book-open" size={24} color={colors.light} />
                                   </TouchableOpacity>

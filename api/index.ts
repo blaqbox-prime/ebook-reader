@@ -2,7 +2,7 @@ const booksApiUrl = "https://www.googleapis.com/books/v1/volumes?q="
 
 export const fetchGoogleBookMetadata = async (author: string, title: string) => {
     try {
-        const res = await fetch(`${booksApiUrl}${encodeURI(author) || ""}+${encodeURI(title)}`)
+        const res = await fetch(`${booksApiUrl}${encodeURI(author) || ""}+${encodeURI(` ${title}`)}`)
         const body = await res.json()
 
         if (!body.items) {

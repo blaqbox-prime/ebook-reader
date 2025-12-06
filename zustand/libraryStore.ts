@@ -9,6 +9,7 @@ interface LibraryState {
     isLoading: boolean;
     filteredBooks: Book[];
     setFilteredBooks: (books: Book[]) => void;
+    setLoading: (isLoading: boolean) => void;
     setBooks: (books: Book[]) => void;
     // ... other state properties
 }
@@ -17,6 +18,7 @@ export const useLibraryStore = create<LibraryState>((set) => ({
     books: [],
     isLoading: true,
     filteredBooks: [],
+    setLoading: (isLoading: boolean) => set({ isLoading }),
     setBooks: (books) => set({ books, isLoading: false }),
     setFilteredBooks: (books) => set({ filteredBooks: books }),
 }));
@@ -36,8 +38,9 @@ export const startLibrarySync = () => {
     // 2. Subscribe to the observable
     const subscription = booksObservable.subscribe((latestBooks: Book[]) => {
         // This callback fires immediately with current data, and again every time data changes
-        console.log(`WatermelonDB detected ${latestBooks.length} books. Updating store.`);
+        // console.log(`WatermelonDB detected ${latestBooks.length} books. Updating store.`);
         useLibraryStore.getState().setBooks(latestBooks);
+        useLibraryStore.getState().setFilteredBooks(latestBooks);
     });
 
     // Return the unsubscribe function so we can clean up the listener later
