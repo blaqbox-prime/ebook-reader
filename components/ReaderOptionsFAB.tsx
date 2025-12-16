@@ -38,10 +38,10 @@ const OPTION_ITEMS = [
     },
 ]
 
-const ReaderOptionsFAB = ({showFab = false, setShowActionSheet}: {showFab: boolean, setShowActionSheet:any}) => {
+const ReaderOptionsFAB = ({showFab = false, setShowActionSheet, reader, setActiveSlide}: {reader: any,showFab: boolean, setShowActionSheet:any, setActiveSlide:any}) => {
     const [isOpen, setIsOpen] = useState(false);
     const toggleOpen = () => setIsOpen(prev => !prev);
-
+    const [isDark, setIsDark] = useState(false)
     const Backdrop = () => (
             <TouchableWithoutFeedback onPress={toggleOpen}>
         <View
@@ -56,23 +56,45 @@ const ReaderOptionsFAB = ({showFab = false, setShowActionSheet}: {showFab: boole
         switch (action) {
             case "adjustFont": {
              setShowActionSheet(true)
+                setActiveSlide(0)
             }
             break;
             case "nightMode": {
-                setShowActionSheet(true)
+                toggleTheme()
             }
             break;
             case "adjustBrightness": {
                 setShowActionSheet(true)
+                setActiveSlide(1)
             }
             break;
             case "toc": {
                 setShowActionSheet(true)
+                setActiveSlide(2)
             }
         }
         setIsOpen(false); // Close the menu after action
 
     }, []);
+
+    const toggleTheme = () => {
+        const rendition = reader?.rendition;
+        if (!rendition) return;
+
+        if (isDark) {
+            rendition.themes.register("light", {
+                body: { background: "white", color: "black" }
+            });
+            rendition.themes.select("light");
+        } else {
+            rendition.themes.register("dark", {
+                body: { background: "#1A1A1A", color: "white" }
+            });
+            rendition.themes.select("dark");
+        }
+
+        setIsDark(prev => !prev);
+    };
 
     return (
         <>
@@ -124,76 +146,5 @@ const ReaderOptionsFAB = ({showFab = false, setShowActionSheet}: {showFab: boole
     )
 }
 
-type ReaderOptionsActionSheetProps = {
-    showActionsheet: boolean;
-    handleClose: () => void
-    selectedFontSize?: "small" | "medium" | "large"
-    reader: any
-}
-
-export const ReaderOptionsActionSheet = ({showActionsheet, handleClose, reader, selectedFontSize = "small"}: ReaderOptionsActionSheetProps) => {
-    return (
-        <Actionsheet isOpen={showActionsheet} onClose={handleClose}>
-            <ActionsheetBackdrop />
-            <ActionsheetContent className="p-6" style={{backgroundColor: colors.dark}}>
-                <ActionsheetDragIndicatorWrapper>
-                    <ActionsheetDragIndicator />
-                </ActionsheetDragIndicatorWrapper>
-                <ReaderTypographyOptions selectedFontSize={selectedFontSize} reader={reader}/>
-
-            </ActionsheetContent>
-        </Actionsheet>
-    )
-}
-
-type FontSizes = "small" | "medium" | "large"
-
-type ReaderTypographyOptionsProps = {
-    selectedFontSize?: FontSizes
-    reader?: any
-}
-
-
-export const ReaderTypographyOptions = ({selectedFontSize,reader} : ReaderTypographyOptionsProps) => {
-
-    const [fontSize, setFontSize] = useState<FontSizes>(selectedFontSize || "medium");
-
-    const handleSelectFontSize = (size: FontSizes) => {
-        setFontSize(size)
-
-        let value = "24px"; // default
-        if (size === "small") value = "16px";
-        if (size === "large") value = "32px";
-
-    }
-
-    return (
-        <>
-            <View className="my-2">
-                <Text className="text-2xl font-lato-bold text-white">Typography</Text>
-            </View>
-            <View className="flex-row items-center gap-16 my-2 ">
-                <TouchableOpacity onPress={() => handleSelectFontSize("small")}>
-                    <View className="gap-2 items-center justify-center ">
-                        <FontAwesome name="font" size={18} color={fontSize === "small" ? colors.primary : "white"} />
-                        <Text className="" style={{color: fontSize === "small" ? colors.primary : "white"}}>Small</Text>
-                    </View>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => handleSelectFontSize("medium")}>
-                    <View className="gap-2 items-center justify-center">
-                        <FontAwesome name="font" size={21} color={fontSize === "medium" ? colors.primary : "white"} />
-                        <Text className="" style={{color: fontSize === "medium" ? colors.primary : "white"}}>Medium</Text>
-                    </View>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => handleSelectFontSize("large")}>
-                    <View className="gap-2 items-center justify-center">
-                        <FontAwesome name="font" size={24} color={fontSize === "large" ? colors.primary : "white"} />
-                        <Text className="" style={{color: fontSize === "large" ? colors.primary : "white"}}>Large</Text>
-                    </View>
-                </TouchableOpacity>
-            </View>
-        </>
-    )
-}
 
 export default ReaderOptionsFAB

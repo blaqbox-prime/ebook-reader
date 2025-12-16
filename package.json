@@ -56,6 +56,7 @@
     "react-native-safe-area-context": "^5.6.1",
     "react-native-screens": "~4.11.1",
     "react-native-svg": "^15.13.0",
+    "react-native-swiper": "^1.6.0-rc.3",
     "react-native-web": "~0.20.0",
     "react-native-webview": "13.13.5",
     "react-native-worklets": "^0.6.1",
@@ -63,7 +64,8 @@
     "tailwind-variants": "^0.1.20",
     "xmldom": "^0.6.0",
     "xpath": "^0.0.32",
-    "zustand": "^5.0.8"
+    "zustand": "^5.0.8",
+    "expo-brightness": "~13.1.4"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

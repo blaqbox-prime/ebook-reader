@@ -42,10 +42,10 @@ const BookDetails = () => {
            else {
                navigator.goBack()
            }
+           setLoading(false)
         }
 
         getBookDetails()
-        setLoading(false)
     }, [uri, navigator])
 
     const handleReadBook = () => {
@@ -100,10 +100,10 @@ const BookDetails = () => {
                             <View className="w-7/12 h-[4px] rounded-full bg-slate-300 mx-auto mt-4">
                                 <View
                                     className="bg-background-dark h-1 rounded-full"
-                                    style={{ width: `${book.progress * 100}%` }}
+                                    style={{ width: `${book.progress}%` }}
                                 ></View>
                             </View>
-                            <Text className="text-center mt-2 text-typography-500">{`${Math.round(book.progress * 100)}% completed`}</Text>
+                            <Text className="text-center mt-2 text-typography-500">{`${book.progress}% completed`}</Text>
                         </>
                     )}
                 </View>

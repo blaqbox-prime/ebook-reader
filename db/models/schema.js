@@ -1,7 +1,7 @@
 import { appSchema, tableSchema } from '@nozbe/watermelondb'
 
 export default appSchema({
-  version: 6,
+  version: 8,
   tables: [
     tableSchema({
         name: 'books',
@@ -14,6 +14,7 @@ export default appSchema({
             { name: 'progress', type: 'number' },
             { name: 'created_at', type: 'number' },
             { name: 'updated_at', type: 'number' },
+            {name: 'last_location', type: 'string', isOptional: true}
         ]
     }),
     tableSchema({
