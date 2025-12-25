@@ -1,17 +1,14 @@
-import {useState} from "react";
-import {useReader} from "@epubjs-react-native/core";
+import ReaderBrightnessOptions from "@/components/ReaderBrightnessOptions";
+import ReaderNavigationOptions from "@/components/ReaderNavigationOptions";
+import ReaderOptionsSwiper from "@/components/ReaderOptionsSwiper";
+import ReaderTypographyOptions from "@/components/ReaderTypographyOptions";
 import {
     Actionsheet,
     ActionsheetBackdrop,
     ActionsheetContent, ActionsheetDragIndicator,
-    ActionsheetDragIndicatorWrapper, ActionsheetItem
+    ActionsheetDragIndicatorWrapper
 } from "@/components/ui/actionsheet";
-import {colors} from "@/constants/constants";
-import ReaderTypographyOptions from "@/components/ReaderTypographyOptions";
-import ReaderOptionsSwiper from "@/components/ReaderOptionsSwiper";
-import ReaderBrightnessOptions from "@/components/ReaderBrightnessOptions";
-import ReaderNavigationOptions from "@/components/ReaderNavigationOptions";
-import {View} from "react-native";
+import { colors } from "@/constants/constants";
 
 type ReaderOptionsActionSheetProps = {
     showActionsheet: boolean;
@@ -33,7 +30,7 @@ const ReaderOptionsActionSheet = ({reader, showActionsheet, handleClose, setThem
 
 
                     <ReaderOptionsSwiper activeSlide={activeSlide}>
-                        <ReaderTypographyOptions selectedFontSize={selectedFontSize} setTheme={setTheme}/>
+                        <ReaderTypographyOptions reader={reader} selectedFontSize={selectedFontSize} setTheme={setTheme}/>
                         <ReaderBrightnessOptions />
                         <ReaderNavigationOptions reader={reader}/>
                     </ReaderOptionsSwiper>

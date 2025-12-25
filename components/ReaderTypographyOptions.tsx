@@ -1,46 +1,41 @@
-import React, {useState} from "react";
-import {useReader} from "@epubjs-react-native/core";
-import {Text, TouchableOpacity, View} from "react-native";
+import { colors } from "@/constants/constants";
+import { Themes } from "@epubjs-react-native/core";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import {colors} from "@/constants/constants";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useState } from "react";
+import { Text, TouchableOpacity, View } from "react-native";
 
 type FontSizes = "small" | "medium" | "large"
 
 type ReaderTypographyOptionsProps = {
     selectedFontSize?: FontSizes
-    setTheme: any
+    setTheme: any,
+    reader: any
 }
 
 
-const ReaderTypographyOptions = ({selectedFontSize, setTheme} : ReaderTypographyOptionsProps) => {
+const ReaderTypographyOptions = ({selectedFontSize, setTheme, reader} : ReaderTypographyOptionsProps) => {
 
     const [fontSize, setFontSize] = useState<FontSizes>(selectedFontSize || "medium");
-    const reader = useReader();
 
-    const handleSelectFontSize = (size: FontSizes) => {
-        let px = "24px";
-        if (size === "small") px = "16px";
-        if (size === "large") px = "32px";
+    const handleSelectFontSize = async (size: FontSizes) => {
+        let px = "22px";
+        if (size === "small") px = "18px";
+        if (size === "large") px = "24px";
 
-
-        console.log(reader.theme)
-        reader.changeTheme({
-            "body": { "font-size": px + " !important" }
-        })
-        reader.theme = {
-            ...reader.theme,
-            "body": { ...reader.theme["body"],
-                "font-size": px + " !important" }
+        const THEMES = Object.values(Themes);
+        const newTheme = {
+            ...THEMES[0],
+            "body": { "font-size": px + " !important", "line-height": "2.2rem" }
         }
-        console.log("UPDATED")
-        console.log(reader.theme["body"]);
-        setTheme({
-            ...reader.theme,
-            "body": { ...reader.theme["body"],
-                "font-size": px + " !important" }
-        })
 
+        console.log(THEMES[0])
+        console.log(newTheme)
+        reader.changeTheme(newTheme)
+        
+        console.log(THEMES[0])
         setFontSize(size)
+        await AsyncStorage.setItem("readerTheme", JSON.stringify(newTheme));
 
     };
 

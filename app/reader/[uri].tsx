@@ -8,6 +8,7 @@ import ReaderOptionsActionSheet from "@/components/ReaderOptionsActionSheet";
 import ReaderOptionsFAB from "@/components/ReaderOptionsFAB";
 import Book from "@/db/models/Book";
 import { fetchBookByUri } from "@/db/queries";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const BookReader = () => {
     const { uri } = useLocalSearchParams();
@@ -20,17 +21,19 @@ const BookReader = () => {
     const [book, setBook] = useState<Book | null>(null)
     
     useEffect(() => {
-        const getBook = async () => {
+        const initReader = async () => {
             const activeBook = await fetchBookByUri(uri as string)
+            const readerThemeString = await AsyncStorage.getItem("readerTheme");
+            setActiveTheme(readerThemeString ? JSON.parse(readerThemeString) : reader.theme)
             setBook(activeBook[0])
         }
-        getBook()
+        initReader()
     },[])
 
     return (
         <SafeAreaView className="flex flex-1 bg-white">
                 <Reader
-                    defaultTheme={reader.theme}                     // <-- IMPORTANT
+                    defaultTheme={activeTheme}                     // <-- IMPORTANT
                     src={uri as string}
                     fileSystem={useFileSystem}
                     allowPopups
