@@ -62,6 +62,8 @@ const BookReader = () => {
                     activeSlide={activeSlide}
                 />
 
+                
+
         </SafeAreaView>
     );
 };

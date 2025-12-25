@@ -1,20 +1,21 @@
-import {View, Text, TextInput, TouchableOpacity, ScrollView} from 'react-native'
-import React, {useState} from 'react'
-import {useReader} from "@epubjs-react-native/core";
-import Feather from '@expo/vector-icons/Feather';
 import {
     Actionsheet,
     ActionsheetBackdrop,
     ActionsheetContent, ActionsheetDragIndicator,
-    ActionsheetDragIndicatorWrapper, ActionsheetItem, ActionsheetItemText
+    ActionsheetDragIndicatorWrapper
 } from "@/components/ui/actionsheet";
-import {colors} from "@/constants/constants";
+import { colors } from "@/constants/constants";
+import { useReader } from "@epubjs-react-native/core";
+import Feather from '@expo/vector-icons/Feather';
+import React, { useState } from 'react';
+import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 type ReaderNavigationProps = {
     reader: any
 }
 
 const ReaderNavigationOptions = ({reader}: ReaderNavigationProps) => {
+    const {goToLocation} = useReader()
 
     const [searchText, setSearchText] = useState<string>("")
     const [isTOCOpen, setIsTOCOpen] = useState(false);
@@ -56,18 +57,16 @@ const ReaderNavigationOptions = ({reader}: ReaderNavigationProps) => {
                    </TouchableOpacity>
                 </View>
             </View>
-            <TOCActionSheet toc={reader.toc} isOpen={isTOCOpen} handleClose={() => {setIsTOCOpen(false)}}/>
+            <TOCActionSheet reader={reader} toc={reader.toc} isOpen={isTOCOpen} handleClose={() => {setIsTOCOpen(false)}}/>
         </>
     )
 }
 export default ReaderNavigationOptions
 
-export const TOCActionSheet = ({isOpen, handleClose, toc}: {toc: any[], isOpen: boolean, handleClose: () => void}) => {
+export const TOCActionSheet = ({isOpen, handleClose, toc, reader}: {toc: any[], isOpen: boolean, handleClose: () => void, reader: any}) => {
 
-    const reader = useReader();
-    const handleChapterSelect =  (href: string) => {
-        reader.goToLocation(href.split("/")[1])
-        console.log(reader.getCurrentLocation())
+    const handleChapterSelect =  (href: any) => {
+        reader.goToLocation(href.href)
         handleClose()
     }
 
@@ -89,7 +88,7 @@ export const TOCActionSheet = ({isOpen, handleClose, toc}: {toc: any[], isOpen: 
             >
                 {
                     toc.length > 0 ? toc.map((item, i) => (
-                            <TouchableOpacity onPress={() => handleChapterSelect(item.href)} key={i} className={`p-2 mb-2 border-primary-500 w-full`}>
+                            <TouchableOpacity onPress={() => handleChapterSelect(item)} key={i} className={`p-2 mb-2 border-primary-500 w-full`}>
                                 <Text className="items-start text-white text-lg">{item.label.trim()}</Text>
                                 <View className="h-[2px] w-full bg-primary-500 opacity-10 mt-1"></View>
                             </TouchableOpacity>
