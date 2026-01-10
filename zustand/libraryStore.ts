@@ -9,6 +9,7 @@ interface LibraryState {
     isLoading: boolean;
     filteredBooks: Book[];
     setFilteredBooks: (books: Book[]) => void;
+    setLoading: (isLoading: boolean) => void;
     setBooks: (books: Book[]) => void;
     // ... other state properties
 }
@@ -17,6 +18,7 @@ export const useLibraryStore = create<LibraryState>((set) => ({
     books: [],
     isLoading: true,
     filteredBooks: [],
+    setLoading: (isLoading: boolean) => set({ isLoading }),
     setBooks: (books) => set({ books, isLoading: false }),
     setFilteredBooks: (books) => set({ filteredBooks: books }),
 }));

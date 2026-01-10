@@ -105,7 +105,7 @@ export const  scanAppDirectoryForBooks = async (showAlert = true):Promise<void> 
           const epubFiles = await getEpubFilesInDirectory(BOOKS_DIR);
           if (epubFiles.length === 0) {
             showAlert && alertNoEpubs()
-          };
+          }
 
           const scannedBooks = await Promise.all(
             epubFiles.map((file) => createBookFromFile(`${BOOKS_DIR}${file}`, file))

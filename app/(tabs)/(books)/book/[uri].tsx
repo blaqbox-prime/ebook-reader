@@ -29,7 +29,7 @@ const BookDetails = () => {
                let metaInfo: Metadata[] = await fetchMetadataByUri(uri as string)
                let googleBooksMetaInfo: MetadataInfo | null;
                if(metaInfo.length === 0){
-                   googleBooksMetaInfo = await fetchGoogleBookMetadata("",bookInfo[0].title)
+                   googleBooksMetaInfo = await fetchGoogleBookMetadata(bookInfo[0].creator,bookInfo[0].title)
                    if(googleBooksMetaInfo){
                        const metadata = await createNewMetadata(uri as string, googleBooksMetaInfo)
                        setMetadata(metadata)
@@ -42,10 +42,10 @@ const BookDetails = () => {
            else {
                navigator.goBack()
            }
+           setLoading(false)
         }
 
         getBookDetails()
-        setLoading(false)
     }, [uri, navigator])
 
     const handleReadBook = () => {
@@ -95,15 +95,15 @@ const BookDetails = () => {
                         {book?.creator}
                     </Text>
                 {/*  progress indicator  */}
-                    {book && book.progress > 0 && (
+                    {book && (
                         <>
                             <View className="w-7/12 h-[4px] rounded-full bg-slate-300 mx-auto mt-4">
                                 <View
                                     className="bg-background-dark h-1 rounded-full"
-                                    style={{ width: `${book.progress * 100}%` }}
+                                    style={{ width: `${book.progress}%` }}
                                 ></View>
                             </View>
-                            <Text className="text-center mt-2 text-typography-500">{`${Math.round(book.progress * 100)}% completed`}</Text>
+                            <Text className="text-center mt-2 text-typography-500">{`${book.progress}% completed`}</Text>
                         </>
                     )}
                 </View>

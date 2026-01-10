@@ -19,6 +19,7 @@ export const createNewBook = async (bookFile: BookFile) => {
         b.creator = bookFile.author;
         b.coverImage = bookFile.coverImage;
         b.title = bookFile.title;
+        b.progress = 0;
       });
     }
   );
