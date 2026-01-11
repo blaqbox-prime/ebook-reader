@@ -37,10 +37,6 @@ const _layout = () => {
         <Tabs.Screen name='bookmarks' options={{
           tabBarIcon: ({color, size}) => (<Feather name="bookmark" size={size} color={color} />)
         }}/>
-        <Tabs.Screen name='profile' 
-        options={{
-          tabBarIcon: ({color, size}) => (<Feather name="user" size={size} color={color} />)
-        }}/>
     </Tabs>
   )
 }

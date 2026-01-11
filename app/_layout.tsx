@@ -1,21 +1,19 @@
-import '@/app/global.css';
-import { fonts } from '@/assets';
+import "@/app/global.css";
+import { fonts } from "@/assets";
 import { startLibrarySync } from "@/zustand/libraryStore";
-import { ReaderProvider } from '@epubjs-react-native/core';
-import { useFonts } from 'expo-font';
+import { ReaderProvider } from "@epubjs-react-native/core";
+import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
+import * as SplashScreen from "expo-splash-screen";
+import { useEffect } from "react";
 
-import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
+import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
 
 export default function RootLayout() {
-
-   const [loaded, error] = useFonts(fonts);
+  const [loaded, error] = useFonts(fonts);
 
   useEffect(() => {
-
-    startLibrarySync()
+    startLibrarySync();
 
     if (loaded || error) {
       SplashScreen.hideAsync();
@@ -27,16 +25,13 @@ export default function RootLayout() {
   }
 
   return (
-  
     <GluestackUIProvider mode="dark">
       <ReaderProvider>
-    <Stack screenOptions={{statusBarHidden: true}}>
-    <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
-    <Stack.Screen name="reader/[uri]" options={{headerShown: false}}/>
-
-  </Stack>
-  </ReaderProvider>
+        <Stack screenOptions={{ statusBarHidden: true }}>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="reader/[uri]" options={{ headerShown: false }} />
+        </Stack>
+      </ReaderProvider>
     </GluestackUIProvider>
-  
   );
 }
