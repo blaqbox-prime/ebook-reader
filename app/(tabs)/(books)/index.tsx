@@ -4,13 +4,12 @@ import EmptyStateView from "@/components/EmptyStateView";
 import SearchBox from "@/components/SearchBox";
 import SortButton from "@/components/SortButton";
 import { colors } from "@/constants/constants";
-import Book from "@/db/models/Book";
 import { fetchAllBooks } from "@/db/queries";
 import { storeBooks } from "@/lib/storageUtils";
 import { handleSelectBooks } from "@/lib/utils";
 import { useLibraryStore } from "@/zustand/libraryStore";
 import { ReaderProvider } from "@epubjs-react-native/core";
-import {useEffect, useLayoutEffect, useState} from "react";
+import Feather from "@expo/vector-icons/Feather";
 import {
     Animated,
     Text,
@@ -19,7 +18,6 @@ import {
 } from "react-native";
 import { PulseIndicator } from "react-native-indicators";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Feather from "@expo/vector-icons/Feather";
 
 const Library = () => {
 
@@ -29,10 +27,6 @@ const Library = () => {
         setLoading,
         filteredBooks, setFilteredBooks,
     } = useLibraryStore();
-
-    // useEffect(() => {
-    //     setFilteredBooks(books)
-    // }, [books]);
 
     const handleSearch = (text: string) => {
         if (text.trim().length == 0) {

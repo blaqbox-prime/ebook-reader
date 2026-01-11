@@ -4,8 +4,8 @@ type Props = {};
 const Layout = (props: Props) => {
     return (
         <Stack screenOptions={{headerShown: false}}>
-            <Stack.Screen name="/(tabs)/(books)/index" />
-            <Stack.Screen name="/(tabs)/(books)/book/[uri]"/>
+            <Stack.Screen name="index" />
+            <Stack.Screen name="book/[uri]" />
         </Stack>
     );
 };
