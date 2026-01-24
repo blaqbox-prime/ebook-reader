@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "ebook-reader",
-    "slug": "ebook-reader",
-    "version": "1.0.0",
+    "name": "Page Turner",
+    "slug": "page-turner",
+    "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "ebookreader",
+    "scheme": "pageturner",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -19,7 +19,8 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.ex_iamprime.ebookreader"
     },
     "web": {
       "output": "static",
