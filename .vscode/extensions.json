@@ -1,1 +1,12 @@
-{ "recommendations": ["expo.vscode-expo-tools"] }
+{
+  "recommendations": [
+    "expo.vscode-expo-tools",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "ms-vscode.vscode-typescript-next",
+    "ms-vscode.references-view",
+    "ms-vscode.vscode-typescript-tslint-plugin",
+    "christian-kohler.npm-intellisense",
+    "christian-kohler.path-intellisense"
+  ]
+}
