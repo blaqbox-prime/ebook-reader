@@ -1,15 +1,23 @@
-import { Text, View } from "react-native";
+import { preferencesStorage, watermelondb } from "@/src/data";
+import { Button, Text, TextInput, View } from "react-native";
+
+
 
 export default function Index() {
+
   return (
     <View
       style={{
         flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
+        justifyContent: "flex-start",
+        padding: "24",
+        gap: 10,
       }}
     >
-      <Text>Edit app/index.tsx to edit this screen.</Text>
+      <Button title="Get Posts" />
+      <Button title="Make Comment" />
+
+
     </View>
   );
 }
