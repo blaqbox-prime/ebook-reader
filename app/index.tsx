@@ -1,7 +1,7 @@
 import { preferencesStorage, watermelondb } from "@/src/data";
 import { Book } from "@/src/data/watermelondb/models";
 import { useState } from "react";
-import { Button, Text, TextInput, View } from "react-native";
+import { Button, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 
 export default function Index() {
@@ -14,8 +14,10 @@ export default function Index() {
 
   return (
     <View>
-      <Text>Books in WatermelonDB: {books.length}</Text>
-      <Button title="Fetch all books" onPress={fetchAllBooks} />
+      <Text className="text-orange-900">Books in WatermelonDB: {books.length}</Text>
+      <TouchableOpacity className="bg-blue-600 p-3 m-6" onPress={fetchAllBooks} >
+        <Text className=" text-white font-bold">Fetch all books</Text>
+      </TouchableOpacity>
     </View>
   );
 }
