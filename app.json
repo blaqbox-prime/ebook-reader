@@ -21,6 +21,7 @@
       "package": "com.ex_iamprime.ebookreader"
     },
     "web": {
+      "bundler": "metro",
       "output": "static",
       "favicon": "./assets/images/logo-transparent.png"
     },

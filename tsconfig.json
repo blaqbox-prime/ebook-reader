@@ -3,7 +3,9 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": [
+        "./*"
+      ]
     },
     "strict": true,
     "noUnusedLocals": true,
@@ -13,5 +15,12 @@
     "allowUnreachableCode": false,
     "allowUnusedLabels": false
   },
-  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts", "src/data/watermelondb/models.js"]
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts",
+    "src/data/watermelondb/models.js",
+    "nativewind-env.d.ts"
+  ]
 }

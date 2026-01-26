@@ -15,7 +15,7 @@ const adapter = new SQLiteAdapter({
 })
 
 
-export default watermelondb = new Database({
+const watermelondb = new Database({
   adapter,
   modelClasses: [
     Book,
@@ -25,3 +25,5 @@ export default watermelondb = new Database({
     Achievements
   ],
 })
+
+export default watermelondb;
