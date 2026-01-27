@@ -48,7 +48,7 @@ const Library = () => {
 
     if (loading) {
         return (
-            <LoadingPulse />
+            <LoadingPulse key={"pulse"}/>
         );
     }
 
@@ -73,7 +73,7 @@ const Library = () => {
                         showsVerticalScrollIndicator={false}
                         renderItem={({ item }) => {
                             return (
-                                <View className="w-1/2 p-2">
+                                <View className="w-1/2 p-2" key={item.id}>
                                     <BookTile book={item} />
                                 </View>
                             );
