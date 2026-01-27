@@ -1,5 +1,6 @@
 import Feather from '@expo/vector-icons/Feather'
 import { TextInput, View } from 'react-native'
+import _ from 'lodash';
 
 type SearchBoxProps = {
     onChangeText: (text :string) => void,
@@ -8,12 +9,12 @@ type SearchBoxProps = {
 
 const SearchBox = ({onChangeText, className}: SearchBoxProps) => {
   return (
-    <View className={`bg-primary-900 w-full py-2 px-4 rounded-full flex-row gap-3 items-center ${className}`}>
-                    <Feather name="search" size={22} color="black" />
+    <View className={`bg-app-deep-mocha-800 w-full py-2 px-4 rounded-full flex-row gap-3 items-center ${className}`}>
+                    <Feather name="search" size={22} color="white" />
                     <TextInput
                       placeholder="Search book title..."
-                      className="text-black"
-                      onChangeText={(text) => onChangeText(text)}
+                      className="text-white placeholder:text-white flex-1 py-2"
+                      onChangeText={(text) => _.debounce(() => onChangeText(text), 1000)()}
                     />
                   </View>
   )
