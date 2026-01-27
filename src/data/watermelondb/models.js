@@ -9,7 +9,7 @@ class Book extends Model {
 
     @text('uri') uri
     @text('title') title
-    @text('author') creator
+    @text('author') author
     @text('cover_image') coverImage
     @field('last_read') lastRead
     @field('progress') progress
