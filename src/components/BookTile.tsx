@@ -1,38 +1,29 @@
-import { images } from "@/assets";
-import { Book } from "@/src/data/watermelondb/models";
-import { Link } from "expo-router";
-import React, { useState } from "react";
-import { Image, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
-import { PressableScale } from 'pressto';
-
+import { images } from '@/assets';
+import { Book } from '@/src/data/watermelondb/models';
+import { Link } from 'expo-router';
+import { useState } from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
+import Animated from 'react-native-reanimated';
 type BookTileProps = {
   book: Book;
 };
 
-
-
 const BookTile = ({ book }: BookTileProps) => {
-
   const [cover, _] = useState(book.coverImage);
-
 
   return (
     <Link
       href={{
-        pathname: "/",
-        // params: { uri: book.uri },
+        pathname: '/book/[uri]',
+        params: { uri: book.uri, cover: cover },
       }}
       asChild
       key={book.uri}
     >
-      <TouchableOpacity onPress={() => {console.log("Pressto")}}>
+      <TouchableOpacity onPress={() => {}}>
         <View className="mb-4 w-full p-1">
-          <Image
-            source={
-              cover
-                ? { uri: cover as string }
-                : images.cover
-            }
+          <Animated.Image
+            source={cover ? { uri: cover as string } : images.cover}
             resizeMode="cover"
             className="h-[270px] w-full rounded-xl "
           />

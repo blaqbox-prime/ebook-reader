@@ -1,6 +1,6 @@
 import { File, Paths, Directory } from 'expo-file-system';
 import { Alert } from 'react-native';
-import EPUBParser from '@/src/services/EPUBParser';
+import EPUBParser from './EPUBParser';
 import * as DocumentPicker from 'expo-document-picker';
 
 class BookScanner {
@@ -117,7 +117,7 @@ class BookScanner {
           );
           this.ensureDirectory(BookScanner.BOOKS_DIR);
 
-          originFile.move(destinationFile);
+          originFile.copy(destinationFile);
           return this.createBookFromFile(destinationFile);
         })
       );
