@@ -3,24 +3,25 @@ interface BookFile {
   uri: string;
   lastModified: number;
   size?: number;
-  author?: string;
-  title? : string;
+  author: string;
+  title: string;
   coverImage?: string | null;
 }
 
-interface MetadataInfo {
-    title: string;
-    subtitle: string;
-    author: string;
-    coverImage?: string;
-    googleBooksId: string;
-    publisher?: string;
-    publishedDate?: string;
-    pageCount?: number;
-    categories?: string;
-    averageRating?: number;
-    description?: string;
-    language?: string;
+interface GoogleBooksMetadata {
+  title: string;
+  subtitle: string;
+  author: string;
+  coverImage?: string;
+  googleBooksId: string;
+  publisher?: string;
+  publishedDate?: string;
+  pageCount?: number;
+  categories?: string;
+  averageRating?: number;
+  description?: string;
+  language?: string;
+  uri?: string;
 }
 
 interface EPUBMetadata {

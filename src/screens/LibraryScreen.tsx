@@ -1,19 +1,24 @@
 import { images } from '@/assets';
-import { BookTile, EmptyStateView, SearchBox } from '@/src/components';
+import {
+  BookTile,
+  EmptyStateView,
+  LoadingPulse,
+  SearchBox,
+} from '@/src/components';
 import watermelondb from '@/src/data/watermelondb';
 import { Book } from '@/src/data/watermelondb/models';
 import BookRepository from '@/src/repositories/BookRepository';
-import { BookScanner } from '@/src/services';
+import BookService from '@/src/services/BookService';
+import { BookScanner } from '@/src/utils';
 import Feather from '@expo/vector-icons/Feather';
-import { memoize } from 'lodash';
-import { memo, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert, Animated, Text, TouchableOpacity, View } from 'react-native';
-import { PulseIndicator } from 'react-native-indicators';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Library = () => {
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const fetchAllBooks = async () => {
     setLoading(true);
@@ -45,14 +50,26 @@ const Library = () => {
 
   const handleAddBooks = async () => {
     const booksScanner = new BookScanner();
+    const bookService = new BookService();
     const addedBooks = await booksScanner.AddBooksFromFileStorage();
-    const repo = new BookRepository(watermelondb);
-    await repo.saveScannedBooks(addedBooks);
+    await bookService.saveScannedBooksWithMetadata(addedBooks);
     fetchAllBooks();
   };
 
   const handleRefresh = async () => {
-    fetchAllBooks();
+    setRefreshing(true);
+    if (BookScanner.BOOKS_DIR.list().length === 0) {
+      Alert.alert('No books found', 'Please add books to your library.');
+      setRefreshing(false);
+      return;
+    }
+    const bookService = new BookService();
+    const booksScanner = new BookScanner();
+
+    const scannedBooks = await booksScanner.scanAppDirectory();
+    await bookService.saveScannedBooksWithMetadata(scannedBooks);
+    await fetchAllBooks();
+    setRefreshing(false);
   };
 
   useEffect(() => {
@@ -85,7 +102,7 @@ const Library = () => {
           renderItem={({ item }) => {
             return (
               <View className="w-1/2 p-2">
-                <BookTile book={item} />
+                <BookTile key={item.uri} book={item} />
               </View>
             );
           }}
@@ -104,7 +121,7 @@ const Library = () => {
               buttonAction={handleAddBooks}
             />
           }
-          refreshing={loading}
+          refreshing={refreshing}
           onRefresh={handleRefresh}
         />
       </View>
@@ -113,14 +130,3 @@ const Library = () => {
 };
 
 export default Library;
-
-function LoadingPulse() {
-  return (
-    <SafeAreaView className="flex flex-1 items-center justify-center gap-4">
-      <View>
-        <PulseIndicator size={24} />
-        <Text className="text-black">Loading Library</Text>
-      </View>
-    </SafeAreaView>
-  );
-}

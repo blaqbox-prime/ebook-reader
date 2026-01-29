@@ -1,15 +1,14 @@
-import { Stack } from "expo-router";
+import { Stack } from 'expo-router';
 import '../global.css';
-import { useFonts } from "expo-font";
-import * as SplashScreen from "expo-splash-screen";
-import { fonts } from "@/assets";
-import { useEffect } from "react";
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
+import { fonts } from '@/assets';
+import { useEffect } from 'react';
 
 export default function RootLayout() {
-const [loaded, error] = useFonts(fonts);
+  const [loaded, error] = useFonts(fonts);
 
- useEffect(() => {
-
+  useEffect(() => {
     if (loaded || error) {
       SplashScreen.hideAsync();
     }
@@ -19,8 +18,11 @@ const [loaded, error] = useFonts(fonts);
     return null;
   }
 
-
-  return <Stack screenOptions={{
-    headerShown: false,
-  }}/>;
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: false,
+      }}
+    />
+  );
 }
