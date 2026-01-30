@@ -7,7 +7,7 @@ import MetadataRepository from '@/src/repositories/MetadataRepository';
 // import { createNewMetadata, fetchBookByUri, fetchMetadataByUri } from "@/db/queries";
 import Feather from '@expo/vector-icons/Feather';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { useNavigation } from 'expo-router';
+import { useNavigation, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import Animated from 'react-native-reanimated';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
@@ -21,15 +21,14 @@ const BookDetails = ({ uri, cover }: { uri: string; cover: string }) => {
   const navigator = useNavigation();
   const bookRepository = new BookRepository(watermelondb);
   const metadataRepository = new MetadataRepository(watermelondb);
+  const router = useRouter();
 
   useEffect(() => {
     const getBookDetails = async () => {
-      let bookInfo = await bookRepository.fetchBookByUri(encodeURI(uri));
+      let bookInfo = await bookRepository.fetchBookByUri(uri);
       if (bookInfo[0]) {
         setBook(bookInfo[0]);
-        let metadataInfo = await metadataRepository.fetchMetadataByUri(
-          encodeURI(uri)
-        );
+        let metadataInfo = await metadataRepository.fetchMetadataByUri(uri);
         if (metadataInfo[0]) {
           setMetadata(metadataInfo[0]);
         }
@@ -43,11 +42,11 @@ const BookDetails = ({ uri, cover }: { uri: string; cover: string }) => {
   }, [uri]);
 
   const handleReadBook = () => {
-    // book?.updateLastRead()
-    // router.push({
-    //     pathname: `/reader/[uri]`,
-    //     params: {uri: uri as string}
-    // })
+    book?.updateLastRead();
+    router.push({
+      pathname: `/(library)/reader/[uri]`,
+      params: { uri: uri as string },
+    });
   };
 
   if (loading) return <LoadingPulse />;
