@@ -1,55 +1,30 @@
 // import { fetchGoogleBookMetadata } from "@/api";
 import { images } from '@/assets';
-import { watermelondb } from '@/src/data';
-import { Book } from '@/src/data/watermelondb/models';
-import BookRepository from '@/src/repositories/BookRepository';
-import MetadataRepository from '@/src/repositories/MetadataRepository';
-// import { createNewMetadata, fetchBookByUri, fetchMetadataByUri } from "@/db/queries";
+import { Book, Metadata } from '@/src/data/watermelondb/models';
 import Feather from '@expo/vector-icons/Feather';
-import AntDesign from '@expo/vector-icons/AntDesign';
-import { useNavigation, useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useRouter } from 'expo-router';
 import Animated from 'react-native-reanimated';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { LoadingPulse } from '@/src/components';
+import { FavouriteButton } from '@/src/components';
+import { withObservables } from '@nozbe/watermelondb/react';
 
-const BookDetails = ({ uri, cover }: { uri: string; cover: string }) => {
-  const [book, setBook] = useState<Book | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [metadata, setMetadata] = useState<any>(null);
-  const navigator = useNavigation();
-  const bookRepository = new BookRepository(watermelondb);
-  const metadataRepository = new MetadataRepository(watermelondb);
+const BookDetails = ({
+  book,
+  metadata,
+}: {
+  book: Book;
+  metadata: Metadata;
+}) => {
   const router = useRouter();
-
-  useEffect(() => {
-    const getBookDetails = async () => {
-      let bookInfo = await bookRepository.fetchBookByUri(uri);
-      if (bookInfo[0]) {
-        setBook(bookInfo[0]);
-        let metadataInfo = await metadataRepository.fetchMetadataByUri(uri);
-        if (metadataInfo[0]) {
-          setMetadata(metadataInfo[0]);
-        }
-      } else {
-        navigator.goBack();
-      }
-      setLoading(false);
-    };
-
-    getBookDetails();
-  }, [uri]);
 
   const handleReadBook = () => {
     book?.updateLastRead();
     router.push({
       pathname: `/(library)/reader/[uri]`,
-      params: { uri: uri as string },
+      params: { uri: book.uri },
     });
   };
-
-  if (loading) return <LoadingPulse />;
 
   return (
     <SafeAreaView className="px-8 py-6">
@@ -58,32 +33,20 @@ const BookDetails = ({ uri, cover }: { uri: string; cover: string }) => {
         <View className="flex flex-row items-center justify-between">
           <TouchableOpacity
             onPress={() => {
-              navigator.goBack();
+              router.back();
             }}
           >
             <Feather name="arrow-left" size={28} color="black" />
           </TouchableOpacity>
-          <View className="flex flex-row items-center gap-4">
-            <TouchableOpacity
-              onPress={async () => {
-                await book?.toggleIsFavourite();
-              }}
-            >
-              {book?.isFavorite ? (
-                <AntDesign name="star" size={28} color="gold" />
-              ) : (
-                <Feather name="star" size={28} color="black" />
-              )}
-            </TouchableOpacity>
-          </View>
+          {book && <FavouriteButton book={book} />}
         </View>
 
         {/*  Image  */}
         <View className="mt-12 pb-4">
           <Animated.Image
             source={
-              cover
-                ? { uri: cover }
+              book.coverImage
+                ? { uri: book.coverImage }
                 : metadata?.coverImage
                   ? { uri: metadata?.coverImage }
                   : images.cover
@@ -144,4 +107,13 @@ const BookDetails = ({ uri, cover }: { uri: string; cover: string }) => {
     </SafeAreaView>
   );
 };
-export default BookDetails;
+
+// 2. The "Enhancer"
+// This makes the component listen to the database.
+const enhance = withObservables(['book'], ({ book }: { book: Book }) => ({
+  book: book.observe(),
+}));
+
+export default enhance(BookDetails);
+
+//

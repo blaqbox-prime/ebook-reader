@@ -1,10 +1,53 @@
+import { LoadingPulse } from '@/src/components';
+import { watermelondb } from '@/src/data';
+import { Book } from '@/src/data/watermelondb/models';
+import { BookRepository, MetadataRepository } from '@/src/repositories';
 import { BookDetailsScreen } from '@/src/screens';
-import { useLocalSearchParams } from 'expo-router';
+import {
+  Redirect,
+  useLocalSearchParams,
+  useNavigation,
+  useRouter,
+} from 'expo-router';
+import { useEffect, useState } from 'react';
 
 const BookDetails = () => {
   const { uri, cover } = useLocalSearchParams();
+  const [book, setBook] = useState<Book>();
+  const [loading, setLoading] = useState(true);
+  const [metadata, setMetadata] = useState<any>(null);
+  const navigator = useNavigation();
+  const bookRepository = new BookRepository(watermelondb);
+  const metadataRepository = new MetadataRepository(watermelondb);
+  const router = useRouter();
 
-  return <BookDetailsScreen uri={uri as string} cover={cover as string} />;
+  useEffect(() => {
+    const getBookDetails = async () => {
+      let bookInfo = await bookRepository.fetchBookByUri(uri as string);
+      if (bookInfo[0]) {
+        setBook(bookInfo[0]);
+        let metadataInfo = await metadataRepository.fetchMetadataByUri(
+          uri as string
+        );
+        if (metadataInfo[0]) {
+          setMetadata(metadataInfo[0]);
+        }
+      } else {
+        navigator.goBack();
+      }
+      setLoading(false);
+    };
+
+    getBookDetails();
+  }, [uri]);
+
+  if (loading) return <LoadingPulse />;
+
+  return book && metadata && !loading ? (
+    <BookDetailsScreen book={book} metadata={metadata} />
+  ) : (
+    <Redirect href="/(library)" />
+  );
 };
 
 export default BookDetails;
