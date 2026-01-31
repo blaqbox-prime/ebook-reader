@@ -61,7 +61,7 @@ const BookDetails = ({ uri, cover }: { uri: string; cover: string }) => {
               navigator.goBack();
             }}
           >
-            <Feather name="arrow-left" size={24} color="black" />
+            <Feather name="arrow-left" size={28} color="black" />
           </TouchableOpacity>
           <View className="flex flex-row items-center gap-4">
             <TouchableOpacity
@@ -70,9 +70,9 @@ const BookDetails = ({ uri, cover }: { uri: string; cover: string }) => {
               }}
             >
               {book?.isFavorite ? (
-                <AntDesign name="star" size={24} color="gold" />
+                <AntDesign name="star" size={28} color="gold" />
               ) : (
-                <Feather name="star" size={24} color="black" />
+                <Feather name="star" size={28} color="black" />
               )}
             </TouchableOpacity>
           </View>
