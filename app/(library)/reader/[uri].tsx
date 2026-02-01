@@ -67,6 +67,8 @@ const ReaderContent = ({ book, uri }: { book: Book; uri: string }) => {
 const BookReader = () => {
   const { uri } = useLocalSearchParams();
   const [book, setBook] = useState<Book | null>(null);
+  const [isTOCOpen, setIsTOCOpen] = useState(false);
+
   const reader = useReader();
 
   useEffect(() => {

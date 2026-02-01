@@ -1,24 +1,22 @@
 module.exports = function (api) {
   api.cache(true);
+
   return {
-    presets: [
+    presets: [['babel-preset-expo'], 'nativewind/babel'],
+
+    plugins: [
       [
-        'babel-preset-expo',
+        'module-resolver',
         {
-          jsxImportSource: 'nativewind',
-          // This ensures the preset doesn't conflict with your custom decorator config
-          setPublicClassFields: true,
+          root: ['./'],
+
+          alias: {
+            '@': './',
+            'tailwind.config': './tailwind.config.js',
+          },
         },
       ],
-      'nativewind/babel',
-    ],
-    plugins: [
-      // 1. Decorators MUST come before class properties
-      ['@babel/plugin-proposal-decorators', { legacy: true }],
-      // 2. This is often required for WatermelonDB + Hermes compatibility
-      ['@babel/plugin-transform-class-properties', { loose: true }],
-      // 3. Reanimated MUST be last
-      'react-native-reanimated/plugin',
+      'react-native-worklets/plugin',
     ],
   };
 };
