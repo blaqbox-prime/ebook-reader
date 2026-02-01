@@ -6,7 +6,7 @@ import SearchBox from '@/src/components/SearchBox';
 import CustomEpubReader from './CustomEpubReader';
 import FavouriteButton from './FavouriteButton';
 import BookmarkButton from './BookmarkButton';
-
+import ReaderOptionsFAB from '@/src/components/ReaderOptionsFAB';
 export {
   BookTile,
   CustomButton,
@@ -16,4 +16,5 @@ export {
   CustomEpubReader,
   FavouriteButton,
   BookmarkButton,
+  ReaderOptionsFAB,
 };

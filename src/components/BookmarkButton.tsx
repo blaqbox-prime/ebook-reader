@@ -3,18 +3,14 @@ import Fontisto from '@expo/vector-icons/Fontisto';
 
 type BookmarkButtonProps = {
   isBookmarked: boolean;
-  toggleBookmark: () => void;
 };
 
-const BookmarkButton = ({
-  isBookmarked,
-  toggleBookmark,
-}: BookmarkButtonProps) => {
+const BookmarkButton = ({ isBookmarked }: BookmarkButtonProps) => {
   return (
     <View className="flex flex-row items-center">
       <TouchableOpacity
         onPress={() => {
-          toggleBookmark();
+          // toggleBookmark();
         }}
       >
         {isBookmarked ? (
