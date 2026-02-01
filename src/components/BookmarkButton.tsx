@@ -8,7 +8,11 @@ type BookmarkButtonProps = {
 const BookmarkButton = ({ isBookmarked }: BookmarkButtonProps) => {
   return (
     <View className="flex flex-row items-center">
-      <TouchableOpacity onPress={() => {}}>
+      <TouchableOpacity
+        onPress={() => {
+          // toggleBookmark();
+        }}
+      >
         {isBookmarked ? (
           <Fontisto name="bookmark-alt" size={24} color="black" />
         ) : (
