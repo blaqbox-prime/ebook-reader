@@ -50,7 +50,6 @@ const ReaderOptionsFAB = ({
   const handleChangeBookmark = () => {
     console.info('handleChangeBookmark');
     const location = getCurrentLocation();
-    console.log(location, isBookmarked, bookmarks);
     if (!location) return;
 
     if (isBookmarked) {
