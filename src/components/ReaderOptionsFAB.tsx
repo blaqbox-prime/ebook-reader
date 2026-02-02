@@ -25,12 +25,10 @@ const ICON_SIZE = 20;
 
 const ReaderOptionsFAB = ({
   showFab = false,
-  toggleTOC,
   reader,
 }: {
   showFab: boolean;
   reader: any;
-  toggleTOC: () => void;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const toggleOpen = () => setIsOpen(prev => !prev);
@@ -52,6 +50,7 @@ const ReaderOptionsFAB = ({
   const handleChangeBookmark = () => {
     console.info('handleChangeBookmark');
     const location = getCurrentLocation();
+    console.log(location, isBookmarked, bookmarks);
     if (!location) return;
 
     if (isBookmarked) {
@@ -82,9 +81,7 @@ const ReaderOptionsFAB = ({
     {
       icon: <MaterialIcons name="toc" size={ICON_SIZE} color={'black'} />,
       label: 'Table of Contents',
-      action: () => {
-        toggleTOC();
-      },
+      action: () => {},
     },
   ];
 
@@ -120,7 +117,7 @@ const ReaderOptionsFAB = ({
 
         {showFab && (
           <TouchableWithoutFeedback onPress={toggleOpen}>
-            <View className="items-center justify-center bg-app-khaki-beige-500 h-16 w-16 p-2 rounded-full z-50 ">
+            <View className="items-center justify-center bg-primary-500 h-16 w-16 p-2 rounded-full z-50 ">
               <Image
                 source={images.logo_transparent}
                 className="w-full h-full overflow-hidden"
@@ -134,3 +131,24 @@ const ReaderOptionsFAB = ({
 };
 
 export default ReaderOptionsFAB;
+const showToast = () => {
+  ToastAndroid.show('A pikachu appeared nearby !', ToastAndroid.SHORT);
+};
+
+const showToastWithGravity = () => {
+  ToastAndroid.showWithGravity(
+    'All Your Base Are Belong To Us',
+    ToastAndroid.SHORT,
+    ToastAndroid.CENTER
+  );
+};
+
+const showToastWithGravityAndOffset = () => {
+  ToastAndroid.showWithGravityAndOffset(
+    'A wild toast appeared!',
+    ToastAndroid.LONG,
+    ToastAndroid.BOTTOM,
+    25,
+    50
+  );
+};

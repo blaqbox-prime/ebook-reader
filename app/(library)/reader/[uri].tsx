@@ -6,8 +6,7 @@ import BookService from '@/src/services/BookService';
 import { Reader, ReaderProvider, useReader } from '@epubjs-react-native/core';
 import { useFileSystem } from '@epubjs-react-native/expo-file-system';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { BookmarkButton } from '@/src/components';
-import ReaderOptionsFAB from '@/src/components/ReaderOptionsFAB';
+import { BookmarkButton, ReaderOptionsFAB } from '@/src/components';
 
 // 1. Create an Inner Component to use the useReader hook
 const ReaderContent = ({ book, uri }: { book: Book; uri: string }) => {
@@ -96,7 +95,7 @@ const BookReader = () => {
   return (
     <SafeAreaView className="flex flex-1 bg-white ">
       <ReaderContent book={book} uri={uri as string} />
-      <ReaderOptionsFAB reader={reader} toggleTOC={() => {}} showFab={true} />
+      <ReaderOptionsFAB showFab={true} reader={reader} />
     </SafeAreaView>
   );
 };

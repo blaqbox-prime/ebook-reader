@@ -6,9 +6,6 @@ import { fonts } from '@/assets';
 import { useEffect } from 'react';
 import { ReaderProvider } from '@epubjs-react-native/core';
 
-import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
-import '@/global.css';
-
 export default function RootLayout() {
   const [loaded, error] = useFonts(fonts);
 
@@ -23,16 +20,12 @@ export default function RootLayout() {
   }
 
   return (
-    
-    <GluestackUIProvider mode="dark">
-      <ReaderProvider>
+    <ReaderProvider>
       <Stack
         screenOptions={{
           headerShown: false,
         }}
       />
     </ReaderProvider>
-    </GluestackUIProvider>
-  
   );
 }
