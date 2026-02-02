@@ -3,9 +3,7 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["./*"]
     },
     "strict": true,
     "noUnusedLocals": true,
@@ -21,6 +19,7 @@
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
     "src/data/watermelondb/models.js",
-    "nativewind-env.d.ts"
+    "nativewind-env.d.ts",
+    "src/components/CustomBottomSheet.tsx"
   ]
 }

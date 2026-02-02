@@ -4,22 +4,12 @@ import {
   Image,
   TouchableWithoutFeedback,
   TouchableOpacity,
-  ToastAndroid,
 } from 'react-native';
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import { images } from '@/assets';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Feather from '@expo/vector-icons/Feather';
-// import {colors} from "@/constants/constants";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import BookmarkButton from '@/src/components/BookmarkButton';
-// import {
-//     Actionsheet,
-//     ActionsheetBackdrop,
-//     ActionsheetContent, ActionsheetDragIndicator,
-//     ActionsheetDragIndicatorWrapper, ActionsheetItem, ActionsheetItemText
-// } from "@/components/ui/actionsheet";
-import { useReader } from '@epubjs-react-native/core';
 
 const ICON_SIZE = 20;
 
@@ -32,7 +22,6 @@ const ReaderOptionsFAB = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const toggleOpen = () => setIsOpen(prev => !prev);
-  const [isDark, setIsDark] = useState(false);
   const {
     bookmarks,
     isBookmarked,
@@ -131,24 +120,3 @@ const ReaderOptionsFAB = ({
 };
 
 export default ReaderOptionsFAB;
-const showToast = () => {
-  ToastAndroid.show('A pikachu appeared nearby !', ToastAndroid.SHORT);
-};
-
-const showToastWithGravity = () => {
-  ToastAndroid.showWithGravity(
-    'All Your Base Are Belong To Us',
-    ToastAndroid.SHORT,
-    ToastAndroid.CENTER
-  );
-};
-
-const showToastWithGravityAndOffset = () => {
-  ToastAndroid.showWithGravityAndOffset(
-    'A wild toast appeared!',
-    ToastAndroid.LONG,
-    ToastAndroid.BOTTOM,
-    25,
-    50
-  );
-};
