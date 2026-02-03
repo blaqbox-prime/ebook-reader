@@ -1,8 +1,35 @@
-import {File} from 'expo-file-system';
+import * as FileSystem from 'expo-file-system';
 import JSZip from 'jszip';
 import { DOMParser } from 'xmldom';
 import xpath from 'xpath';
 
+// Standard EPUB interfaces
+export interface EPUBMetadata {
+  [key: string]: string | undefined;
+}
+
+export interface ManifestItem {
+  href: string;
+  mediaType: string;
+}
+
+export interface SpineItem {
+  id: string;
+  href: string;
+}
+
+export interface ParsedEPUB {
+  metadata: EPUBMetadata;
+  spine: SpineItem[];
+  manifest: { [id: string]: ManifestItem };
+}
+
+export interface Chapter {
+  index: number;
+  id: string;
+  href: string;
+  content: string;
+}
 
 class EPUBParser {
   private zip: JSZip | null = null;
@@ -14,22 +41,38 @@ class EPUBParser {
 
   constructor(private filePath: string) {}
 
+  /**
+   * Main Parsing Logic using Legacy FileSystem
+   */
   async parse(): Promise<ParsedEPUB> {
     try {
-      // Load the EPUB file
-      const file: File = new File(this.filePath);
-      // Read the EPUB file as base64
-      const base64Data = await file.base64();
-      
-      // Load as ZIP
+      // 1. Ensure the URI is properly formatted for legacy methods
+      let absoluteUri = this.filePath;
+      if (
+        !absoluteUri.startsWith('file://') &&
+        !absoluteUri.startsWith('content://')
+      ) {
+        absoluteUri = `file://${absoluteUri}`;
+      }
+
+      // 2. Check if file exists (Legacy approach)
+      const fileInfo = await FileSystem.getInfoAsync(absoluteUri);
+      if (!fileInfo.exists) {
+        throw new Error(`File does not exist at path: ${absoluteUri}`);
+      }
+
+      // 3. Read the EPUB file as base64 string
+      const base64Data = await FileSystem.readAsStringAsync(absoluteUri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      // 4. Load as ZIP
       this.zip = await JSZip.loadAsync(base64Data, { base64: true });
-      
-      // Find OPF path
+
+      // 5. Navigate internal EPUB structure
       await this.findOPFPath();
-      
-      // Parse OPF file
       await this.parseOPF();
-      
+
       return {
         metadata: this.metadata,
         spine: this.spine,
@@ -43,25 +86,28 @@ class EPUBParser {
 
   private async findOPFPath(): Promise<void> {
     if (!this.zip) throw new Error('ZIP not loaded');
-    
+
     const containerFile = this.zip.file('META-INF/container.xml');
     if (!containerFile) throw new Error('container.xml not found');
-    
+
     const containerXML = await containerFile.async('string');
     const doc = new DOMParser().parseFromString(containerXML, 'text/xml');
-    
+
     const select = xpath.useNamespaces({
       container: 'urn:oasis:names:tc:opendocument:xmlns:container',
     });
-    
+
     const rootfileNode = select(
       '//container:rootfile/@full-path',
       doc
     ) as Attr[];
-    
+
     if (rootfileNode.length > 0) {
       this.opfPath = rootfileNode[0].value;
-      this.opfDir = this.opfPath.substring(0, this.opfPath.lastIndexOf('/') + 1);
+      this.opfDir = this.opfPath.substring(
+        0,
+        this.opfPath.lastIndexOf('/') + 1
+      );
     } else {
       throw new Error('OPF path not found in container.xml');
     }
@@ -69,13 +115,13 @@ class EPUBParser {
 
   private async parseOPF(): Promise<void> {
     if (!this.zip) throw new Error('ZIP not loaded');
-    
+
     const opfFile = this.zip.file(this.opfPath);
     if (!opfFile) throw new Error('OPF file not found');
-    
+
     const opfContent = await opfFile.async('string');
     const doc = new DOMParser().parseFromString(opfContent, 'text/xml');
-    
+
     this.extractMetadata(doc);
     this.extractManifest(doc);
     this.extractSpine(doc);
@@ -84,26 +130,20 @@ class EPUBParser {
   private extractMetadata(doc: Document): void {
     const metadataNode = doc.getElementsByTagName('metadata')[0];
     if (!metadataNode) return;
-    
-    // Helper to get text content
+
     const getText = (tagName: string): string | undefined => {
       const elements = metadataNode.getElementsByTagName(tagName);
-      if (elements.length > 0) {
-        return elements[0].textContent?.trim();
-      }
-      
-      // Try with dc: namespace
+      if (elements.length > 0) return elements[0].textContent?.trim();
+
       const dcElements = metadataNode.getElementsByTagNameNS(
         'http://purl.org/dc/elements/1.1/',
         tagName
       );
-      if (dcElements.length > 0) {
-        return dcElements[0].textContent?.trim();
-      }
-      
+      if (dcElements.length > 0) return dcElements[0].textContent?.trim();
+
       return undefined;
     };
-    
+
     this.metadata = {
       title: getText('title'),
       creator: getText('creator'),
@@ -114,32 +154,29 @@ class EPUBParser {
       description: getText('description'),
       rights: getText('rights'),
     };
-    
-    // Extract meta tags
+
     const metaTags = metadataNode.getElementsByTagName('meta');
     for (let i = 0; i < metaTags.length; i++) {
       const meta = metaTags[i];
       const name = meta.getAttribute('name') || meta.getAttribute('property');
       const content = meta.getAttribute('content');
-      
-      if (name && content) {
-        this.metadata[name] = content;
-      }
+      if (name && content) this.metadata[name] = content;
     }
   }
 
   private extractManifest(doc: Document): void {
-    const manifestItems = doc.getElementsByTagName('manifest')[0]
+    const manifestItems = doc
+      .getElementsByTagName('manifest')[0]
       ?.getElementsByTagName('item');
-    
+
     if (!manifestItems) return;
-    
+
     for (let i = 0; i < manifestItems.length; i++) {
       const item = manifestItems[i];
       const id = item.getAttribute('id');
       const href = item.getAttribute('href');
       const mediaType = item.getAttribute('media-type');
-      
+
       if (id && href && mediaType) {
         this.manifest[id] = {
           href: this.resolveHref(href),
@@ -150,15 +187,16 @@ class EPUBParser {
   }
 
   private extractSpine(doc: Document): void {
-    const spineItems = doc.getElementsByTagName('spine')[0]
+    const spineItems = doc
+      .getElementsByTagName('spine')[0]
       ?.getElementsByTagName('itemref');
-    
+
     if (!spineItems) return;
-    
+
     for (let i = 0; i < spineItems.length; i++) {
       const item = spineItems[i];
       const idref = item.getAttribute('idref');
-      
+
       if (idref && this.manifest[idref]) {
         this.spine.push({
           id: idref,
@@ -169,90 +207,36 @@ class EPUBParser {
   }
 
   private resolveHref(href: string): string {
-    // Remove any URL fragments
     const cleanHref = href.split('#')[0];
     return this.opfDir + cleanHref;
   }
 
   async getChapterContent(chapterHref: string): Promise<string | null> {
     if (!this.zip) throw new Error('ZIP not loaded');
-    
     try {
       const file = this.zip.file(chapterHref);
-      if (!file) {
-        console.error(`Chapter file not found: ${chapterHref}`);
-        return null;
-      }
-      
-      const content = await file.async('string');
-      return content;
+      return file ? await file.async('string') : null;
     } catch (error) {
       console.error(`Failed to load chapter: ${chapterHref}`, error);
       return null;
     }
   }
 
-  async getAllChapters(): Promise<Chapter[]> {
-    const chapters: Chapter[] = [];
-    
-    for (let i = 0; i < this.spine.length; i++) {
-      const spineItem = this.spine[i];
-      const content = await this.getChapterContent(spineItem.href);
-      
-      if (content) {
-        chapters.push({
-          index: i,
-          id: spineItem.id,
-          href: spineItem.href,
-          content,
-        });
-      }
-    }
-    
-    return chapters;
-  }
-
   async getCoverImage(): Promise<string | null> {
     if (!this.zip) throw new Error('ZIP not loaded');
-    
-    // Try to find cover from metadata
+
+    // Try standard EPUB cover metadata
     const coverId = this.metadata['cover'];
-    
     if (coverId && this.manifest[coverId]) {
-      const coverPath = this.manifest[coverId].href;
-      const coverFile = this.zip.file(coverPath);
-      
+      const coverItem = this.manifest[coverId];
+      const coverFile = this.zip.file(coverItem.href);
+
       if (coverFile) {
         const imageData = await coverFile.async('base64');
-        const mimeType = this.manifest[coverId].mediaType;
-        return `data:${mimeType};base64,${imageData}`;
+        return `data:${coverItem.mediaType};base64,${imageData}`;
       }
     }
-    
     return null;
-  }
-
-  // Extract plain text from HTML content
-  extractPlainText(htmlContent: string): string {
-    // Remove script and style tags
-    let text = htmlContent.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
-    text = text.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
-    
-    // Remove HTML tags
-    text = text.replace(/<[^>]+>/g, ' ');
-    
-    // Decode HTML entities
-    text = text.replace(/&nbsp;/g, ' ')
-               .replace(/&amp;/g, '&')
-               .replace(/&lt;/g, '<')
-               .replace(/&gt;/g, '>')
-               .replace(/&quot;/g, '"')
-               .replace(/&#39;/g, "'");
-    
-    // Clean up whitespace
-    text = text.replace(/\s+/g, ' ').trim();
-    
-    return text;
   }
 }
 

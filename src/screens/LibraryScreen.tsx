@@ -58,11 +58,11 @@ const Library = () => {
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    if (BookScanner.BOOKS_DIR.list().length === 0) {
-      Alert.alert('No books found', 'Please add books to your library.');
-      setRefreshing(false);
-      return;
-    }
+    // if (BookScanner.BOOKS_DIR.list().length === 0) {
+    //   Alert.alert('No books found', 'Please add books to your library.');
+    //   setRefreshing(false);
+    //   return;
+    // }
     const bookService = new BookService();
     const booksScanner = new BookScanner();
 
