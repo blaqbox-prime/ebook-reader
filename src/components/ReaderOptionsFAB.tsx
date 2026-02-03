@@ -10,13 +10,14 @@ import { images } from '@/assets';
 import Feather from '@expo/vector-icons/Feather';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import BookmarkButton from '@/src/components/BookmarkButton';
-
 const ICON_SIZE = 20;
 
 const ReaderOptionsFAB = ({
   showFab = false,
   reader,
+  toggleToc,
 }: {
+  toggleToc: () => void;
   showFab: boolean;
   reader: any;
 }) => {
@@ -70,7 +71,9 @@ const ReaderOptionsFAB = ({
     {
       icon: <MaterialIcons name="toc" size={ICON_SIZE} color={'black'} />,
       label: 'Table of Contents',
-      action: () => {},
+      action: () => {
+        toggleToc();
+      },
     },
   ];
 
@@ -80,12 +83,12 @@ const ReaderOptionsFAB = ({
       return (
         <TouchableOpacity key={option.label} onPress={option.action}>
           <View className="flex-row items-center gap-3 my-3 pr-2">
-            <Text className="px-3 py-2 rounded-lg shadow-md bg-app-taupe-grey-400 text-app-taupe-grey-800">
+            <Text className="px-3 py-2 rounded-lg shadow-md bg-primary-500 text-app-taupe-grey-900">
               {option.label}
             </Text>
 
             {/* Individual Option Button */}
-            <View className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg bg-app-taupe-grey-400">
+            <View className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg bg-primary-500">
               {option.icon}
             </View>
           </View>

@@ -7,6 +7,8 @@ import { Reader, ReaderProvider, useReader } from '@epubjs-react-native/core';
 import { useFileSystem } from '@epubjs-react-native/expo-file-system';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BookmarkButton, ReaderOptionsFAB } from '@/src/components';
+import BottomSheet from '@gorhom/bottom-sheet';
+import { TOCActionSheet } from '@/src/components/TOCActionSheet';
 
 // 1. Create an Inner Component to use the useReader hook
 const ReaderContent = ({ book, uri }: { book: Book; uri: string }) => {
@@ -67,7 +69,13 @@ const ReaderContent = ({ book, uri }: { book: Book; uri: string }) => {
 const BookReader = () => {
   const { uri } = useLocalSearchParams();
   const [book, setBook] = useState<Book | null>(null);
+  const [isVisible, setVisible] = useState(false);
+  const sheetRef = useRef<BottomSheet>(null);
   const reader = useReader();
+
+  const toggleToc = () => {
+    setVisible(prev => !prev);
+  };
 
   useEffect(() => {
     const fetchBook = async () => {
@@ -93,10 +101,18 @@ const BookReader = () => {
   // Bookmark handler
 
   return (
-    <SafeAreaView className="flex flex-1 bg-white ">
+    <View className="flex flex-1 bg-white ">
       <ReaderContent book={book} uri={uri as string} />
-      <ReaderOptionsFAB showFab={true} reader={reader} />
-    </SafeAreaView>
+      <ReaderOptionsFAB showFab={true} reader={reader} toggleToc={toggleToc} />
+      <TOCActionSheet
+        handleClose={() => {
+          setVisible(false);
+        }}
+        isOpen={isVisible}
+        toc={reader.toc}
+        reader={reader}
+      />
+    </View>
   );
 };
 

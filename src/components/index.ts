@@ -1,3 +1,4 @@
+import { TOCActionSheet } from './TOCActionSheet';
 import LoadingPulse from './LoadingPulse';
 import CustomButton from './CustomButton';
 import BookTile from './BookTile';
@@ -17,4 +18,5 @@ export {
   FavouriteButton,
   BookmarkButton,
   ReaderOptionsFAB,
+  TOCActionSheet,
 };
