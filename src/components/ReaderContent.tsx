@@ -15,15 +15,16 @@ const ReaderContent = ({ book, uri }: { book: Book; uri: string }) => {
 
   const saveProgress = async () => {
     const current = locationRef.current;
-    const total = totalLocationsRef.current || 0;
+    const total = totalLocationsRef.current;
 
     if (book && current) {
       // WatermelonDB update
       await book.updateLastLocation(current.start.cfi);
 
       if (total > 0) {
-        const progress = Math.round((current.start.location / total) * 100);
-        await book.updateProgress(progress);
+        await book.updateProgress(
+          Math.round((current.start.location / total) * 100)
+        );
       }
     }
   };
@@ -49,13 +50,11 @@ const ReaderContent = ({ book, uri }: { book: Book; uri: string }) => {
       src={uri}
       fileSystem={useFileSystem}
       initialLocation={book.lastLocation}
-      flow="paginated"
+      flow="scrolled-doc"
       defaultTheme={Themes.LIGHT}
-      onLocationChange={(_, current, __) => {
+      onLocationChange={(totalLocations, current, __) => {
         locationRef.current = current;
-      }}
-      onLocationsReady={(_, locations) => {
-        totalLocationsRef.current = locations.length;
+        totalLocationsRef.current = totalLocations;
       }}
       onDisplayError={reason => {
         Alert.alert('Failed To Open Book', reason);

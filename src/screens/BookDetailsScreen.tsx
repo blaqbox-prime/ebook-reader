@@ -26,6 +26,8 @@ const BookDetails = ({
     });
   };
 
+  console.info('Progress ', book.progress);
+
   return (
     <SafeAreaView className="px-8 py-6">
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -69,10 +71,10 @@ const BookDetails = ({
           {book && (
             <>
               <View className="w-7/12 h-[4px] rounded-full bg-slate-300 mx-auto mt-4">
-                <View
-                  className="bg-background-dark h-1 rounded-full"
+                <Animated.View
+                  className="bg-app-khaki-beige-700 h-1 rounded-full"
                   style={{ width: `${book.progress}%` }}
-                ></View>
+                ></Animated.View>
               </View>
               <Text className="text-center mt-2 text-typography-500">{`${book.progress}% completed`}</Text>
             </>

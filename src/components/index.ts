@@ -9,6 +9,9 @@ import FavouriteButton from './FavouriteButton';
 import BookmarkButton from './BookmarkButton';
 import ReaderOptionsFAB from '@/src/components/ReaderOptionsFAB';
 import ReaderContent from '@/src/components/ReaderContent';
+import BrightnessAdjuster from '@/src/components/BrightnessAdjuster';
+import FontAdjuster from '@/src/components/FontAdjuster';
+
 export {
   BookTile,
   CustomButton,
@@ -21,4 +24,6 @@ export {
   ReaderOptionsFAB,
   TOCActionSheet,
   ReaderContent,
+  BrightnessAdjuster,
+  FontAdjuster,
 };

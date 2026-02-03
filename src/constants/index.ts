@@ -65,3 +65,5 @@ const colors = {
     950: '#1f1205',
   },
 };
+
+export { colors };
