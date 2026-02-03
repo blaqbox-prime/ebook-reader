@@ -8,6 +8,7 @@ import CustomEpubReader from './CustomEpubReader';
 import FavouriteButton from './FavouriteButton';
 import BookmarkButton from './BookmarkButton';
 import ReaderOptionsFAB from '@/src/components/ReaderOptionsFAB';
+import ReaderContent from '@/src/components/ReaderContent';
 export {
   BookTile,
   CustomButton,
@@ -19,4 +20,5 @@ export {
   BookmarkButton,
   ReaderOptionsFAB,
   TOCActionSheet,
+  ReaderContent,
 };

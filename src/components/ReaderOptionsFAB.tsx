@@ -10,14 +10,20 @@ import { images } from '@/assets';
 import Feather from '@expo/vector-icons/Feather';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import BookmarkButton from '@/src/components/BookmarkButton';
+import { Themes } from '@epubjs-react-native/core';
 const ICON_SIZE = 20;
 
+const THEMES = Object.values(Themes).slice(0, 2);
 const ReaderOptionsFAB = ({
   showFab = false,
   reader,
   toggleToc,
+  switchTheme,
+  toggleReaderSettings,
 }: {
   toggleToc: () => void;
+  toggleReaderSettings: () => void;
+  switchTheme: any;
   showFab: boolean;
   reader: any;
 }) => {
@@ -31,12 +37,16 @@ const ReaderOptionsFAB = ({
     getCurrentLocation,
   } = reader;
 
+  const index = Object.values(THEMES).indexOf(reader.theme);
+
+  // Backdrops
   const Backdrop = () => (
     <TouchableWithoutFeedback onPress={toggleOpen}>
       <View className="absolute top-0 left-0 right-0 bottom-0 z-10 inset-0 bg-black opacity-15"></View>
     </TouchableWithoutFeedback>
   );
 
+  // Toggling Bookmark
   const handleChangeBookmark = () => {
     console.info('handleChangeBookmark');
     const location = getCurrentLocation();
@@ -55,7 +65,15 @@ const ReaderOptionsFAB = ({
     } else addBookmark(location);
   };
 
+  // Action Buttons props
   const OPTION_ITEMS = [
+    {
+      icon: <Feather name="settings" size={ICON_SIZE} color={'black'} />,
+      label: 'Reader Settings',
+      action: () => {
+        toggleReaderSettings();
+      },
+    },
     {
       icon: <BookmarkButton isBookmarked={isBookmarked} />,
       label: `${isBookmarked ? 'Remove' : 'Add'} Bookmark`,
@@ -64,9 +82,16 @@ const ReaderOptionsFAB = ({
       },
     },
     {
-      icon: <Feather name="moon" size={ICON_SIZE} color={'black'} />,
-      label: 'Night Mode',
-      action: () => {},
+      icon:
+        index === 0 ? (
+          <Feather name="moon" size={ICON_SIZE} color={'black'} />
+        ) : (
+          <Feather name="sun" size={ICON_SIZE} color={'black'} />
+        ),
+      label: index === 0 ? 'Night Mode' : 'Light Mode',
+      action: () => {
+        switchTheme();
+      },
     },
     {
       icon: <MaterialIcons name="toc" size={ICON_SIZE} color={'black'} />,
@@ -77,6 +102,7 @@ const ReaderOptionsFAB = ({
     },
   ];
 
+  // Action Button Elements
   const actionButtons = OPTION_ITEMS.slice()
     .reverse()
     .map(option => {
