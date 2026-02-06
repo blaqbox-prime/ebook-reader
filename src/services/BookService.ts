@@ -54,6 +54,11 @@ class BookService {
     return book[0];
   }
 
+  async getBooksinProgress(): Promise<Book[]> {
+    const books = await this.bookRepository.fetchBooksInProgress();
+    return books;
+  }
+
   async deleteBook(bookId: string): Promise<void> {
     await this.bookRepository.deleteBook(bookId);
     await this.metadataRepository.deleteMetadataByUri(bookId);

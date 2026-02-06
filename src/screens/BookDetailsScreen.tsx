@@ -21,7 +21,7 @@ const BookDetails = ({
   const handleReadBook = () => {
     book?.updateLastRead();
     router.push({
-      pathname: `/(library)/reader/[uri]`,
+      pathname: `/reader/[uri]`,
       params: { uri: book.uri },
     });
   };

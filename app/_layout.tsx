@@ -28,7 +28,10 @@ export default function RootLayout() {
           screenOptions={{
             headerShown: false,
           }}
-        />
+        >
+          <Stack.Screen name="(main)" />
+          <Stack.Screen name="reader/[uri]" />
+        </Stack>
       </ReaderProvider>
     </GluestackUIProvider>
   );
