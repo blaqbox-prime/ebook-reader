@@ -53,6 +53,17 @@ class BookRepository {
   async fetchBookByUri(uri: string): Promise<Book[]> {
     return await this.booksCollection.query(Q.where('uri', uri)).fetch();
   }
+  async fetchBooksInProgress(): Promise<Book[]> {
+    return await this.booksCollection
+      .query(Q.where('progress', Q.gt(0)), Q.sortBy('last_read', Q.desc))
+      .fetch();
+  }
+
+  async fetchBooksByDateAdded(order: Q.SortOrder) {
+    return await this.booksCollection
+      .query(Q.sortBy('created_at', order))
+      .fetch();
+  }
 }
 
 export default BookRepository;

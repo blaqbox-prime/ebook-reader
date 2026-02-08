@@ -22,6 +22,10 @@ class Book extends Model {
   @field('progress') progress;
   @field('last_location') lastLocation;
   @field('is_favorite') isFavorite;
+  @date('created_at') createdAt;
+  @date('updated_at') updatedAt;
+
+  @children('metadata') metadata;
 
   @writer async updateLastRead() {
     await this.update(book => (book.lastRead = Date.now()));

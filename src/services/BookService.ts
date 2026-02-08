@@ -2,7 +2,7 @@ import { fetchGoogleBookMetadata } from '@/src/api';
 import { watermelondb } from '@/src/data';
 import { Book } from '@/src/data/watermelondb/models';
 import { BookRepository, MetadataRepository } from '@/src/repositories';
-import { Database } from '@nozbe/watermelondb';
+import { Database, Q } from '@nozbe/watermelondb';
 
 class BookService {
   private database: Database = watermelondb;
@@ -54,9 +54,19 @@ class BookService {
     return book[0];
   }
 
+  async getBooksinProgress(): Promise<Book[]> {
+    const books = await this.bookRepository.fetchBooksInProgress();
+    return books;
+  }
+
   async deleteBook(bookId: string): Promise<void> {
     await this.bookRepository.deleteBook(bookId);
     await this.metadataRepository.deleteMetadataByUri(bookId);
+  }
+
+  async getNewlyAddedBooks(): Promise<Book[]> {
+    const books = await this.bookRepository.fetchBooksByDateAdded(Q.desc);
+    return books;
   }
 }
 

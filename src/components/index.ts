@@ -11,6 +11,8 @@ import ReaderOptionsFAB from '@/src/components/ReaderOptionsFAB';
 import ReaderContent from '@/src/components/ReaderContent';
 import BrightnessAdjuster from '@/src/components/BrightnessAdjuster';
 import FontAdjuster from '@/src/components/FontAdjuster';
+import Greeting from '@/src/components/Greeting';
+import ContinueReadingList from '@/src/components/ContinueReadingList';
 
 export {
   BookTile,
@@ -26,4 +28,6 @@ export {
   ReaderContent,
   BrightnessAdjuster,
   FontAdjuster,
+  Greeting,
+  ContinueReadingList,
 };
