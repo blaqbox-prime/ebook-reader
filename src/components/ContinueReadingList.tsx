@@ -24,9 +24,9 @@ const ContinueReadingList = () => {
   if (loading) return null;
 
   return (
-    <View className="my-6">
-      <Text className="font-body font-semibold text-3xl mb-2">
-        Continue Reading
+    <View className="mt-10">
+      <Text className="font-body font-bold text-2xl mb-2">
+        Currently Reading
       </Text>
 
       <Animated.FlatList
@@ -69,7 +69,7 @@ const Item = ({ book }: { book: Book }) => {
         <Text numberOfLines={2} className="font-body font-bold text-xl">
           {book.title}
         </Text>
-        <Text numberOfLines={1} className="font-body text-gray-500">
+        <Text numberOfLines={1} className="font-heading text-gray-500">
           {book.author}
         </Text>
         <View className="w-full h-[4px] rounded-full bg-slate-300 mt-6">
@@ -78,6 +78,7 @@ const Item = ({ book }: { book: Book }) => {
             style={{ width: `${book.progress}%` }}
           ></Animated.View>
         </View>
+        <Text className="text-sm mt-2 text-app-khaki-beige-700">{`${book.progress}% completed`}</Text>
       </View>
     </TouchableOpacity>
   );
