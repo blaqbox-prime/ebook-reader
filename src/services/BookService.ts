@@ -11,6 +11,12 @@ class BookService {
     this.database
   );
 
+  // Get all books from the database
+  async getBooks(): Promise<Book[]> {
+    const books = await this.bookRepository.getAllBooks();
+    return books;
+  }
+
   /**
    * Persists new scanned books into WatermelonDB.
    * It checks for duplicates by URI before saving.
@@ -56,6 +62,11 @@ class BookService {
 
   async getBooksinProgress(): Promise<Book[]> {
     const books = await this.bookRepository.fetchBooksInProgress();
+    return books;
+  }
+
+  async getFavorites(): Promise<Book[]> {
+    const books = await this.bookRepository.fetchFavoriteBooks();
     return books;
   }
 

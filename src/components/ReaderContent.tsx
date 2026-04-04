@@ -1,14 +1,19 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import LoadingPulse from '@/src/components/LoadingPulse';
+import { preferencesStorage } from '@/src/data';
 import { Book } from '@/src/data/watermelondb/models';
-import { Reader, Themes } from '@epubjs-react-native/core';
+import BookmarkService from '@/src/services/BookmarkService';
+import { Reader, Themes, Bookmark } from '@epubjs-react-native/core';
 import { useFileSystem } from '@epubjs-react-native/expo-file-system';
 import { useRouter } from 'expo-router';
 import { useEffect, useRef } from 'react';
 import { Alert, AppState } from 'react-native';
+import { useMMKV } from 'react-native-mmkv';
 
 // 1. Create an Inner Component to use the useReader hook
-const ReaderContent = ({ book, uri }: { book: Book; uri: string }) => {
+const ReaderContent = ({ book, uri }: { book: Book | null; uri: string }) => {
   const router = useRouter();
+  const preferences = useMMKV(preferencesStorage);
   // Use a Ref to keep track of location without re-rendering
   const locationRef = useRef<any>(null);
   const totalLocationsRef = useRef<number>(0);
@@ -50,6 +55,16 @@ const ReaderContent = ({ book, uri }: { book: Book; uri: string }) => {
       src={uri}
       fileSystem={useFileSystem}
       initialLocation={book.lastLocation}
+      onAddBookmark={bookmark => {
+        const service = new BookmarkService();
+        service.addBookmark(bookmark, book.uri);
+        Alert.alert('Bookmark Added', 'Your bookmark has been saved.');
+      }}
+      onRemoveBookmark={bookmark => {
+        const service = new BookmarkService();
+        service.removeBookmark(bookmark);
+        Alert.alert('Bookmark Removed', 'Your bookmark has been removed.');
+      }}
       flow="scrolled-doc"
       defaultTheme={Themes.LIGHT}
       onLocationChange={(totalLocations, current, __) => {

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Model } from '@nozbe/watermelondb';
 import {
   field,
@@ -54,13 +55,12 @@ class Metadata extends Model {
   @field('subtitle') subtitle;
   @field('author') author;
   @field('publisher') publisher;
-  @field('cover_image') coverImage;
   @field('language') language;
   @date('published_date') publishedDate;
   @field('description') description;
   @field('page_count') pageCount;
   @field('categories') categories;
-  @field('average_rating') averageRating;
+  @field('cover_image') coverImage;
 
   @relation('books', 'book_uri') book;
 }
@@ -68,17 +68,17 @@ class Metadata extends Model {
 class UserStats extends Model {
   static table = 'user_stats';
 
-  @field('total_xp') total_xp;
-  @field('current_streak') current_streak;
-  @field('longest_streak') longest_streak;
-  @field('last_read_at') last_read_at;
+  @field('total_xp') totalXp;
+  @field('current_streak') currentStreak;
+  @field('longest_streak') longestStreak;
+  @field('last_read_at') lastReadAt;
 }
 
 class ReadSession extends Model {
   static table = 'read_sessions';
-  @field('book_id') book_id;
-  @field('duration_ms') duration_ms;
-  @field('pages_read') pages_read;
+  @field('book_uri') bookUri;
+  @field('duration_ms') durationMs;
+  @field('pages_read') pagesRead;
   @field('date') date;
 }
 
@@ -86,8 +86,8 @@ class Achievements extends Model {
   static table = 'achievements';
   @field('slug') slug;
   @field('title') title;
-  @field('unlocked_at') unlocked_at;
-  @field('progress_value') progress_value;
+  @field('unlocked_at') unlockedAt;
+  @field('progress_value') progressValue;
 }
 
 export { UserStats, ReadSession, Achievements, Book, Metadata };
