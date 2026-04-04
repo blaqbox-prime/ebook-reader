@@ -5,6 +5,8 @@ import Fontisto from '@expo/vector-icons/Fontisto';
 import { colors } from '@/src/constants';
 import { useBookmarksStore } from '@/src/store';
 import Animated from 'react-native-reanimated';
+import EmptyStateView from '@/src/components/EmptyStateView';
+import { images } from '@/assets';
 
 type BookmarkListProps = {
   bookmarks: Bookmark[];
@@ -13,10 +15,17 @@ type BookmarkListProps = {
 const BookmarkList = () => {
   // const [items, setItems] = React.useState<Bookmark[]>(bookmarks);
   const { bookmarks, loadBookmarks, removeBookmark } = useBookmarksStore();
+  const [refreshing, setRefreshing] = React.useState(false);
 
   useEffect(() => {
     loadBookmarks();
   }, [loadBookmarks]);
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    loadBookmarks();
+    setRefreshing(false);
+  };
 
   const handleDeleteBookmark = (bookmark: Bookmark) => {
     Alert.alert(
@@ -53,6 +62,15 @@ const BookmarkList = () => {
       ItemSeparatorComponent={() => (
         <View className="border-b border-gray-200"></View>
       )}
+      ListEmptyComponent={
+        <EmptyStateView
+          image={images.bookshelf}
+          message={'No bookmarks available.'}
+          showButton={false}
+        />
+      }
+      refreshing={refreshing}
+      onRefresh={handleRefresh}
       renderItem={({ item }: { item: any }) => {
         return (
           <View className="px-4 py-2 flex-row gap-4 items-center">
