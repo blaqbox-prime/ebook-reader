@@ -13,8 +13,9 @@ class BookmarkService {
     }
   }
 
-  addBookmark = (bookmark: Bookmark, bookUri: string) => {
+  addBookmark = (bookmark: Bookmark, bookUri: string, bookTitle: string) => {
     (bookmark as any).bookUri = bookUri;
+    (bookmark as any).bookTitle = bookTitle;
     this.bookmarks.push(bookmark);
     this.storage.set(this.storageKey, JSON.stringify(this.bookmarks));
   };
@@ -50,6 +51,13 @@ class BookmarkService {
   isEmpty = () => {
     return this.bookmarks.length === 0;
   };
+
+  deleteBookmarkById(bookmarkId: string) {
+    this.bookmarks = this.bookmarks.filter(
+      bookmark => bookmark.id.toString() !== bookmarkId
+    );
+    this.storage.set(this.storageKey, JSON.stringify(this.bookmarks));
+  }
 }
 
 export default BookmarkService;

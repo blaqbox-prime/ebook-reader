@@ -22,7 +22,7 @@ const BookmarksScreen = () => {
     <SafeAreaView className=" bg-white px-6 py-4 flex-1">
       <FavoritesList containerClassName="mb-4" />
       <Text className="text-5xl font-heading w-3/4 mb-2">Bookmarks</Text>
-      <BookmarkList bookmarks={bookmarks} />
+      <BookmarkList />
     </SafeAreaView>
   );
 };

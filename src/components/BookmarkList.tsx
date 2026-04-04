@@ -1,28 +1,80 @@
-import { View, Text, Animated, FlatList } from 'react-native';
-import React from 'react';
+import { View, Text, FlatList, TouchableOpacity, Alert } from 'react-native';
+import React, { use, useEffect } from 'react';
 import { Bookmark } from '@epubjs-react-native/core';
+import Fontisto from '@expo/vector-icons/Fontisto';
+import { colors } from '@/src/constants';
+import { useBookmarksStore } from '@/src/store';
+import Animated from 'react-native-reanimated';
 
 type BookmarkListProps = {
   bookmarks: Bookmark[];
 };
 
-const BookmarkList = ({ bookmarks }: BookmarkListProps) => {
+const BookmarkList = () => {
+  // const [items, setItems] = React.useState<Bookmark[]>(bookmarks);
+  const { bookmarks, loadBookmarks, removeBookmark } = useBookmarksStore();
+
+  useEffect(() => {
+    loadBookmarks();
+  }, [loadBookmarks]);
+
+  const handleDeleteBookmark = (bookmark: Bookmark) => {
+    Alert.alert(
+      'Delete Bookmark',
+      'Are you sure you want to delete this bookmark?',
+      [
+        {
+          text: 'DELETE',
+          onPress: () => {
+            removeBookmark(bookmark);
+            Alert.alert('Bookmark Deleted', 'The bookmark has been deleted.');
+          },
+          style: 'destructive',
+        },
+        {
+          text: 'CANCEL',
+          onPress: () => {
+            Alert.alert('Cancelled', 'Bookmark deletion cancelled.');
+          },
+          style: 'cancel',
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
   return (
-    <FlatList
+    <Animated.FlatList
+      className="mt-8"
       data={bookmarks}
       extraData={bookmarks}
       keyExtractor={bookmark => `${bookmark.id}`}
       showsVerticalScrollIndicator={false}
+      ItemSeparatorComponent={() => (
+        <View className="border-b border-gray-200"></View>
+      )}
       renderItem={({ item }: { item: any }) => {
-        console.log('Bookmark item: ', item);
         return (
-          <View className="p-4 mb-4">
-            <Text className="text-lg font-semibold mb-2">
-              {item.chapter.label.trim() || 'Untitled Chapter'}
-            </Text>
-            <Text className="text-secondary-500 font-semibold mb-2 line-clamp-2">
-              {item.text.trim() || 'No bookmark text'}
-            </Text>
+          <View className="px-4 py-2 flex-row gap-4 items-center">
+            <TouchableOpacity className="flex-1">
+              <View>
+                <Text className="text-lg font-semibold mb-1 line-clamp-2">
+                  {item.bookTitle.trim() || 'Untitled'}
+                </Text>
+                <Text className="text-secondary-500 font-semibold mb-2 line-clamp-2">
+                  {item.text.trim() || 'No bookmark text'}
+                </Text>
+              </View>
+            </TouchableOpacity>
+            <View className="w-14 bg-blue h-full flex items-center justify-center">
+              <TouchableOpacity onPress={() => handleDeleteBookmark(item)}>
+                <Fontisto
+                  name="bookmark-alt"
+                  size={28}
+                  color={colors.graphite[800]}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
         );
       }}

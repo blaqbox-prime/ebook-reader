@@ -13,10 +13,10 @@ import { useMMKV } from 'react-native-mmkv';
 // 1. Create an Inner Component to use the useReader hook
 const ReaderContent = ({ book, uri }: { book: Book | null; uri: string }) => {
   const router = useRouter();
-  const preferences = useMMKV(preferencesStorage);
   // Use a Ref to keep track of location without re-rendering
   const locationRef = useRef<any>(null);
   const totalLocationsRef = useRef<number>(0);
+  const bookmarkService = new BookmarkService();
 
   const saveProgress = async () => {
     const current = locationRef.current;
@@ -55,9 +55,10 @@ const ReaderContent = ({ book, uri }: { book: Book | null; uri: string }) => {
       src={uri}
       fileSystem={useFileSystem}
       initialLocation={book.lastLocation}
+      initialBookmarks={bookmarkService.getBookmarksByBookUri(uri)}
       onAddBookmark={bookmark => {
         const service = new BookmarkService();
-        service.addBookmark(bookmark, book.uri);
+        service.addBookmark(bookmark, book.uri, book.title);
         Alert.alert('Bookmark Added', 'Your bookmark has been saved.');
       }}
       onRemoveBookmark={bookmark => {
