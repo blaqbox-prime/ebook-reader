@@ -1,4 +1,5 @@
 import { colors } from '@/src/constants';
+import { home_tab_items } from '@/src/constants/data';
 import Feather from '@expo/vector-icons/Feather';
 import { Tabs } from 'expo-router';
 import React from 'react';
@@ -30,30 +31,17 @@ const _layout = () => {
         },
       }}
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <Feather name="home" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="(library)"
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <Feather name="book-open" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="bookmarks"
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <Feather name="bookmark" size={size} color={color} />
-          ),
-        }}
-      />
+      {home_tab_items.map(item => (
+        <Tabs.Screen
+          key={item.name}
+          name={item.name}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <Feather name={item.iconName as any} size={size} color={color} />
+            ),
+          }}
+        />
+      ))}
     </Tabs>
   );
 };

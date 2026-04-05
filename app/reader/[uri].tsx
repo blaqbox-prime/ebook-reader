@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useLocalSearchParams } from 'expo-router';
-import { Book } from '@/src/data/watermelondb/models';
+import { Book, ReadingSession } from '@/src/data/watermelondb/models';
 import BookService from '@/src/services/BookService';
 import { Themes, useReader } from '@epubjs-react-native/core';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ReaderContent, ReaderOptionsFAB } from '@/src/components';
 import { TOCActionSheet } from '@/src/components/TOCActionSheet';
 import ReaderSettingsSheet from '@/src/components/ReaderSettingsSheet';
+import SessionTrackingService from '@/src/services/SessionTrackingService';
 
 const THEMES = Object.values(Themes).slice(0, 2);
 
@@ -16,6 +17,8 @@ const BookReader = () => {
   const [isTOCVisible, setTOCVisible] = useState(false);
   const [isReaderSettingsVisible, setReaderSettingsVisible] = useState(false);
   const reader = useReader();
+  const sessionService = useRef(new SessionTrackingService());
+  const sessionRef = useRef<ReadingSession | null>(null);
   // Theme handling
   const switchTheme = () => {
     const index = Object.values(THEMES).indexOf(reader.theme);
@@ -32,6 +35,30 @@ const BookReader = () => {
   const toggleReaderSettings = () => {
     setReaderSettingsVisible(prev => !prev);
   };
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const currentSessionService = sessionService.current;
+
+    const startSession = async () => {
+      if (!uri) return;
+      const newSession = await currentSessionService.createSession(
+        uri as string,
+        new Date()
+      );
+      console.log('New session:', newSession);
+      if (!isMounted) return;
+      sessionRef.current = newSession;
+    };
+    console.log('Starting session:', sessionRef.current);
+    startSession();
+
+    return () => {
+      isMounted = false;
+      console.log('Stopping session on unmount:', sessionRef.current);
+    };
+  }, [uri]);
 
   useEffect(() => {
     const fetchBook = async () => {
