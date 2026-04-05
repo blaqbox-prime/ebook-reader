@@ -3,7 +3,7 @@ import SQLiteAdapter from '@nozbe/watermelondb/adapters/sqlite';
 
 import schema from './schema';
 // import migrations from './migrations'
-// eslint-disable-next-line import/namespace
+ 
 import { Book, Metadata, UserStats, ReadSession, Achievements } from './models';
 
 const adapter = new SQLiteAdapter({

@@ -1,9 +1,8 @@
-import { View, Text } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useLocalSearchParams } from 'expo-router';
 import { Book } from '@/src/data/watermelondb/models';
 import BookService from '@/src/services/BookService';
-import { Themes, Theme, useReader } from '@epubjs-react-native/core';
+import { Themes, useReader } from '@epubjs-react-native/core';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ReaderContent, ReaderOptionsFAB } from '@/src/components';
 import { TOCActionSheet } from '@/src/components/TOCActionSheet';

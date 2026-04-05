@@ -1,12 +1,6 @@
 import { EPUBParser } from '@/src/utils';
 import React, { useEffect, useState, useMemo } from 'react';
-import {
-  View,
-  ActivityIndicator,
-  useWindowDimensions,
-  TouchableOpacity,
-  Text,
-} from 'react-native';
+import { View, ActivityIndicator, TouchableOpacity, Text } from 'react-native';
 import { WebView } from 'react-native-webview';
 
 const CustomEpubReader = ({ bookUri }: { bookUri: string }) => {
@@ -14,7 +8,6 @@ const CustomEpubReader = ({ bookUri }: { bookUri: string }) => {
   const [currentChapterIndex, setCurrentChapterIndex] = useState(0);
   const [chapterHtml, setChapterHtml] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const { width } = useWindowDimensions();
 
   useEffect(() => {
     const initParser = async () => {

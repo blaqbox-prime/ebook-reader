@@ -1,4 +1,4 @@
-import { Section as SectionType, useReader } from '@epubjs-react-native/core';
+import { Section as SectionType } from '@epubjs-react-native/core';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 

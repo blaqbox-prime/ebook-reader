@@ -1,7 +1,7 @@
 import { appSchema, tableSchema } from '@nozbe/watermelondb';
 
 const schema = appSchema({
-  version: 4,
+  version: 5,
   tables: [
     tableSchema({
       name: 'books',
@@ -36,21 +36,11 @@ const schema = appSchema({
       ],
     }),
     tableSchema({
-      name: 'user_stats',
-      columns: [
-        { name: 'total_xp', type: 'number' },
-        { name: 'current_streak', type: 'number' },
-        { name: 'longest_streak', type: 'number' },
-        { name: 'last_read_at', type: 'number' },
-      ],
-    }),
-    tableSchema({
       name: 'read_sessions',
       columns: [
         { name: 'book_uri', type: 'string', isIndexed: true },
-        { name: 'duration_ms', type: 'number' },
-        { name: 'pages_read', type: 'number' },
-        { name: 'date', type: 'string' },
+        { name: 'time_start_at', type: 'number' },
+        { name: 'time_end_at', type: 'number' },
       ],
     }),
     tableSchema({
@@ -58,7 +48,7 @@ const schema = appSchema({
       columns: [
         { name: 'slug', type: 'string', isIndexed: true },
         { name: 'title', type: 'string' },
-        { name: 'unlocked_at', type: 'string' },
+        { name: 'unlocked_at', type: 'number' },
         { name: 'progress_value', type: 'number' },
       ],
     }),

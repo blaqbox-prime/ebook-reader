@@ -9,7 +9,7 @@ type BookTileProps = {
 };
 
 const BookTile = ({ book }: BookTileProps) => {
-  const [cover, _] = useState(book.coverImage);
+  const [cover] = useState(book.coverImage);
 
   return (
     <Link

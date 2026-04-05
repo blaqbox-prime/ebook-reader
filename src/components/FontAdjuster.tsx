@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Theme, Themes } from '@epubjs-react-native/core';
+import { Themes } from '@epubjs-react-native/core';
 import { colors } from '@/src/constants';
 
 type FontAdjusterProps = {

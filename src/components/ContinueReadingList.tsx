@@ -1,10 +1,9 @@
-import { View, Text, Image, Dimensions, TouchableOpacity } from 'react-native';
+import { View, Text } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { Book } from '@/src/data/watermelondb/models';
 import BookService from '@/src/services/BookService';
 import Animated from 'react-native-reanimated';
-import { images } from '@/assets';
-import { useRouter } from 'expo-router';
+
 import BookTileWide from '@/src/components/BookTileWide';
 
 const ContinueReadingList = () => {

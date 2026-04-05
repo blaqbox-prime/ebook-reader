@@ -1,14 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import LoadingPulse from '@/src/components/LoadingPulse';
-import { preferencesStorage } from '@/src/data';
 import { Book } from '@/src/data/watermelondb/models';
 import BookmarkService from '@/src/services/BookmarkService';
-import { Reader, Themes, Bookmark } from '@epubjs-react-native/core';
+import { Reader, Themes } from '@epubjs-react-native/core';
 import { useFileSystem } from '@epubjs-react-native/expo-file-system';
 import { useRouter } from 'expo-router';
 import { useEffect, useRef } from 'react';
 import { Alert, AppState } from 'react-native';
-import { useMMKV } from 'react-native-mmkv';
 
 // 1. Create an Inner Component to use the useReader hook
 const ReaderContent = ({ book, uri }: { book: Book | null; uri: string }) => {

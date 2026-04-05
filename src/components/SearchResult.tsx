@@ -1,8 +1,5 @@
 import { colors } from '@/src/constants';
-import {
-  SearchResult as SearchResultType,
-  useReader,
-} from '@epubjs-react-native/core';
+import { SearchResult as SearchResultType } from '@epubjs-react-native/core';
 import Feather from '@expo/vector-icons/Feather';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -14,8 +11,6 @@ interface Props {
 }
 
 function SearchResult({ searchTerm, searchResult, onPress }: Props) {
-  const { theme } = useReader();
-
   const regex = new RegExp(`(${searchTerm})`, 'gi');
   const parts = searchResult.excerpt.split(regex);
   return (

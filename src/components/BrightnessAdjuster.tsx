@@ -1,7 +1,6 @@
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import * as Brightness from 'expo-brightness';
-import _ from 'lodash';
 import {
   Slider,
   SliderFilledTrack,
@@ -24,7 +23,7 @@ const BrightnessAdjuster = () => {
         setStatus(status);
       }
     })();
-  }, [permissionStatus]);
+  }, [permissionStatus, currentBrightness]);
 
   const updateBrightness = async (value: number) => {
     console.log('Update brightness to ' + value);
