@@ -36,7 +36,7 @@ const schema = appSchema({
       ],
     }),
     tableSchema({
-      name: 'read_sessions',
+      name: 'reading_sessions',
       columns: [
         { name: 'book_uri', type: 'string', isIndexed: true },
         { name: 'time_start_at', type: 'number' },

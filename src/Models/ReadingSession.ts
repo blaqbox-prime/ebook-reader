@@ -1,7 +1,7 @@
 import { Model } from '@nozbe/watermelondb';
 import { date, field } from '@nozbe/watermelondb/decorators';
 
-export class ReadingSession extends Model {
+class ReadingSession extends Model {
   static table = 'reading_sessions';
   @field('book_uri') bookUri!: string;
   @date('time_start_at') timeStart!: Date;
@@ -28,3 +28,5 @@ export class ReadingSession extends Model {
     return this.duration / (1000 * 60 * 60);
   }
 }
+
+export default ReadingSession;

@@ -2,9 +2,11 @@ import { Database } from '@nozbe/watermelondb';
 import SQLiteAdapter from '@nozbe/watermelondb/adapters/sqlite';
 
 import schema from './schema';
+import Book from '@/src/Models/Book';
+import Metadata from '@/src/Models/Metadata';
+import ReadingSession from '@/src/Models/ReadingSession';
+import Achievements from '@/src/Models/Achievements';
 // import migrations from './migrations'
- 
-import { Book, Metadata, UserStats, ReadSession, Achievements } from './models';
 
 const adapter = new SQLiteAdapter({
   schema,
@@ -16,7 +18,7 @@ const adapter = new SQLiteAdapter({
 
 const watermelondb = new Database({
   adapter,
-  modelClasses: [Book, Metadata, UserStats, ReadSession, Achievements],
+  modelClasses: [Book, Metadata, ReadingSession, Achievements],
 });
 
 export default watermelondb;

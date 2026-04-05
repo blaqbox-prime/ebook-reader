@@ -1,82 +1,98 @@
-import { Database } from '@nozbe/watermelondb';
-import { UserStats } from '@/src/data/watermelondb/models';
+import UserStats from '@/src/Models/UserStats';
+import { preferencesStorage } from '@/src/data/mmkv/preferencesStorage';
 
 class UserStatsRepository {
-  private database: Database;
+  private readonly STORAGE_KEY = 'user_stats';
 
-  constructor(database: Database) {
-    this.database = database;
+  /**
+   * Fetches the user stats record from MMKV storage
+   */
+  getUserStats(): UserStats | null {
+    const statsJson = preferencesStorage.getString(this.STORAGE_KEY);
+    if (!statsJson) {
+      return null;
+    }
+    try {
+      const data = JSON.parse(statsJson);
+      return new UserStats(
+        data.totalXp,
+        data.currentStreak,
+        data.longestStreak,
+        new Date(data.lastReadAt)
+      );
+    } catch {
+      return null;
+    }
   }
 
   /**
-   * Returns the collection for the UserStats model
+   * Creates a new user stats record in MMKV storage
    */
-  get userStatsCollection() {
-    return this.database.get<UserStats>('user_stats');
-  }
-
-  /**
-   * Fetches the user stats record (assuming single record)
-   */
-  async getUserStats(): Promise<UserStats | null> {
-    const stats = await this.userStatsCollection.query().fetch();
-    return stats.length > 0 ? stats[0] : null;
-  }
-
-  /**
-   * Creates a new user stats record
-   */
-  async createUserStats(stats: {
+  createUserStats(stats: {
     totalXp: number;
     currentStreak: number;
     longestStreak: number;
-    lastReadAt: string;
-  }): Promise<UserStats> {
-    return await this.database.write(async () => {
-      return await this.userStatsCollection.create(userStats => {
-        userStats.totalXp = stats.totalXp;
-        userStats.currentStreak = stats.currentStreak;
-        userStats.longestStreak = stats.longestStreak;
-        userStats.lastReadAt = stats.lastReadAt;
-      });
-    });
+    lastReadAt: Date;
+  }): UserStats {
+    const userStats = new UserStats(
+      stats.totalXp,
+      stats.currentStreak,
+      stats.longestStreak,
+      stats.lastReadAt
+    );
+    preferencesStorage.set(
+      this.STORAGE_KEY,
+      JSON.stringify({
+        totalXp: userStats.totalXp,
+        currentStreak: userStats.currentStreak,
+        longestStreak: userStats.longestStreak,
+        lastReadAt: userStats.lastReadAt.toISOString(),
+      })
+    );
+    return userStats;
   }
 
   /**
-   * Updates the user stats record
+   * Updates the user stats record in MMKV storage
    */
-  async updateUserStats(
-    statsId: string,
+  updateUserStats(
     updates: Partial<{
       totalXp: number;
       currentStreak: number;
       longestStreak: number;
-      lastReadAt: string;
+      lastReadAt: Date;
     }>
-  ): Promise<void> {
-    await this.database.write(async () => {
-      const userStats = await this.userStatsCollection.find(statsId);
-      await userStats.update(userStats => {
-        if (updates.totalXp !== undefined) userStats.totalXp = updates.totalXp;
-        if (updates.currentStreak !== undefined)
-          userStats.currentStreak = updates.currentStreak;
-        if (updates.longestStreak !== undefined)
-          userStats.longestStreak = updates.longestStreak;
-        if (updates.lastReadAt !== undefined)
-          userStats.lastReadAt = updates.lastReadAt;
-      });
-    });
+  ): UserStats | null {
+    const currentStats = this.getUserStats();
+    if (!currentStats) {
+      return null;
+    }
+
+    const updatedStats = new UserStats(
+      updates.totalXp ?? currentStats.totalXp,
+      updates.currentStreak ?? currentStats.currentStreak,
+      updates.longestStreak ?? currentStats.longestStreak,
+      updates.lastReadAt ?? currentStats.lastReadAt
+    );
+
+    preferencesStorage.set(
+      this.STORAGE_KEY,
+      JSON.stringify({
+        totalXp: updatedStats.totalXp,
+        currentStreak: updatedStats.currentStreak,
+        longestStreak: updatedStats.longestStreak,
+        lastReadAt: updatedStats.lastReadAt.toISOString(),
+      })
+    );
+
+    return updatedStats;
   }
 
   /**
-   * Deletes the user stats record
+   * Deletes the user stats record from MMKV storage
    */
-  async deleteUserStats(statsId: string): Promise<void> {
-    await this.database.write(async () => {
-      const userStats = await this.userStatsCollection.find(statsId);
-      await userStats.markAsDeleted();
-      await userStats.destroyPermanently();
-    });
+  deleteUserStats(): void {
+    preferencesStorage.remove(this.STORAGE_KEY);
   }
 }
 
