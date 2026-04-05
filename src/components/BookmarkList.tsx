@@ -1,5 +1,5 @@
-import { View, Text, FlatList, TouchableOpacity, Alert } from 'react-native';
-import React, { use, useEffect } from 'react';
+import { View, Text, TouchableOpacity, Alert } from 'react-native';
+import React, { useEffect } from 'react';
 import { Bookmark } from '@epubjs-react-native/core';
 import Fontisto from '@expo/vector-icons/Fontisto';
 import { colors } from '@/src/constants';
@@ -7,10 +7,6 @@ import { useBookmarksStore } from '@/src/store';
 import Animated from 'react-native-reanimated';
 import EmptyStateView from '@/src/components/EmptyStateView';
 import { images } from '@/assets';
-
-type BookmarkListProps = {
-  bookmarks: Bookmark[];
-};
 
 const BookmarkList = () => {
   // const [items, setItems] = React.useState<Bookmark[]>(bookmarks);

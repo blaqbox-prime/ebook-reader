@@ -3,12 +3,7 @@ import { watermelondb } from '@/src/data';
 import { Book } from '@/src/data/watermelondb/models';
 import { BookRepository, MetadataRepository } from '@/src/repositories';
 import { BookDetailsScreen } from '@/src/screens';
-import {
-  Redirect,
-  useLocalSearchParams,
-  useNavigation,
-  useRouter,
-} from 'expo-router';
+import { Redirect, useLocalSearchParams, useNavigation } from 'expo-router';
 import { useEffect, useState } from 'react';
 
 const BookDetails = () => {
@@ -17,10 +12,10 @@ const BookDetails = () => {
   const [loading, setLoading] = useState(true);
   const [metadata, setMetadata] = useState<any>(null);
   const navigator = useNavigation();
-  const bookRepository = new BookRepository(watermelondb);
-  const metadataRepository = new MetadataRepository(watermelondb);
 
   useEffect(() => {
+    const bookRepository = new BookRepository(watermelondb);
+    const metadataRepository = new MetadataRepository(watermelondb);
     const getBookDetails = async () => {
       let bookInfo = await bookRepository.fetchBookByUri(uri as string);
       if (bookInfo[0]) {
@@ -40,7 +35,7 @@ const BookDetails = () => {
     };
 
     getBookDetails();
-  }, [uri]);
+  }, [uri, navigator]);
 
   if (loading) return <LoadingPulse />;
 

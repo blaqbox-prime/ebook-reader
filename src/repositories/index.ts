@@ -1,3 +1,10 @@
 import MetadataRepository from './MetadataRepository';
 import BookRepository from './BookRepository';
-export { BookRepository, MetadataRepository };
+import UserStatsRepository from './UserStatsRepository';
+import SessionRepository from './SessionRepository';
+export {
+  BookRepository,
+  MetadataRepository,
+  UserStatsRepository,
+  SessionRepository,
+};

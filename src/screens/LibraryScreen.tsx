@@ -5,9 +5,7 @@ import {
   LoadingPulse,
   SearchBox,
 } from '@/src/components';
-import watermelondb from '@/src/data/watermelondb';
 import { Book } from '@/src/data/watermelondb/models';
-import BookRepository from '@/src/repositories/BookRepository';
 import BookService from '@/src/services/BookService';
 import { BookScanner } from '@/src/utils';
 import Feather from '@expo/vector-icons/Feather';
