@@ -12,14 +12,13 @@ import {
 import { useEffect, useState } from 'react';
 
 const BookDetails = () => {
-  const { uri, cover } = useLocalSearchParams();
+  const { uri } = useLocalSearchParams();
   const [book, setBook] = useState<Book>();
   const [loading, setLoading] = useState(true);
   const [metadata, setMetadata] = useState<any>(null);
   const navigator = useNavigation();
   const bookRepository = new BookRepository(watermelondb);
   const metadataRepository = new MetadataRepository(watermelondb);
-  const router = useRouter();
 
   useEffect(() => {
     const getBookDetails = async () => {
@@ -33,6 +32,8 @@ const BookDetails = () => {
           setMetadata(metadataInfo[0]);
         }
       } else {
+        // If no book found, navigate back to library
+        console.warn(`No book found with URI: ${uri}`);
         navigator.goBack();
       }
       setLoading(false);
@@ -43,10 +44,10 @@ const BookDetails = () => {
 
   if (loading) return <LoadingPulse />;
 
-  return book && metadata && !loading ? (
+  return book && !loading ? (
     <BookDetailsScreen book={book} metadata={metadata} />
   ) : (
-    <Redirect href="/(library)" />
+    <Redirect href="/(main)" />
   );
 };
 

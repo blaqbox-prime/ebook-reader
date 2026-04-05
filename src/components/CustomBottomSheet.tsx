@@ -22,80 +22,91 @@ interface BottomSheetProps {
   backgroundColor?: string;
 }
 
-const CustomBottomSheet = React.forwardRef<BottomSheetMethods, BottomSheetProps>(
-  ({ children, backgroundColor = '#ffffff' }, ref) => {
-    const translateY = useSharedValue(0);
-    const active = useSharedValue(false);
-    const context = useSharedValue({ y: 0 });
+const CustomBottomSheet = React.forwardRef<
+  BottomSheetMethods,
+  BottomSheetProps
+>(({ children, backgroundColor = '#ffffff' }, ref) => {
+  const translateY = useSharedValue(0);
+  const active = useSharedValue(false);
+  const context = useSharedValue({ y: 0 });
 
-    const scrollTo = useCallback((destination: number) => {
+  const scrollTo = useCallback(
+    (destination: number) => {
       'worklet';
       active.value = destination !== 0;
-      translateY.value = withSpring(destination, { damping: 20, stiffness: 90 });
-    }, [active, translateY]);
-
-    // Expose the scrollTo method to the parent via the ref
-    useImperativeHandle(ref, () => ({ scrollTo }), [scrollTo]);
-
-    const gesture = Gesture.Pan()
-      .onStart(() => {
-        context.value = { y: translateY.value };
-      })
-      .onUpdate((event) => {
-        translateY.value = event.translationY + context.value.y;
-        translateY.value = Math.max(translateY.value, -SCREEN_HEIGHT + 50);
-      })
-      .onEnd(() => {
-        if (translateY.value > -SCREEN_HEIGHT / 3) {
-          scrollTo(0);
-        } else if (translateY.value < -SCREEN_HEIGHT / 1.5) {
-          scrollTo(-SCREEN_HEIGHT + 50);
-        }
+      translateY.value = withSpring(destination, {
+        damping: 20,
+        stiffness: 90,
       });
+    },
+    [active, translateY]
+  );
 
-    const rBottomSheetStyle = useAnimatedStyle(() => {
-      const borderRadius = interpolate(
-        translateY.value,
-        [-SCREEN_HEIGHT + 50, -SCREEN_HEIGHT + 100],
-        [5, 25],
-        Extrapolation.CLAMP
-      );
+  // Expose the scrollTo method to the parent via the ref
+  useImperativeHandle(ref, () => ({ scrollTo }), [scrollTo]);
 
-      return {
-        borderRadius,
-        transform: [{ translateY: translateY.value }],
-      };
+  const gesture = Gesture.Pan()
+    .onStart(() => {
+      context.value = { y: translateY.value };
+    })
+    .onUpdate(event => {
+      translateY.value = event.translationY + context.value.y;
+      translateY.value = Math.max(translateY.value, -SCREEN_HEIGHT + 50);
+    })
+    .onEnd(() => {
+      if (translateY.value > -SCREEN_HEIGHT / 3) {
+        scrollTo(0);
+      } else if (translateY.value < -SCREEN_HEIGHT / 1.5) {
+        scrollTo(-SCREEN_HEIGHT + 50);
+      }
     });
 
-    const rBackdropStyle = useAnimatedStyle(() => {
-      return {
-        opacity: interpolate(
-          translateY.value,
-          [0, -SCREEN_HEIGHT / 2],
-          [0, 1],
-          Extrapolation.CLAMP
-        ),
-      };
-    });
-
-    return (
-      <>
-        <Animated.View
-          style={[styles.backdrop, rBackdropStyle]}
-          onTouchStart={() => scrollTo(0)}
-        />
-        <GestureDetector gesture={gesture}>
-          <Animated.View 
-            style={[styles.sheetContainer, { backgroundColor }, rBottomSheetStyle]}
-          >
-            <View style={styles.handle} />
-            <View style={styles.content}>{children}</View>
-          </Animated.View>
-        </GestureDetector>
-      </>
+  const rBottomSheetStyle = useAnimatedStyle(() => {
+    const borderRadius = interpolate(
+      translateY.value,
+      [-SCREEN_HEIGHT + 50, -SCREEN_HEIGHT + 100],
+      [5, 25],
+      Extrapolation.CLAMP
     );
-  }
-);
+
+    return {
+      borderRadius,
+      transform: [{ translateY: translateY.value }],
+    };
+  });
+
+  const rBackdropStyle = useAnimatedStyle(() => {
+    return {
+      opacity: interpolate(
+        translateY.value,
+        [0, -SCREEN_HEIGHT / 2],
+        [0, 1],
+        Extrapolation.CLAMP
+      ),
+    };
+  });
+
+  return (
+    <>
+      <Animated.View
+        style={[styles.backdrop, rBackdropStyle]}
+        onTouchStart={() => scrollTo(0)}
+      />
+      <GestureDetector gesture={gesture}>
+        <Animated.View
+          style={[
+            styles.sheetContainer,
+            { backgroundColor },
+            rBottomSheetStyle,
+          ]}
+        >
+          <View style={styles.handle} />
+          <View style={styles.content}>{children}</View>
+        </Animated.View>
+      </GestureDetector>
+    </>
+  );
+});
 
 const styles = StyleSheet.create({
   sheetContainer: {
@@ -128,5 +139,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
 });
+
+CustomBottomSheet.displayName = 'CustomBottomSheet';
 
 export default CustomBottomSheet;

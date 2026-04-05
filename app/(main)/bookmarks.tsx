@@ -1,12 +1,9 @@
-import React from 'react'
-import { Text, View } from 'react-native'
+import { BookmarksScreen } from '@/src/screens';
+import React from 'react';
+import { Text, View } from 'react-native';
 
-const BookmarksScreen = () => {
-  return (
-    <View>
-      <Text>bookmarks</Text>
-    </View>
-  )
-}
+const Bookmarks = () => {
+  return <BookmarksScreen />;
+};
 
-export default BookmarksScreen
+export default Bookmarks;

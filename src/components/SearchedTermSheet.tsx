@@ -1,6 +1,5 @@
-import { View, Text, TouchableOpacity, FlatList } from 'react-native';
+import { View, Text, FlatList } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { ScrollView } from 'react-native-gesture-handler';
 import {
   Actionsheet,
   ActionsheetBackdrop,
@@ -18,7 +17,12 @@ type SearchedTermSheetProps = {
   searchTerm: string;
 };
 
-const SearchedTermSheet = ({ isOpen, handleClose, reader, searchTerm }) => {
+const SearchedTermSheet = ({
+  isOpen,
+  handleClose,
+  reader,
+  searchTerm,
+}: SearchedTermSheetProps) => {
   const {
     goToLocation,
     addAnnotation,

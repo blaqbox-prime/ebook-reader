@@ -24,8 +24,8 @@ const Library = () => {
     setLoading(true);
 
     try {
-      const repo = new BookRepository(watermelondb);
-      const dbBooks = await repo.getAllBooks();
+      const service = new BookService();
+      const dbBooks = await service.getBooks();
       setBooks(dbBooks);
     } catch (error) {
       console.log(error);
@@ -81,9 +81,9 @@ const Library = () => {
   }
 
   return (
-    <SafeAreaView className="flex flex-1 px-6 py-3 bg-app-khaki-beige-50">
+    <SafeAreaView className="flex flex-1 px-6 py-4 ">
       <View className="flex flex-row items-center justify-between">
-        <Text className="text-3xl font-lora">Library</Text>
+        <Text className="text-5xl font-lora">Library</Text>
         <View className="flex flex-row items-center gap-4">
           <TouchableOpacity onPress={handleAddBooks}>
             <Text className="text-primary">Add books</Text>

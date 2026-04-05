@@ -10,8 +10,6 @@ interface Props {
 }
 
 function Section({ searchTerm, isCurrentSection, section, onPress }: Props) {
-  const { theme } = useReader();
-
   const regex = new RegExp(`(${searchTerm})`, 'gi');
   const parts = section?.label.split(regex);
   return (

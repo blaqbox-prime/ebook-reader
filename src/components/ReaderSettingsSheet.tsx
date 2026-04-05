@@ -8,11 +8,9 @@ import {
   ActionsheetDragIndicatorWrapper,
 } from '@/components/ui/actionsheet';
 
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import BrightnessAdjuster from '@/src/components/BrightnessAdjuster';
 import FontAdjuster from '@/src/components/FontAdjuster';
 import Feather from '@expo/vector-icons/Feather';
-import { colors } from '@/src/constants';
 import SearchBox from '@/src/components/SearchBox';
 import SearchedTermSheet from '@/src/components/SearchedTermSheet';
 
@@ -35,16 +33,7 @@ const ReaderSettingsSheet = ({
     setResultsOpen(true);
   };
 
-  const {
-    searchResults,
-    goToLocation,
-    search,
-    clearSearchResults,
-    isSearching,
-    addAnnotation,
-    removeAnnotationByCfi,
-    theme,
-  } = reader;
+  const { search } = reader;
 
   return (
     <>

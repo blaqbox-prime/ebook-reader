@@ -59,6 +59,12 @@ class BookRepository {
       .fetch();
   }
 
+  async fetchFavoriteBooks(): Promise<Book[]> {
+    return await this.booksCollection
+      .query(Q.where('is_favorite', Q.eq(true)))
+      .fetch();
+  }
+
   async fetchBooksByDateAdded(order: Q.SortOrder) {
     return await this.booksCollection
       .query(Q.sortBy('created_at', order))
