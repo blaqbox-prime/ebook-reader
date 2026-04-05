@@ -12,7 +12,7 @@ export const home_tab_items = [
     iconName: 'bookmark',
   },
   {
-    name: 'profile',
+    name: 'profile/index',
     iconName: 'user',
   },
 ];

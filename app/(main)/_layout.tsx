@@ -18,16 +18,19 @@ const _layout = () => {
           justifyContent: 'center',
         },
         tabBarStyle: {
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
           backgroundColor: colors.graphite[800],
           borderRadius: 50,
           marginHorizontal: 24,
           marginBottom: 24,
           position: 'absolute',
-          paddingVertical: 10,
-          width: '60%',
-          transform: [{ translateX: '25%' }],
+          width: '70%',
+          transform: [{ translateX: '15%' }],
           // left: '50%',
-          height: 60, // Ensures proper vertical alignment
+          height: 80, // Ensures proper vertical alignment
         },
       }}
     >
@@ -37,7 +40,7 @@ const _layout = () => {
           name={item.name}
           options={{
             tabBarIcon: ({ color, size }) => (
-              <Feather name={item.iconName as any} size={size} color={color} />
+              <Feather name={item.iconName as any} size={28} color={color} />
             ),
           }}
         />
