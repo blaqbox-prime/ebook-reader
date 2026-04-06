@@ -32,13 +32,14 @@ class UserStatsRepository {
     totalXp: number;
     currentStreak: number;
     longestStreak: number;
-    lastReadAt: Date;
+    lastReadAt?: Date;
   }): UserStats {
+    const lastReadAt = stats.lastReadAt ?? new Date(0);
     const userStats = new UserStats(
       stats.totalXp,
       stats.currentStreak,
       stats.longestStreak,
-      stats.lastReadAt
+      lastReadAt
     );
     preferencesStorage.set(
       this.STORAGE_KEY,

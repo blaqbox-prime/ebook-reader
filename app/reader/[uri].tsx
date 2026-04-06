@@ -56,7 +56,11 @@ const BookReader = () => {
 
     return () => {
       isMounted = false;
-      console.log('Stopping session on unmount:', sessionRef.current);
+      // console.log('Stopping session on unmount:', sessionRef.current);
+      const updatedSession = currentSessionService.stopSession(
+        sessionRef.current
+      );
+      console.log('Updated session after stopping:', updatedSession);
     };
   }, [uri]);
 

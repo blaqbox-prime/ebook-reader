@@ -29,7 +29,7 @@ const Profile = () => {
               {item.timeStart.toLocaleDateString()}
             </Text>
             <Text className="font-body">
-              {item.duration.toFixed(2)} seconds
+              {item.durationInMinutes.toFixed(2)} minutes
             </Text>
           </View>
         )}
