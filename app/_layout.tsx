@@ -5,7 +5,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { fonts } from '@/assets';
 import { useEffect } from 'react';
 import { ReaderProvider } from '@epubjs-react-native/core';
-
+import * as Notifications from 'expo-notifications';
 import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
 
 export default function RootLayout() {
@@ -20,6 +20,15 @@ export default function RootLayout() {
   if (!loaded && !error) {
     return null;
   }
+
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowBanner: true, // Show the banner at the top
+      shouldShowList: true, // Show in notification tray
+      shouldPlaySound: true,
+      shouldSetBadge: false,
+    }),
+  });
 
   return (
     <GluestackUIProvider mode="dark">

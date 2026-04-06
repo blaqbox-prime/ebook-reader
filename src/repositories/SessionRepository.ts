@@ -2,6 +2,11 @@ import { Collection, Database, Q } from '@nozbe/watermelondb';
 import { ReadingSession } from '@/src/data/watermelondb/models';
 
 class SessionRepository {
+  fetchSessionById /**
+   * Creates a new reading session record
+   */(id: string) {
+    return this.sessionsCollection.find(id);
+  }
   private database: Database;
   private sessionsCollection: Collection<ReadingSession>;
 
@@ -66,14 +71,8 @@ class SessionRepository {
   ): Promise<ReadingSession[]> {
     return await this.sessionsCollection
       .query(
-        Q.where(
-          'time_start_at',
-          Q.gte(start.toTemporalInstant().epochMilliseconds)
-        ),
-        Q.where(
-          'time_end_at',
-          Q.lte(end.toTemporalInstant().epochMilliseconds)
-        ),
+        Q.where('time_start_at', Q.gte(start.getTime())),
+        Q.where('time_start_at', Q.lt(end.getTime())),
         Q.sortBy('time_start_at', Q.desc)
       )
       .fetch();
@@ -82,12 +81,11 @@ class SessionRepository {
   /*
   Update Sesson End Time
 */
-  async updateSession(id: string, arg1: { timeEnd: Date }): Promise<void> {
+  async updateSession(id: string, timeEnd: Date): Promise<void> {
     await this.database.write(async () => {
       const session = await this.sessionsCollection.find(id);
-      session.timeEnd = arg1.timeEnd;
       await session.update(session => {
-        session.timeEnd = arg1.timeEnd;
+        session.timeEnd = timeEnd;
       });
     });
   }

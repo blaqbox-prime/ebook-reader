@@ -1,5 +1,5 @@
 import { Model } from '@nozbe/watermelondb';
-import { date, field } from '@nozbe/watermelondb/decorators';
+import { date, field, writer } from '@nozbe/watermelondb/decorators';
 
 class ReadingSession extends Model {
   static table = 'reading_sessions';
@@ -26,6 +26,12 @@ class ReadingSession extends Model {
    */
   get durationInHours(): number {
     return this.duration / (1000 * 60 * 60);
+  }
+
+  @writer async updateEndTime(endTime: Date) {
+    await this.update(record => {
+      record.timeEnd = endTime;
+    });
   }
 }
 
