@@ -9,18 +9,17 @@ import NewAdded from '@/src/components/NewAdded';
 
 const HomeScreen = () => {
   return (
-    <SafeAreaView className=" bg-white px-6 py-4 flex-1">
+    <SafeAreaView className="px-6 py-4 flex-1">
       <ScrollView showsVerticalScrollIndicator={false}>
         <Greeting />
         {/* Search */}
         <SearchBox onChangeText={() => {}} className="my-8" />
-        {/* Reading Goals & Streak */}
-        <View className=" h-40 w-full flex-row justify-between gap-2">
+        {/* Streak Summary */}
+        <StreakSummary />
+        {/* Reading Goals */}
+        <View className=" h-20 w-full flex-row items-center gap-2">
           {/* Minutes Read Today */}
           <MinutesReadToday />
-          {/* Streak Summary */}
-          <StreakSummary />
-          {/* Streak Summary */}
           <XPSummary />
         </View>
         {/* Continue Reading */}

@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import React, { useEffect } from 'react';
 import Feather from '@expo/vector-icons/Feather';
 import { colors } from '@/src/constants';
@@ -35,25 +35,27 @@ const MinutesReadToday = () => {
 
   useEffect(() => {
     fetchDailyRead();
-  }, []);
+  });
 
   return (
-    <TouchableOpacity className="bg-app-deep-mocha-600 h-full flex-1 overflow-hidden relative items-center justify-center rounded-2xl">
+    <TouchableOpacity className="bg-app-golden-apricot-100 h-full flex-1 flex-row overflow-hidden relative items-center justify-between p-4 rounded-2xl w-3/5">
+      <View>
+        <Text className="text-app-khaki-beige-900 text-5xl font-heading">
+          {todayMinutesRead.toFixed(0)}
+        </Text>
+        <Text className="text-app-khaki-beige-900 font-lato-bold text-sm opacity-50">
+          {hasReadToday
+            ? 'Goal reached for today 🏆'
+            : `${Math.max(0, 5 - todayMinutesRead).toFixed(0)} Min To Your Daily Goal`}
+        </Text>
+      </View>
+
       <Feather
         name="clock"
-        size={80}
+        size={30}
         color={colors['khaki-beige'][800]}
-        className="absolute -top-5 -right-5 opacity-25"
+        className="mr-3"
       />
-      <Text className="text-white text-5xl font-heading">
-        {todayMinutesRead.toFixed(0)}
-      </Text>
-      <Text className="text-app-khaki-beige-100 font-heading">
-        Minutes Read Today
-      </Text>
-      <Text className="text-app-khaki-beige-100 font-heading mt-2">
-        {hasReadToday ? 'Goal reached today' : 'Read 5+ minutes today'}
-      </Text>
     </TouchableOpacity>
   );
 };
