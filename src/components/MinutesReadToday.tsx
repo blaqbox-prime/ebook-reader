@@ -1,5 +1,5 @@
 import { Text, TouchableOpacity, View } from 'react-native';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import Feather from '@expo/vector-icons/Feather';
 import { colors } from '@/src/constants';
 import { useUserStatsStore } from '@/src/store/userStatsStore';
@@ -16,7 +16,7 @@ const MinutesReadToday = () => {
     setLongestStreak,
   } = useUserStatsStore();
 
-  const fetchDailyRead = async () => {
+  const fetchDailyRead = useCallback(async () => {
     const sessionService = new SessionTrackingService();
     const statsService = new UserStatsService();
 
@@ -31,11 +31,16 @@ const MinutesReadToday = () => {
       setCurrentStreak(updatedStats.currentStreak);
       setLongestStreak(updatedStats.longestStreak);
     }
-  };
+  }, [
+    setTodayMinutesRead,
+    setHasReadToday,
+    setCurrentStreak,
+    setLongestStreak,
+  ]);
 
   useEffect(() => {
     fetchDailyRead();
-  });
+  }, [fetchDailyRead]);
 
   return (
     <TouchableOpacity className="bg-app-golden-apricot-100 h-full flex-1 flex-row overflow-hidden relative items-center justify-between p-4 rounded-2xl w-3/5">

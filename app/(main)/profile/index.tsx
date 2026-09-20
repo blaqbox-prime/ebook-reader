@@ -7,15 +7,18 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 const Profile = () => {
   const [sessions, setSessions] = React.useState<ReadingSession[]>([]);
 
-  const fetchSessions = async () => {
-    const service: SessionTrackingService = new SessionTrackingService();
-    const allSessions = await service.getAllSessions();
-    setSessions(allSessions);
-  };
-
   useEffect(() => {
+    let isMounted = true;
+    const fetchSessions = async () => {
+      const service: SessionTrackingService = new SessionTrackingService();
+      const allSessions = await service.getAllSessions();
+      if (isMounted) setSessions(allSessions);
+    };
     fetchSessions();
-  });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (
     <SafeAreaView className="mx-8">

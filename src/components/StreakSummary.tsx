@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text } from 'react-native';
 import React from 'react';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useUserStatsStore } from '@/src/store/userStatsStore';

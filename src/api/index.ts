@@ -1,3 +1,5 @@
+import { GoogleBooksMetadata } from '@/src/types/book.types';
+
 const booksApiUrl = 'https://www.googleapis.com/books/v1/volumes?q=';
 
 export const fetchGoogleBookMetadata = async (

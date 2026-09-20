@@ -2,34 +2,12 @@ import * as FileSystem from 'expo-file-system';
 import JSZip from 'jszip';
 import { DOMParser } from 'xmldom';
 import xpath from 'xpath';
-
-// Standard EPUB interfaces
-export interface EPUBMetadata {
-  [key: string]: string | undefined;
-}
-
-export interface ManifestItem {
-  href: string;
-  mediaType: string;
-}
-
-export interface SpineItem {
-  id: string;
-  href: string;
-}
-
-export interface ParsedEPUB {
-  metadata: EPUBMetadata;
-  spine: SpineItem[];
-  manifest: { [id: string]: ManifestItem };
-}
-
-export interface Chapter {
-  index: number;
-  id: string;
-  href: string;
-  content: string;
-}
+import {
+  EPUBMetadata,
+  ManifestItem,
+  ParsedEPUB,
+  SpineItem,
+} from '@/src/types/epub.types';
 
 class EPUBParser {
   private zip: JSZip | null = null;

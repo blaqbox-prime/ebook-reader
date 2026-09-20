@@ -2,16 +2,7 @@ import * as FileSystem from 'expo-file-system';
 import { Alert } from 'react-native';
 import EPUBParser from './EPUBParser';
 import * as DocumentPicker from 'expo-document-picker';
-
-export interface BookFile {
-  name: string;
-  uri: string;
-  lastModified: number;
-  size: number;
-  coverImage: string | null;
-  author: string;
-  title: string;
-}
+import { BookFile } from '@/src/types/book.types';
 
 class BookScanner {
   // Legacy paths are strings

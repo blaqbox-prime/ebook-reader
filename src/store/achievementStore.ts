@@ -1,14 +1,14 @@
 // stores/achievementStore.ts
 import { create } from 'zustand';
-import { preferencesStorage } from '@/src/data/mmkv/preferencesStorage';
 import UserStats from '@/src/Models/UserStats';
 import { Achievement } from '@/src/types/achievement.types';
 import ReadingSession from '@/src/Models/ReadingSession';
 import { ACHIEVEMENT_DEFINITIONS } from '@/src/lib/achievements.config';
 import UserStatsRepository from '@/src/repositories/UserStatsRepository';
+import UserStatsService from '@/src/services/UserStatsService';
 
-const storage = preferencesStorage;
 const userStatsRepository = new UserStatsRepository();
+const userStatsService = new UserStatsService();
 
 interface AchievementStore {
   userStats: UserStats;
@@ -16,7 +16,7 @@ interface AchievementStore {
 
   // Actions
   initializeAchievements: () => void;
-  processReadingSession: (session: ReadingSession) => void;
+  processReadingSession: (session: ReadingSession) => Promise<void>;
   clearNewlyUnlocked: () => void;
   getTotalPoints: () => number;
   getAchievementsByCategory: (
@@ -46,7 +46,18 @@ export const useAchievementStore = create<AchievementStore>((set, get) => ({
     const savedProgress = userStatsRepository.getUserStats();
 
     if (savedProgress) {
-      set({ userStats: savedProgress });
+      // Backfill any achievement definitions absent from the saved record so
+      // the engine keeps working regardless of which system wrote first
+      const savedAchievements = savedProgress.achievements ?? {};
+      const achievements: Record<string, Achievement> = {};
+      ACHIEVEMENT_DEFINITIONS.forEach(def => {
+        achievements[def.id] = savedAchievements[def.id] ?? {
+          ...def,
+          isUnlocked: false,
+        };
+      });
+
+      set({ userStats: { ...savedProgress, achievements } });
     } else {
       // Initialize all achievements as locked
       const achievements: Record<string, Achievement> = {};
@@ -62,12 +73,12 @@ export const useAchievementStore = create<AchievementStore>((set, get) => ({
         achievements,
       };
 
-      userStatsRepository.updateUserStats(progress);
+      userStatsRepository.createUserStats(progress);
       set({ userStats: progress });
     }
   },
 
-  processReadingSession: (session: ReadingSession) => {
+  processReadingSession: async (session: ReadingSession) => {
     const { userStats: userProgress } = get();
     const newlyUnlocked: Achievement[] = [];
 
@@ -85,14 +96,15 @@ export const useAchievementStore = create<AchievementStore>((set, get) => ({
       updatedProgress.totalBooksCompleted += 1;
     }
 
-    // Update streak (simplified - in production, use proper date logic)
-    updatedProgress.currentStreak = calculateStreak(
-      session.timeEnd.toISOString()
+    // Refresh streak through the shared stats service so the UI and the
+    // achievement engine stay in sync
+    const streakStats = await userStatsService.refreshDailyStreak(
+      session.durationInMinutes
     );
-    updatedProgress.longestStreak = Math.max(
-      updatedProgress.longestStreak,
-      updatedProgress.currentStreak
-    );
+    if (streakStats) {
+      updatedProgress.currentStreak = streakStats.currentStreak;
+      updatedProgress.longestStreak = streakStats.longestStreak;
+    }
 
     // Check all achievements
     Object.values(updatedProgress.achievements).forEach(achievement => {
@@ -115,8 +127,8 @@ export const useAchievementStore = create<AchievementStore>((set, get) => ({
       }
     });
 
-    // Save to storage
-    storage.set('user_stats', JSON.stringify(updatedProgress));
+    // Save to storage via the repository (single source of truth)
+    userStatsRepository.updateUserStats(updatedProgress);
 
     // Update state
     set({
@@ -144,12 +156,11 @@ export const useAchievementStore = create<AchievementStore>((set, get) => ({
   },
 
   resetProgress: () => {
-    storage.remove('user_stats');
+    userStatsRepository.deleteUserStats();
     get().initializeAchievements();
   },
 }));
 
-// Helper Functions
 function checkAchievementCondition(
   achievement: Achievement,
   progress: UserStats
@@ -173,38 +184,4 @@ function checkAchievementCondition(
     default:
       return false;
   }
-}
-
-function calculateStreak(sessionEndDate: string): number {
-  // Simplified streak calculation
-  // In production, implement proper logic with date comparisons
-  const lastSession = storage.getString('lastSessionDate');
-  const today = new Date(sessionEndDate).toDateString();
-
-  if (!lastSession) {
-    storage.set('lastSessionDate', today);
-    storage.set('currentStreak', '1');
-    return 1;
-  }
-
-  const lastDate = new Date(lastSession);
-  const currentDate = new Date(sessionEndDate);
-  const diffTime = Math.abs(currentDate.getTime() - lastDate.getTime());
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-  let streak = parseInt(storage.getString('currentStreak') || '1');
-
-  if (diffDays === 1) {
-    // Consecutive day
-    streak += 1;
-  } else if (diffDays > 1) {
-    // Streak broken
-    streak = 1;
-  }
-  // Same day reading doesn't change streak
-
-  storage.set('lastSessionDate', today);
-  storage.set('currentStreak', streak.toString());
-
-  return streak;
 }

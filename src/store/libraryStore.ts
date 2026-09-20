@@ -29,7 +29,7 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
       const dbBooks = await bookService.getBooks();
       set({ books: dbBooks, allBooks: dbBooks });
     } catch (error) {
-      console.log(error);
+      console.error(error);
     } finally {
       set({ loading: false });
     }
@@ -56,7 +56,7 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
       await bookService.saveScannedBooksWithMetadata(addedBooks);
       await get().fetchBooks();
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   },
 
@@ -67,7 +67,7 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
       await bookService.saveScannedBooksWithMetadata(scannedBooks);
       await get().fetchBooks();
     } catch (error) {
-      console.log(error);
+      console.error(error);
     } finally {
       set({ refreshing: false });
     }

@@ -1,5 +1,5 @@
 // components/AchievementUnlockModal.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Modal,
   View,
@@ -25,19 +25,12 @@ export const AchievementUnlockModal: React.FC<AchievementUnlockModalProps> = ({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [visible, setVisible] = useState(false);
 
-  // Animations
-  const scaleAnim = new Animated.Value(0);
-  const fadeAnim = new Animated.Value(0);
-  const confettiAnim = new Animated.Value(0);
+  // Animations (stable across renders)
+  const scaleAnim = useRef(new Animated.Value(0)).current;
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const confettiAnim = useRef(new Animated.Value(0)).current;
 
-  useEffect(() => {
-    if (achievements.length > 0) {
-      setVisible(true);
-      playAnimation();
-    }
-  }, [achievements]);
-
-  const playAnimation = () => {
+  const playAnimation = useCallback(() => {
     // Reset animations
     scaleAnim.setValue(0);
     fadeAnim.setValue(0);
@@ -62,7 +55,14 @@ export const AchievementUnlockModal: React.FC<AchievementUnlockModalProps> = ({
         useNativeDriver: true,
       }),
     ]).start();
-  };
+  }, [scaleAnim, fadeAnim, confettiAnim]);
+
+  useEffect(() => {
+    if (achievements.length > 0) {
+      setVisible(true);
+      playAnimation();
+    }
+  }, [achievements, playAnimation]);
 
   const handleNext = () => {
     if (currentIndex < achievements.length - 1) {

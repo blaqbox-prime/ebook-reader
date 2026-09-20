@@ -79,8 +79,8 @@ class NotificationsService {
 
   async refreshDailyReminder(hasReadToday: boolean): Promise<void> {
     if (hasReadToday) {
+      // User already read today: no reminder needed
       await this.cancelDailyReadingReminder();
-      await this.scheduleDailyReadingReminder();
       return;
     }
 

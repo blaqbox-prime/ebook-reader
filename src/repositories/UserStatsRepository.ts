@@ -1,6 +1,5 @@
 import UserStats from '@/src/Models/UserStats';
 import { preferencesStorage } from '@/src/data/mmkv/preferencesStorage';
-import { Achievement } from '@/src/types/achievement.types';
 
 class UserStatsRepository {
   private readonly STORAGE_KEY = 'user_stats';
@@ -35,41 +34,40 @@ class UserStatsRepository {
    * Creates a new user stats record in MMKV storage
    */
   createUserStats(stats: Partial<UserStats>): UserStats {
-    const lastReadAt = stats.lastReadAt ?? new Date(0);
-    const userStats = stats as UserStats;
-    userStats.lastReadAt = lastReadAt;
+    const userStats: UserStats = {
+      totalXp: stats.totalXp ?? 0,
+      currentStreak: stats.currentStreak ?? 0,
+      longestStreak: stats.longestStreak ?? 0,
+      lastReadAt: stats.lastReadAt ?? new Date(0),
+      totalPagesRead: stats.totalPagesRead ?? 0,
+      totalBooksCompleted: stats.totalBooksCompleted ?? 0,
+      totalReadingTime: stats.totalReadingTime ?? 0,
+      fastestBookCompletion: stats.fastestBookCompletion ?? Infinity,
+      achievements: stats.achievements ?? {},
+    };
 
-    preferencesStorage.set(
-      this.STORAGE_KEY,
-      JSON.stringify({
-        ...userStats,
-        lastReadAt: userStats.lastReadAt.toISOString(),
-      })
-    );
+    this.persist(userStats);
     return userStats;
   }
 
   /**
-   * Updates the user stats record in MMKV storage
+   * Updates the user stats record in MMKV storage, merging into the current
+   * record so no fields are lost.
    */
   updateUserStats(updates: Partial<UserStats>): UserStats | null {
-    const currentStats: UserStats | null = this.getUserStats();
+    const currentStats = this.getUserStats();
     if (!currentStats) {
       return null;
     }
 
-    const updatedStats = { currentStats, ...updates } as UserStats;
+    const updatedStats: UserStats = {
+      ...currentStats,
+      ...updates,
+      lastReadAt: updates.lastReadAt ?? currentStats.lastReadAt,
+      achievements: updates.achievements ?? currentStats.achievements,
+    };
 
-    preferencesStorage.set(
-      this.STORAGE_KEY,
-      JSON.stringify({
-        totalXp: updatedStats.totalXp,
-        currentStreak: updatedStats.currentStreak,
-        longestStreak: updatedStats.longestStreak,
-        lastReadAt: updatedStats.lastReadAt.toISOString(),
-      })
-    );
-
+    this.persist(updatedStats);
     return updatedStats;
   }
 
@@ -78,6 +76,16 @@ class UserStatsRepository {
    */
   deleteUserStats(): void {
     preferencesStorage.remove(this.STORAGE_KEY);
+  }
+
+  private persist(stats: UserStats): void {
+    preferencesStorage.set(
+      this.STORAGE_KEY,
+      JSON.stringify({
+        ...stats,
+        lastReadAt: stats.lastReadAt.toISOString(),
+      })
+    );
   }
 }
 
