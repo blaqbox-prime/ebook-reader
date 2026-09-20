@@ -1,5 +1,6 @@
 import UserStats from '@/src/Models/UserStats';
 import { preferencesStorage } from '@/src/data/mmkv/preferencesStorage';
+import { Achievement } from '@/src/types/achievement.types';
 
 class UserStatsRepository {
   private readonly STORAGE_KEY = 'user_stats';
@@ -18,7 +19,12 @@ class UserStatsRepository {
         data.totalXp,
         data.currentStreak,
         data.longestStreak,
-        new Date(data.lastReadAt)
+        new Date(data.lastReadAt),
+        data.totalPagesRead,
+        data.totalBooksCompleted,
+        data.totalReadingTime,
+        data.fastestBookCompletion,
+        data.achievements
       );
     } catch {
       return null;
@@ -28,25 +34,15 @@ class UserStatsRepository {
   /**
    * Creates a new user stats record in MMKV storage
    */
-  createUserStats(stats: {
-    totalXp: number;
-    currentStreak: number;
-    longestStreak: number;
-    lastReadAt?: Date;
-  }): UserStats {
+  createUserStats(stats: Partial<UserStats>): UserStats {
     const lastReadAt = stats.lastReadAt ?? new Date(0);
-    const userStats = new UserStats(
-      stats.totalXp,
-      stats.currentStreak,
-      stats.longestStreak,
-      lastReadAt
-    );
+    const userStats = stats as UserStats;
+    userStats.lastReadAt = lastReadAt;
+
     preferencesStorage.set(
       this.STORAGE_KEY,
       JSON.stringify({
-        totalXp: userStats.totalXp,
-        currentStreak: userStats.currentStreak,
-        longestStreak: userStats.longestStreak,
+        ...userStats,
         lastReadAt: userStats.lastReadAt.toISOString(),
       })
     );
@@ -56,25 +52,13 @@ class UserStatsRepository {
   /**
    * Updates the user stats record in MMKV storage
    */
-  updateUserStats(
-    updates: Partial<{
-      totalXp: number;
-      currentStreak: number;
-      longestStreak: number;
-      lastReadAt: Date;
-    }>
-  ): UserStats | null {
-    const currentStats = this.getUserStats();
+  updateUserStats(updates: Partial<UserStats>): UserStats | null {
+    const currentStats: UserStats | null = this.getUserStats();
     if (!currentStats) {
       return null;
     }
 
-    const updatedStats = new UserStats(
-      updates.totalXp ?? currentStats.totalXp,
-      updates.currentStreak ?? currentStats.currentStreak,
-      updates.longestStreak ?? currentStats.longestStreak,
-      updates.lastReadAt ?? currentStats.lastReadAt
-    );
+    const updatedStats = { currentStats, ...updates } as UserStats;
 
     preferencesStorage.set(
       this.STORAGE_KEY,
