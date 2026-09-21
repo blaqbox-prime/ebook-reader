@@ -20,7 +20,11 @@ const FontAdjuster = ({ reader }: FontAdjusterProps) => {
 
     const newTheme = {
       ...reader.theme,
-      body: { 'font-size': px + ' !important', 'line-height': '2.4rem' },
+      body: {
+        ...reader.theme.body,
+        'font-size': px + ' !important',
+        'line-height': '2.4rem',
+      },
     };
 
     reader.changeTheme(newTheme);

@@ -15,15 +15,15 @@ class UserStatsRepository {
     try {
       const data = JSON.parse(statsJson);
       return new UserStats(
-        data.totalXp,
-        data.currentStreak,
-        data.longestStreak,
-        new Date(data.lastReadAt),
-        data.totalPagesRead,
-        data.totalBooksCompleted,
-        data.totalReadingTime,
-        data.fastestBookCompletion,
-        data.achievements
+        data.totalXp ?? 0,
+        data.currentStreak ?? 0,
+        data.longestStreak ?? 0,
+        data.lastReadAt ? new Date(data.lastReadAt) : new Date(0),
+        data.totalPagesRead ?? 0,
+        data.totalBooksCompleted ?? 0,
+        data.totalReadingTime ?? 0,
+        data.fastestBookCompletion ?? Infinity,
+        data.achievements ?? {}
       );
     } catch {
       return null;

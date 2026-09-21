@@ -21,21 +21,23 @@ class MetadataRepository {
     uri: string,
     metadata: GoogleBooksMetadata
   ): Promise<Metadata> {
-    return this.metadataCollection.create(m => {
-      m.title = metadata.title;
-      m.bookUri = uri;
-      m.subtitle = metadata.subtitle;
-      m.author = metadata.author;
-      m.publisher = metadata.publisher;
-      m.language = metadata.language;
-      m.publishedDate = metadata.publishedDate
-        ? new Date(metadata.publishedDate)
-        : undefined;
-      m.description = metadata.description;
-      m.pageCount = metadata.pageCount;
-      m.categories = metadata.categories;
-      m.coverImage = metadata.coverImage;
-    });
+    return this.database.write(async () =>
+      this.metadataCollection.create(m => {
+        m.title = metadata.title;
+        m.bookUri = uri;
+        m.subtitle = metadata.subtitle;
+        m.author = metadata.author;
+        m.publisher = metadata.publisher;
+        m.language = metadata.language;
+        m.publishedDate = metadata.publishedDate
+          ? new Date(metadata.publishedDate)
+          : undefined;
+        m.description = metadata.description;
+        m.pageCount = metadata.pageCount;
+        m.categories = metadata.categories;
+        m.coverImage = metadata.coverImage;
+      })
+    );
   }
 
   /**

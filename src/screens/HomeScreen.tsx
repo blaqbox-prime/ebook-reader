@@ -1,5 +1,5 @@
 import { View, ScrollView } from 'react-native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   ContinueReadingList,
@@ -16,8 +16,14 @@ import { images } from '@/assets';
 import { useNavigation } from '@react-navigation/native';
 
 const HomeScreen = () => {
-  const { books } = useLibraryStore();
+  const { books, loading, fetchBooks } = useLibraryStore();
+  const [hydrated, setHydrated] = useState(false);
   const nav = useNavigation();
+
+  useEffect(() => {
+    fetchBooks().finally(() => setHydrated(true));
+  }, [fetchBooks]);
+
   return (
     <SafeAreaView className="px-6 py-4 flex-1">
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -37,14 +43,14 @@ const HomeScreen = () => {
         {/* Newly Added */}
         <NewAdded />
 
-        {books.length === 0 && (
+        {hydrated && !loading && books.length === 0 && (
           <EmptyStateView
             image={images.book_lover}
             message="Your Library is empty. Add books and start reading"
             showButton={true}
             buttonText="Start Reading"
             buttonAction={() => {
-              nav.navigate('(Library)' as never);
+              nav.navigate('(library)' as never);
             }}
           />
         )}

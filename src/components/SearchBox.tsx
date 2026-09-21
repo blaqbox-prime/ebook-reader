@@ -1,6 +1,6 @@
 import Feather from '@expo/vector-icons/Feather';
 import { TextInput, View } from 'react-native';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import _ from 'lodash';
 
 type SearchBoxProps = {
@@ -17,6 +17,11 @@ const SearchBox = ({
   const debouncedOnChangeText = useMemo(
     () => _.debounce(onChangeText, 300),
     [onChangeText]
+  );
+
+  useEffect(
+    () => () => debouncedOnChangeText.cancel(),
+    [debouncedOnChangeText]
   );
 
   return (

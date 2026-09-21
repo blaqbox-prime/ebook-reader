@@ -31,6 +31,8 @@ const BookDetails = () => {
           console.warn(`No book found with URI: ${uri}`);
           navigator.goBack();
         }
+      } catch (error) {
+        console.error('Error loading book details:', error);
       } finally {
         if (isMounted) setLoading(false);
       }

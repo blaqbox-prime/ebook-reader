@@ -104,6 +104,7 @@ export const useAchievementStore = create<AchievementStore>((set, get) => ({
     if (streakStats) {
       updatedProgress.currentStreak = streakStats.currentStreak;
       updatedProgress.longestStreak = streakStats.longestStreak;
+      updatedProgress.lastReadAt = streakStats.lastReadAt;
     }
 
     // Check all achievements
