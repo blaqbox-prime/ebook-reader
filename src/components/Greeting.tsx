@@ -7,9 +7,11 @@ const greeting: string = `Good ${time > 17 ? 'Evening' : time > 11 ? 'Afternoon'
 
 const Greeting = () => {
   return (
-    <View className="mt-10">
-      <Text className="text-5xl font-heading w-3/4 mb-2">{greeting}</Text>
-      <Text className="text-xl text-gray-400 font-lato-regular">
+    <View className="flex flex-col">
+      <Text className="font-heading text-5xl text-m3-primary leading-[3rem] tracking-wider max-w-[90%]">
+        {greeting}
+      </Text>
+      <Text className="font-lato-regular text-sm text-m3-on-surface-variant leading-5 mt-1">
         What are we reading today?
       </Text>
     </View>

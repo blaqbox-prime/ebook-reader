@@ -1,8 +1,8 @@
 import { images } from '@/assets';
 import { Book } from '@/src/data/watermelondb/models';
 import { useRouter } from 'expo-router';
-import { Dimensions, Image, Text, TouchableOpacity, View } from 'react-native';
-import Animated from 'react-native-reanimated';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 
 const BookTileWide = ({
   book,
@@ -11,8 +11,6 @@ const BookTileWide = ({
   book: Book;
   showProgress: boolean;
 }) => {
-  const { width } = Dimensions.get('screen');
-  const _width = width * 0.79;
   const router = useRouter();
 
   const handleReadBook = () => {
@@ -23,37 +21,66 @@ const BookTileWide = ({
     });
   };
 
+  const progress = Math.round(book.progress);
+
   return (
-    <TouchableOpacity
-      onPress={handleReadBook}
-      className="flex-row gap-4 p-4  rounded-2xl border-2 border-gray-50"
-      style={{ height: 150, width: _width }}
-    >
-      <Image
-        source={book.coverImage ? { uri: book.coverImage } : images.cover}
-        resizeMode="cover"
-        className={`h-[120px] w-[100px] rounded-xl`}
-      />
-      <View className="w-1/2 py-2">
-        <Text numberOfLines={2} className="font-body font-bold text-xl">
-          {book.title}
-        </Text>
-        <Text numberOfLines={1} className="font-heading text-gray-500">
-          {book.author}
-        </Text>
-        {showProgress && (
-          <>
-            <View className="w-full h-[4px] rounded-full bg-slate-300 mt-6">
-              <Animated.View
-                className="bg-app-khaki-beige-700 h-1 rounded-full"
-                style={{ width: `${book.progress}%` }}
-              ></Animated.View>
+    <View className="bg-m3-surface-low rounded-xl p-4 shadow-sm">
+      <TouchableOpacity
+        onPress={handleReadBook}
+        className="flex-row gap-4 items-start"
+      >
+        <Image
+          source={book.coverImage ? { uri: book.coverImage } : images.cover}
+          resizeMode="cover"
+          className="w-20 h-28 rounded-lg"
+        />
+        <View className="flex-1 min-w-0 h-28 justify-between">
+          <View className="min-w-0">
+            <Text
+              numberOfLines={1}
+              className="text-base leading-6 text-m3-on-surface font-bold"
+            >
+              {book.title}
+            </Text>
+            <Text
+              numberOfLines={1}
+              className="text-[12px] leading-4 text-m3-on-surface-variant mt-0.5"
+            >
+              {book.author}
+            </Text>
+          </View>
+          {showProgress && (
+            <View className="flex-row items-center justify-between gap-2 pt-2">
+              <View className="flex-1 min-w-0 mr-2">
+                <View className="flex-row justify-between items-center mb-1">
+                  <Text className="text-[11px] leading-4 text-m3-outline">
+                    Progress
+                  </Text>
+                  <Text className="text-[11px] leading-4 text-m3-primary font-bold">
+                    {progress}%
+                  </Text>
+                </View>
+                <View className="w-full bg-m3-secondary-container h-2 rounded-full overflow-hidden">
+                  <View
+                    className="bg-m3-primary h-full rounded-full"
+                    style={{ width: `${progress}%` }}
+                  />
+                </View>
+              </View>
+              <TouchableOpacity
+                onPress={handleReadBook}
+                className="h-10 px-4 rounded-full bg-m3-primary flex-row items-center justify-center gap-1 shadow-sm"
+              >
+                <MaterialIcons name="play-arrow" size={18} color="#ffffff" />
+                <Text className="text-[14px] leading-5 text-m3-on-primary font-semibold">
+                  Continue
+                </Text>
+              </TouchableOpacity>
             </View>
-            <Text className="text-sm mt-2 text-app-khaki-beige-700">{`${book.progress}% completed`}</Text>
-          </>
-        )}
-      </View>
-    </TouchableOpacity>
+          )}
+        </View>
+      </TouchableOpacity>
+    </View>
   );
 };
 

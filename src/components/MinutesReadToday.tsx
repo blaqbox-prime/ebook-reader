@@ -1,10 +1,11 @@
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, View } from 'react-native';
 import React, { useCallback, useEffect } from 'react';
-import Feather from '@expo/vector-icons/Feather';
-import { colors } from '@/src/constants';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useUserStatsStore } from '@/src/store/userStatsStore';
 import SessionTrackingService from '@/src/services/SessionTrackingService';
 import UserStatsService from '@/src/services/UserStatsService';
+
+const DAILY_GOAL_MINUTES = 5;
 
 const MinutesReadToday = () => {
   const {
@@ -21,12 +22,15 @@ const MinutesReadToday = () => {
     const statsService = new UserStatsService();
 
     const todayMinutes = await sessionService.getTotalDurationTodayInMinutes();
-    const readGoalMet = todayMinutes >= 5;
+    const readGoalMet = todayMinutes >= DAILY_GOAL_MINUTES;
 
     setTodayMinutesRead(todayMinutes);
     setHasReadToday(readGoalMet);
 
-    const updatedStats = await statsService.refreshDailyStreak(todayMinutes, 5);
+    const updatedStats = await statsService.refreshDailyStreak(
+      todayMinutes,
+      DAILY_GOAL_MINUTES
+    );
     if (updatedStats) {
       setCurrentStreak(updatedStats.currentStreak);
       setLongestStreak(updatedStats.longestStreak);
@@ -42,26 +46,43 @@ const MinutesReadToday = () => {
     fetchDailyRead();
   }, [fetchDailyRead]);
 
+  const goalProgress = Math.min(
+    100,
+    (todayMinutesRead / DAILY_GOAL_MINUTES) * 100
+  );
+
   return (
-    <TouchableOpacity className="bg-app-golden-apricot-100 h-full flex-1 flex-row overflow-hidden relative items-center justify-between p-4 rounded-2xl w-3/5">
-      <View>
-        <Text className="text-app-khaki-beige-900 text-5xl font-heading">
-          {todayMinutesRead.toFixed(0)}
-        </Text>
-        <Text className="text-app-khaki-beige-900 font-lato-bold text-sm opacity-50">
-          {hasReadToday
-            ? 'Goal reached for today 🏆'
-            : `${Math.max(0, 5 - todayMinutesRead).toFixed(0)} Min To Your Daily Goal`}
+    <View className="flex-1 bg-m3-surface-low rounded-xl p-4 shadow-sm">
+      <View className="flex-row items-center justify-between">
+        <MaterialIcons name="schedule" size={20} color="#5c2d00" />
+        <Text className="text-[11px] leading-4 text-m3-on-surface-variant font-bold tracking-wide">
+          GOAL
         </Text>
       </View>
-
-      <Feather
-        name="clock"
-        size={30}
-        color={colors['khaki-beige'][800]}
-        className="mr-3"
-      />
-    </TouchableOpacity>
+      <View className="my-1">
+        <View className="flex-row items-baseline">
+          <Text className="text-base leading-6 text-m3-on-surface font-bold">
+            {todayMinutesRead.toFixed(0)}
+          </Text>
+          <Text className="text-[12px] leading-4 text-m3-outline ml-0.5">
+            /{DAILY_GOAL_MINUTES}m
+          </Text>
+        </View>
+        <View className="w-full bg-m3-secondary-container h-1.5 rounded-full mt-1.5 overflow-hidden">
+          <View
+            className="bg-m3-primary h-full rounded-full"
+            style={{ width: `${goalProgress}%` }}
+          />
+        </View>
+      </View>
+      <View className="pt-1">
+        <Text className="text-[11px] leading-4 text-m3-outline">
+          {hasReadToday
+            ? 'Goal reached for today 🏆'
+            : `${Math.max(0, DAILY_GOAL_MINUTES - todayMinutesRead).toFixed(0)}m to daily goal`}
+        </Text>
+      </View>
+    </View>
   );
 };
 

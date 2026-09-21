@@ -4,23 +4,29 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useUserStatsStore } from '@/src/store/userStatsStore';
 
 const StreakSummary = () => {
-  const { currentStreak } = useUserStatsStore();
+  const { currentStreak, longestStreak } = useUserStatsStore();
 
   return (
-    <View className="shadow-md bg-app-taupe-grey-50 shadow-app-taupe-grey-300 h-36 flex-1 overflow-hidden relative justify-center rounded-2xl mb-4 p-8">
-      <View className="absolute top-7 right-8 ">
-        <MaterialIcons
-          name="local-fire-department"
-          size={90}
-          color={`rgba(255, 69, 0, ${Math.min(1, 0.2 + currentStreak * 0.1)})`}
-        />
+    <View className="flex-1 bg-m3-surface-low rounded-xl p-4 shadow-sm">
+      <View className="flex-row items-center justify-between">
+        <MaterialIcons name="local-fire-department" size={22} color="#7c4100" />
+        <Text className="text-[11px] leading-4 text-m3-on-surface-variant font-bold tracking-wide">
+          STREAK
+        </Text>
       </View>
-      <Text className="text-app-deep-mocha-950 text-5xl font-heading">
-        {currentStreak}
-      </Text>
-      <Text className="text-app-deep-mocha-950 font-heading text-3xl">
-        Daily Streak
-      </Text>
+      <View className="my-1">
+        <Text className="font-heading text-[28px] leading-9 text-m3-primary font-bold tracking-tight">
+          {currentStreak}
+        </Text>
+        <Text className="text-[12px] leading-4 text-m3-on-surface">
+          Daily Streak
+        </Text>
+      </View>
+      <View className="pt-1">
+        <Text className="text-[11px] leading-4 text-m3-outline">
+          Best: {longestStreak} days
+        </Text>
+      </View>
     </View>
   );
 };

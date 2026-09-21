@@ -1,6 +1,5 @@
-import { View, Text } from 'react-native';
+import { View, Text, FlatList } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import Animated from 'react-native-reanimated';
 import BookTile from '@/src/components/BookTile';
 import { Book } from '@/src/data/watermelondb/models';
 import BookService from '@/src/services/BookService';
@@ -23,18 +22,32 @@ const NewAdded = () => {
   if (loading) return null;
   if (data.length === 0) return null;
   return (
-    <View className="my-10">
-      <Text className="font-body font-bold text-2xl mb-2">Newly Added</Text>
+    <View className="flex flex-col">
+      <View className="flex-row items-center justify-between mb-3">
+        <Text className="font-heading text-[22px] leading-7 text-m3-primary">
+          Newly Added
+        </Text>
+        <Text className="text-[12px] leading-4 text-m3-outline">
+          {data.length} books
+        </Text>
+      </View>
 
-      <Animated.FlatList
+      <FlatList
         data={data}
         renderItem={({ item }) => (
-          <View className="w-[200px] p-2">
-            <BookTile key={item.uri} book={item} />
+          <View style={{ width: 128 }}>
+            <BookTile
+              key={item.uri}
+              book={item}
+              coverWidth={128}
+              coverHeight={192}
+              showFormatBadge={true}
+            />
           </View>
         )}
         horizontal
-        contentContainerStyle={{ gap: 12 }}
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ gap: 12, paddingHorizontal: 4 }}
       />
     </View>
   );
