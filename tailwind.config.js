@@ -254,6 +254,7 @@ module.exports = {
         'm3-on-surface': '#1b1c1a',
         'm3-on-surface-variant': '#52443b',
         'm3-outline': '#857469',
+        'm3-error': '#ba1a1a',
       },
       fontFamily: {
         heading: ['Lora'],
