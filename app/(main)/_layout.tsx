@@ -1,8 +1,9 @@
-import { colors } from '@/src/constants';
+import { m3 } from '@/src/constants';
 import { home_tab_items } from '@/src/constants/data';
 import Feather from '@expo/vector-icons/Feather';
 import { Tabs } from 'expo-router';
 import React from 'react';
+import { View } from 'react-native';
 
 const _layout = () => {
   return (
@@ -10,10 +11,7 @@ const _layout = () => {
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
-        tabBarActiveTintColor: colors.graphite[100],
-        tabBarInactiveTintColor: colors.graphite[700],
         tabBarItemStyle: {
-          marginTop: 10,
           alignItems: 'center',
           justifyContent: 'center',
         },
@@ -22,15 +20,20 @@ const _layout = () => {
           flexDirection: 'row',
           justifyContent: 'space-between',
           alignItems: 'center',
-          backgroundColor: colors.graphite[800],
+          backgroundColor: m3['surface-low'],
           borderRadius: 50,
           marginHorizontal: 24,
           marginBottom: 24,
           position: 'absolute',
           width: '70%',
-          transform: [{ translateX: '15%' }],
-          // left: '50%',
-          height: 80, // Ensures proper vertical alignment
+          left: '15%',
+          height: 72,
+          paddingHorizontal: 8,
+          shadowColor: '#000000',
+          shadowOpacity: 0.08,
+          shadowOffset: { width: 0, height: 4 },
+          shadowRadius: 12,
+          elevation: 6,
         },
       }}
     >
@@ -39,8 +42,23 @@ const _layout = () => {
           key={item.name}
           name={item.name}
           options={{
-            tabBarIcon: ({ color, size }) => (
-              <Feather name={item.iconName} size={28} color={color} />
+            tabBarIcon: ({ focused }) => (
+              <View
+                style={{
+                  paddingHorizontal: 14,
+                  paddingVertical: 8,
+                  borderRadius: 999,
+                  backgroundColor: focused
+                    ? m3['secondary-container']
+                    : 'transparent',
+                }}
+              >
+                <Feather
+                  name={item.iconName}
+                  size={26}
+                  color={focused ? m3.primary : m3['on-surface-variant']}
+                />
+              </View>
             ),
           }}
         />

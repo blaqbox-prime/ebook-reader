@@ -67,3 +67,13 @@ const colors = {
 };
 
 export { colors };
+
+const m3 = {
+  primary: '#5c2d00',
+  'on-surface-variant': '#52443b',
+  'secondary-container': '#f9dfb3',
+  surface: '#fbf9f6',
+  'surface-low': '#f5f3f0',
+};
+
+export { m3 };
