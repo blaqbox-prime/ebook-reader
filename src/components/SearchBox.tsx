@@ -1,4 +1,4 @@
-import Feather from '@expo/vector-icons/Feather';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { TextInput, View } from 'react-native';
 import { useEffect, useMemo } from 'react';
 import _ from 'lodash';
@@ -12,7 +12,7 @@ type SearchBoxProps = {
 const SearchBox = ({
   onChangeText,
   className,
-  placeholder = 'Search book title...',
+  placeholder = 'Search title, author, or genre...',
 }: SearchBoxProps) => {
   const debouncedOnChangeText = useMemo(
     () => _.debounce(onChangeText, 300),
@@ -26,14 +26,18 @@ const SearchBox = ({
 
   return (
     <View
-      className={`bg-app-ash-brown-400 w-full py-2 px-4 rounded-full flex-row gap-3 items-center ${className}`}
+      className={`bg-m3-surface-high rounded-full h-14 px-4 flex-row items-center shadow-sm ${className}`}
     >
-      <Feather name="search" size={22} color="white" />
+      <MaterialIcons name="search" size={24} color="#5c2d00" className="mr-2" />
       <TextInput
         placeholder={placeholder}
-        className="text-white placeholder:text-white flex-1 py-2"
+        placeholderTextColor="#857469"
+        className="flex-1 py-1 text-m3-on-surface font-lato-regular text-base leading-5"
         onChangeText={text => debouncedOnChangeText(text)}
       />
+      <View className="w-9 h-9 items-center justify-center rounded-full">
+        <MaterialIcons name="mic" size={20} color="#52443b" />
+      </View>
     </View>
   );
 };
