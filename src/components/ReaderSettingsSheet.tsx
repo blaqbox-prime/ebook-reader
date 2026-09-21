@@ -13,11 +13,12 @@ import FontAdjuster from '@/src/components/FontAdjuster';
 import Feather from '@expo/vector-icons/Feather';
 import SearchBox from '@/src/components/SearchBox';
 import SearchedTermSheet from '@/src/components/SearchedTermSheet';
+import { ReaderContext } from '@/src/types/reader.types';
 
 type ReaderSettingsSheetProps = {
   isOpen: boolean;
   handleClose: () => void;
-  reader: any;
+  reader: ReaderContext;
 };
 
 const ReaderSettingsSheet = ({

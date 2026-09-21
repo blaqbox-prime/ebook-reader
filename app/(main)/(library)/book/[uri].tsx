@@ -1,7 +1,6 @@
 import { LoadingPulse } from '@/src/components';
-import { watermelondb } from '@/src/data';
-import { Book } from '@/src/data/watermelondb/models';
-import { BookRepository, MetadataRepository } from '@/src/repositories';
+import { Book, Metadata } from '@/src/data/watermelondb/models';
+import BookService from '@/src/services/BookService';
 import { BookDetailsScreen } from '@/src/screens';
 import { Redirect, useLocalSearchParams, useNavigation } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -10,31 +9,39 @@ const BookDetails = () => {
   const { uri } = useLocalSearchParams();
   const [book, setBook] = useState<Book>();
   const [loading, setLoading] = useState(true);
-  const [metadata, setMetadata] = useState<any>(null);
+  const [metadata, setMetadata] = useState<Metadata | null>(null);
   const navigator = useNavigation();
 
   useEffect(() => {
-    const bookRepository = new BookRepository(watermelondb);
-    const metadataRepository = new MetadataRepository(watermelondb);
+    let isMounted = true;
+    const service = new BookService();
     const getBookDetails = async () => {
-      let bookInfo = await bookRepository.fetchBookByUri(uri as string);
-      if (bookInfo[0]) {
-        setBook(bookInfo[0]);
-        let metadataInfo = await metadataRepository.fetchMetadataByUri(
-          uri as string
-        );
-        if (metadataInfo[0]) {
-          setMetadata(metadataInfo[0]);
+      try {
+        const [bookInfo, metadataInfo] = await Promise.all([
+          service.getBookByUri(uri as string),
+          service.getMetadataByUri(uri as string),
+        ]);
+        if (bookInfo) {
+          if (isMounted) {
+            setBook(bookInfo);
+            setMetadata(metadataInfo ?? null);
+          }
+        } else {
+          // If no book found, navigate back to library
+          console.warn(`No book found with URI: ${uri}`);
+          navigator.goBack();
         }
-      } else {
-        // If no book found, navigate back to library
-        console.warn(`No book found with URI: ${uri}`);
-        navigator.goBack();
+      } catch (error) {
+        console.error('Error loading book details:', error);
+      } finally {
+        if (isMounted) setLoading(false);
       }
-      setLoading(false);
     };
 
     getBookDetails();
+    return () => {
+      isMounted = false;
+    };
   }, [uri, navigator]);
 
   if (loading) return <LoadingPulse />;

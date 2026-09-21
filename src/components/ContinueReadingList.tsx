@@ -22,7 +22,7 @@ const ContinueReadingList = () => {
   }, []);
 
   if (loading) return null;
-
+  if (data.length === 0) return null;
   return (
     <View className="mt-10">
       <Text className="font-body font-bold text-2xl mb-2">

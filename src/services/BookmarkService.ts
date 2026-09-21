@@ -1,8 +1,9 @@
 import { preferencesStorage } from '@/src/data';
 import { Bookmark } from '@epubjs-react-native/core';
+import { BookmarkWithContext } from '@/src/types/reader.types';
 
 class BookmarkService {
-  private bookmarks: Bookmark[] = [];
+  private bookmarks: BookmarkWithContext[] = [];
   private storageKey = 'bookmarks';
   private storage = preferencesStorage;
 
@@ -14,9 +15,12 @@ class BookmarkService {
   }
 
   addBookmark = (bookmark: Bookmark, bookUri: string, bookTitle: string) => {
-    (bookmark as any).bookUri = bookUri;
-    (bookmark as any).bookTitle = bookTitle;
-    this.bookmarks.push(bookmark);
+    const bookmarkWithContext: BookmarkWithContext = {
+      ...bookmark,
+      bookUri,
+      bookTitle,
+    };
+    this.bookmarks.push(bookmarkWithContext);
     this.storage.set(this.storageKey, JSON.stringify(this.bookmarks));
   };
 
@@ -25,7 +29,7 @@ class BookmarkService {
   };
 
   removeBookmark = (bookmark: Bookmark) => {
-    this.bookmarks = this.bookmarks.filter(b => b !== bookmark);
+    this.bookmarks = this.bookmarks.filter(b => b.id !== bookmark.id);
     this.storage.set(this.storageKey, JSON.stringify(this.bookmarks));
   };
 
@@ -35,7 +39,7 @@ class BookmarkService {
   };
 
   isBookmarked = (bookmark: Bookmark) => {
-    return this.bookmarks.includes(bookmark);
+    return this.bookmarks.some(b => b.id === bookmark.id);
   };
 
   getBookmarkCount = () => {
@@ -43,9 +47,7 @@ class BookmarkService {
   };
 
   getBookmarksByBookUri = (bookUri: string) => {
-    return this.bookmarks.filter(
-      (bookmark: Bookmark) => (bookmark as any).bookUri === bookUri
-    );
+    return this.bookmarks.filter(bookmark => bookmark.bookUri === bookUri);
   };
 
   isEmpty = () => {

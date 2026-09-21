@@ -1,11 +1,11 @@
 import { View, Text, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Themes } from '@epubjs-react-native/core';
 import { colors } from '@/src/constants';
+import { ReaderContext } from '@/src/types/reader.types';
 
 type FontAdjusterProps = {
-  reader: any;
+  reader: ReaderContext;
 };
 
 type FontSizes = 'small' | 'medium' | 'large';
@@ -13,22 +13,22 @@ type FontSizes = 'small' | 'medium' | 'large';
 const FontAdjuster = ({ reader }: FontAdjusterProps) => {
   const [fontSize, setFontSize] = useState<FontSizes>('medium');
 
-  const handleSelectFontSize = async (size: FontSizes) => {
+  const handleSelectFontSize = (size: FontSizes) => {
     let px = '28px';
     if (size === 'small') px = '22px';
     if (size === 'large') px = '32px';
 
-    const THEMES = Object.values(Themes).slice(0, 2);
-
-    const index = Object.values(THEMES).indexOf(reader.theme);
     const newTheme = {
-      ...THEMES[index],
-      body: { 'font-size': px + ' !important', 'line-height': '2.4rem' },
+      ...reader.theme,
+      body: {
+        ...reader.theme.body,
+        'font-size': px + ' !important',
+        'line-height': '2.4rem',
+      },
     };
 
     reader.changeTheme(newTheme);
     setFontSize(size);
-    // await AsyncStorage.setItem('readerTheme', JSON.stringify(newTheme));
   };
   return (
     <View className="flex-row items-center justify-center gap-16 my-4 ">

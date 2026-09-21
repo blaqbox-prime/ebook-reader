@@ -8,12 +8,12 @@ import {
 import React, { useState } from 'react';
 import { images } from '@/assets';
 import Feather from '@expo/vector-icons/Feather';
+import Fontisto from '@expo/vector-icons/Fontisto';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import BookmarkButton from '@/src/components/BookmarkButton';
-import { Themes } from '@epubjs-react-native/core';
+import { ReaderContext } from '@/src/types/reader.types';
+import { getCurrentThemeIndex } from '@/src/utils/readerTheme';
 const ICON_SIZE = 20;
 
-const THEMES = Object.values(Themes).slice(0, 2);
 const ReaderOptionsFAB = ({
   showFab = false,
   reader,
@@ -23,9 +23,9 @@ const ReaderOptionsFAB = ({
 }: {
   toggleToc: () => void;
   toggleReaderSettings: () => void;
-  switchTheme: any;
+  switchTheme: () => void;
   showFab: boolean;
-  reader: any;
+  reader: ReaderContext;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const toggleOpen = () => setIsOpen(prev => !prev);
@@ -37,7 +37,7 @@ const ReaderOptionsFAB = ({
     getCurrentLocation,
   } = reader;
 
-  const index = Object.values(THEMES).indexOf(reader.theme);
+  const index = getCurrentThemeIndex(reader.theme);
 
   // Backdrops
   const Backdrop = () => (
@@ -48,14 +48,12 @@ const ReaderOptionsFAB = ({
 
   // Toggling Bookmark
   const handleChangeBookmark = () => {
-    console.info('handleChangeBookmark');
     const location = getCurrentLocation();
-    console.log(location, isBookmarked, bookmarks);
     if (!location) return;
 
     if (isBookmarked) {
       const bookmark = bookmarks.find(
-        (item: any) =>
+        item =>
           item.location.start.cfi === location?.start.cfi &&
           item.location.end.cfi === location?.end.cfi
       );
@@ -75,7 +73,11 @@ const ReaderOptionsFAB = ({
       },
     },
     {
-      icon: <BookmarkButton isBookmarked={isBookmarked} />,
+      icon: isBookmarked ? (
+        <Fontisto name="bookmark-alt" size={20} color={'black'} />
+      ) : (
+        <Fontisto name="bookmark" size={20} color={'black'} />
+      ),
       label: `${isBookmarked ? 'Remove' : 'Add'} Bookmark`,
       action: () => {
         handleChangeBookmark();

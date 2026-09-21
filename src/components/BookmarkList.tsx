@@ -1,12 +1,12 @@
 import { View, Text, TouchableOpacity, Alert } from 'react-native';
 import React, { useEffect } from 'react';
-import { Bookmark } from '@epubjs-react-native/core';
 import Fontisto from '@expo/vector-icons/Fontisto';
 import { colors } from '@/src/constants';
 import { useBookmarksStore } from '@/src/store';
 import Animated from 'react-native-reanimated';
 import EmptyStateView from '@/src/components/EmptyStateView';
 import { images } from '@/assets';
+import { BookmarkWithContext } from '@/src/types/reader.types';
 
 const BookmarkList = () => {
   // const [items, setItems] = React.useState<Bookmark[]>(bookmarks);
@@ -23,7 +23,7 @@ const BookmarkList = () => {
     setRefreshing(false);
   };
 
-  const handleDeleteBookmark = (bookmark: Bookmark) => {
+  const handleDeleteBookmark = (bookmark: BookmarkWithContext) => {
     Alert.alert(
       'Delete Bookmark',
       'Are you sure you want to delete this bookmark?',
@@ -67,7 +67,7 @@ const BookmarkList = () => {
       }
       refreshing={refreshing}
       onRefresh={handleRefresh}
-      renderItem={({ item }: { item: any }) => {
+      renderItem={({ item }: { item: BookmarkWithContext }) => {
         return (
           <View className="px-4 py-2 flex-row gap-4 items-center">
             <TouchableOpacity className="flex-1">

@@ -1,5 +1,6 @@
 import { Metadata } from '@/src/data/watermelondb/models';
 import { Collection, Database, Q } from '@nozbe/watermelondb';
+import { GoogleBooksMetadata } from '@/src/types/book.types';
 
 class MetadataRepository {
   private database: Database;
@@ -20,21 +21,23 @@ class MetadataRepository {
     uri: string,
     metadata: GoogleBooksMetadata
   ): Promise<Metadata> {
-    return await this.database.write(async () => {
-      const newMetadata = this.metadataCollection.prepareCreate(m => {
+    return this.database.write(async () =>
+      this.metadataCollection.create(m => {
         m.title = metadata.title;
         m.bookUri = uri;
         m.subtitle = metadata.subtitle;
         m.author = metadata.author;
         m.publisher = metadata.publisher;
         m.language = metadata.language;
-        m.publishedDate = metadata.publishedDate;
+        m.publishedDate = metadata.publishedDate
+          ? new Date(metadata.publishedDate)
+          : undefined;
         m.description = metadata.description;
         m.pageCount = metadata.pageCount;
         m.categories = metadata.categories;
-      });
-      return newMetadata;
-    });
+        m.coverImage = metadata.coverImage;
+      })
+    );
   }
 
   /**
@@ -50,10 +53,13 @@ class MetadataRepository {
           m.author = metadata.author;
           m.publisher = metadata.publisher;
           m.language = metadata.language;
-          m.publishedDate = metadata.publishedDate;
+          m.publishedDate = metadata.publishedDate
+            ? new Date(metadata.publishedDate)
+            : undefined;
           m.description = metadata.description;
           m.pageCount = metadata.pageCount;
           m.categories = metadata.categories;
+          m.coverImage = metadata.coverImage;
         })
       );
       await this.database.batch(...creations);

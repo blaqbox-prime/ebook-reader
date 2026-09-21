@@ -40,7 +40,7 @@ const _layout = () => {
           name={item.name}
           options={{
             tabBarIcon: ({ color, size }) => (
-              <Feather name={item.iconName as any} size={28} color={color} />
+              <Feather name={item.iconName} size={28} color={color} />
             ),
           }}
         />

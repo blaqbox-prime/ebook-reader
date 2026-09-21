@@ -26,7 +26,6 @@ const BrightnessAdjuster = () => {
   }, [permissionStatus, currentBrightness]);
 
   const updateBrightness = async (value: number) => {
-    console.log('Update brightness to ' + value);
     await Brightness.setSystemBrightnessAsync(value);
     setBrightness(value);
   };

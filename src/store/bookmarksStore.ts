@@ -1,16 +1,17 @@
 import { create } from 'zustand';
 import { Bookmark } from '@epubjs-react-native/core';
 import BookmarkService from '@/src/services/BookmarkService';
+import { BookmarkWithContext } from '@/src/types/reader.types';
 
 interface BookmarksState {
-  bookmarks: Bookmark[];
+  bookmarks: BookmarkWithContext[];
   addBookmark: (bookmark: Bookmark, bookUri: string, bookTitle: string) => void;
   removeBookmark: (bookmark: Bookmark) => void;
   clearBookmarks: () => void;
-  getBookmarks: () => Bookmark[];
-  isBookmarked: (bookmark: Bookmark) => boolean;
+  getBookmarks: () => BookmarkWithContext[];
+  isBookmarked: (bookmark: BookmarkWithContext) => boolean;
   getBookmarkCount: () => number;
-  getBookmarksByBookUri: (bookUri: string) => Bookmark[];
+  getBookmarksByBookUri: (bookUri: string) => BookmarkWithContext[];
   loadBookmarks: () => void;
 }
 
@@ -36,7 +37,8 @@ export const useBookmarksStore = create<BookmarksState>((set, get) => ({
 
   getBookmarks: () => get().bookmarks,
 
-  isBookmarked: (bookmark: Bookmark) => bookmarkService.isBookmarked(bookmark),
+  isBookmarked: (bookmark: BookmarkWithContext) =>
+    bookmarkService.isBookmarked(bookmark),
 
   getBookmarkCount: () => bookmarkService.getBookmarkCount(),
 

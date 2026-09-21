@@ -4,15 +4,17 @@ import { ReadingSession } from '@/src/data/watermelondb/models';
 import { Database } from '@nozbe/watermelondb';
 
 class SessionTrackingService {
-  async stopSession(session: ReadingSession | null) {
-    if (!session) return;
-    this.sessionRepository
-      .updateSession(session.id, new Date())
-      .catch(error => {
-        console.error('Error stopping session:', error);
-      });
-
-    return await this.fetchSessionById(session.id);
+  async stopSession(
+    session: ReadingSession | null
+  ): Promise<ReadingSession | null> {
+    if (!session) return null;
+    try {
+      await this.sessionRepository.updateSession(session.id, new Date());
+      return await this.fetchSessionById(session.id);
+    } catch (error) {
+      console.error('Error stopping session:', error);
+      return null;
+    }
   }
   async fetchSessionById(id: string): Promise<ReadingSession | null> {
     return await this.sessionRepository.fetchSessionById(id);

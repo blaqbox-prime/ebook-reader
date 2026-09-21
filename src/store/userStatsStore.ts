@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { watermelondb } from '@/src/data';
 import SessionTrackingService from '@/src/services/SessionTrackingService';
 import UserStatsService from '@/src/services/UserStatsService';
+import _ from 'lodash';
 
 interface UserStatsState {
   totalMinutesRead: number;
@@ -64,12 +65,15 @@ export const useUserStatsStore = create<UserStatsState>((set, get) => {
     }
   };
 
+  // Debounce updates triggered by session changes to avoid query storms
+  const scheduledUpdateStats = _.debounce(updateStats, 400);
+
   // Subscribe to changes in reading_sessions table
   sessionsCollection
     .query()
     .observeWithColumns(['time_start_at', 'time_end_at'])
     .subscribe(() => {
-      updateStats();
+      scheduledUpdateStats();
     });
 
   return {
