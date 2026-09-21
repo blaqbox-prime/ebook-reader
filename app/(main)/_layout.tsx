@@ -26,8 +26,8 @@ const _layout = () => {
           marginBottom: 24,
           position: 'absolute',
           width: '70%',
-          left: '15%',
-          height: 72,
+          transformOrigin: 'center',
+          height: 64,
           paddingHorizontal: 8,
           shadowColor: '#000000',
           shadowOpacity: 0.08,
@@ -45,8 +45,8 @@ const _layout = () => {
             tabBarIcon: ({ focused }) => (
               <View
                 style={{
-                  paddingHorizontal: 14,
-                  paddingVertical: 8,
+                  paddingHorizontal: 7,
+                  paddingVertical: 4,
                   borderRadius: 999,
                   backgroundColor: focused
                     ? m3['secondary-container']
@@ -55,7 +55,7 @@ const _layout = () => {
               >
                 <Feather
                   name={item.iconName}
-                  size={26}
+                  size={18}
                   color={focused ? m3.primary : m3['on-surface-variant']}
                 />
               </View>

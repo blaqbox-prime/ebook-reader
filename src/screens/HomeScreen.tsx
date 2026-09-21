@@ -105,6 +105,7 @@ const HomeScreen = () => {
             />
           )}
         </View>
+        <View className="h-16 w-full"></View>
       </ScrollView>
     </SafeAreaView>
   );
