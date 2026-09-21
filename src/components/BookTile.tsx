@@ -1,7 +1,6 @@
 import { images } from '@/assets';
 import { Book } from '@/src/data/watermelondb/models';
 import { Link } from 'expo-router';
-import { useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 type BookTileProps = {
@@ -9,7 +8,7 @@ type BookTileProps = {
 };
 
 const BookTile = ({ book }: BookTileProps) => {
-  const [cover] = useState(book.coverImage);
+  const cover = book.coverImage;
 
   return (
     <Link
@@ -20,7 +19,7 @@ const BookTile = ({ book }: BookTileProps) => {
       asChild
       key={book.uri}
     >
-      <TouchableOpacity onPress={() => {}}>
+      <TouchableOpacity>
         <View className="mb-4 w-full p-1">
           <Animated.Image
             source={cover ? { uri: cover as string } : images.cover}

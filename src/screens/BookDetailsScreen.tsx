@@ -1,4 +1,3 @@
-// import { fetchGoogleBookMetadata } from "@/api";
 import { images } from '@/assets';
 import { Book, Metadata } from '@/src/data/watermelondb/models';
 import Feather from '@expo/vector-icons/Feather';
@@ -25,8 +24,6 @@ const BookDetails = ({
       params: { uri: book.uri },
     });
   };
-
-  console.info('Progress ', book.progress);
 
   return (
     <SafeAreaView className="px-8 py-6">

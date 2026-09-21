@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import LoadingPulse from '@/src/components/LoadingPulse';
 import { Book } from '@/src/data/watermelondb/models';
-import BookmarkService from '@/src/services/BookmarkService';
-import { Reader, Themes } from '@epubjs-react-native/core';
+import { useBookmarksStore } from '@/src/store';
+import { Reader, Themes, Location } from '@epubjs-react-native/core';
 import { useFileSystem } from '@epubjs-react-native/expo-file-system';
 import { useRouter } from 'expo-router';
 import { useEffect, useRef } from 'react';
@@ -11,10 +11,11 @@ import { Alert, AppState } from 'react-native';
 // 1. Create an Inner Component to use the useReader hook
 const ReaderContent = ({ book, uri }: { book: Book | null; uri: string }) => {
   const router = useRouter();
+  const { addBookmark, removeBookmark, getBookmarksByBookUri } =
+    useBookmarksStore();
   // Use a Ref to keep track of location without re-rendering
-  const locationRef = useRef<any>(null);
+  const locationRef = useRef<Location | null>(null);
   const totalLocationsRef = useRef<number>(0);
-  const bookmarkService = new BookmarkService();
 
   const saveProgress = async () => {
     const current = locationRef.current;
@@ -53,15 +54,13 @@ const ReaderContent = ({ book, uri }: { book: Book | null; uri: string }) => {
       src={uri}
       fileSystem={useFileSystem}
       initialLocation={book.lastLocation}
-      initialBookmarks={bookmarkService.getBookmarksByBookUri(uri)}
+      initialBookmarks={getBookmarksByBookUri(uri)}
       onAddBookmark={bookmark => {
-        const service = new BookmarkService();
-        service.addBookmark(bookmark, book.uri, book.title);
+        addBookmark(bookmark, book.uri, book.title);
         Alert.alert('Bookmark Added', 'Your bookmark has been saved.');
       }}
       onRemoveBookmark={bookmark => {
-        const service = new BookmarkService();
-        service.removeBookmark(bookmark);
+        removeBookmark(bookmark);
         Alert.alert('Bookmark Removed', 'Your bookmark has been removed.');
       }}
       flow="scrolled-doc"

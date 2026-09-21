@@ -18,7 +18,12 @@ class UserStatsRepository {
         data.totalXp,
         data.currentStreak,
         data.longestStreak,
-        new Date(data.lastReadAt)
+        new Date(data.lastReadAt),
+        data.totalPagesRead,
+        data.totalBooksCompleted,
+        data.totalReadingTime,
+        data.fastestBookCompletion,
+        data.achievements
       );
     } catch {
       return null;
@@ -28,64 +33,41 @@ class UserStatsRepository {
   /**
    * Creates a new user stats record in MMKV storage
    */
-  createUserStats(stats: {
-    totalXp: number;
-    currentStreak: number;
-    longestStreak: number;
-    lastReadAt?: Date;
-  }): UserStats {
-    const lastReadAt = stats.lastReadAt ?? new Date(0);
-    const userStats = new UserStats(
-      stats.totalXp,
-      stats.currentStreak,
-      stats.longestStreak,
-      lastReadAt
-    );
-    preferencesStorage.set(
-      this.STORAGE_KEY,
-      JSON.stringify({
-        totalXp: userStats.totalXp,
-        currentStreak: userStats.currentStreak,
-        longestStreak: userStats.longestStreak,
-        lastReadAt: userStats.lastReadAt.toISOString(),
-      })
-    );
+  createUserStats(stats: Partial<UserStats>): UserStats {
+    const userStats: UserStats = {
+      totalXp: stats.totalXp ?? 0,
+      currentStreak: stats.currentStreak ?? 0,
+      longestStreak: stats.longestStreak ?? 0,
+      lastReadAt: stats.lastReadAt ?? new Date(0),
+      totalPagesRead: stats.totalPagesRead ?? 0,
+      totalBooksCompleted: stats.totalBooksCompleted ?? 0,
+      totalReadingTime: stats.totalReadingTime ?? 0,
+      fastestBookCompletion: stats.fastestBookCompletion ?? Infinity,
+      achievements: stats.achievements ?? {},
+    };
+
+    this.persist(userStats);
     return userStats;
   }
 
   /**
-   * Updates the user stats record in MMKV storage
+   * Updates the user stats record in MMKV storage, merging into the current
+   * record so no fields are lost.
    */
-  updateUserStats(
-    updates: Partial<{
-      totalXp: number;
-      currentStreak: number;
-      longestStreak: number;
-      lastReadAt: Date;
-    }>
-  ): UserStats | null {
+  updateUserStats(updates: Partial<UserStats>): UserStats | null {
     const currentStats = this.getUserStats();
     if (!currentStats) {
       return null;
     }
 
-    const updatedStats = new UserStats(
-      updates.totalXp ?? currentStats.totalXp,
-      updates.currentStreak ?? currentStats.currentStreak,
-      updates.longestStreak ?? currentStats.longestStreak,
-      updates.lastReadAt ?? currentStats.lastReadAt
-    );
+    const updatedStats: UserStats = {
+      ...currentStats,
+      ...updates,
+      lastReadAt: updates.lastReadAt ?? currentStats.lastReadAt,
+      achievements: updates.achievements ?? currentStats.achievements,
+    };
 
-    preferencesStorage.set(
-      this.STORAGE_KEY,
-      JSON.stringify({
-        totalXp: updatedStats.totalXp,
-        currentStreak: updatedStats.currentStreak,
-        longestStreak: updatedStats.longestStreak,
-        lastReadAt: updatedStats.lastReadAt.toISOString(),
-      })
-    );
-
+    this.persist(updatedStats);
     return updatedStats;
   }
 
@@ -94,6 +76,16 @@ class UserStatsRepository {
    */
   deleteUserStats(): void {
     preferencesStorage.remove(this.STORAGE_KEY);
+  }
+
+  private persist(stats: UserStats): void {
+    preferencesStorage.set(
+      this.STORAGE_KEY,
+      JSON.stringify({
+        ...stats,
+        lastReadAt: stats.lastReadAt.toISOString(),
+      })
+    );
   }
 }
 

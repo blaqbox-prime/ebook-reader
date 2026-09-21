@@ -1,8 +1,9 @@
 import { fetchGoogleBookMetadata } from '@/src/api';
 import { watermelondb } from '@/src/data';
-import { Book } from '@/src/data/watermelondb/models';
+import { Book, Metadata } from '@/src/data/watermelondb/models';
 import { BookRepository, MetadataRepository } from '@/src/repositories';
 import { Database, Q } from '@nozbe/watermelondb';
+import { BookFile, GoogleBooksMetadata } from '@/src/types/book.types';
 
 class BookService {
   private database: Database = watermelondb;
@@ -47,8 +48,6 @@ class BookService {
           (metadata): metadata is GoogleBooksMetadata => metadata !== null
         )
       );
-
-      console.log(`Successfully saved ${newFiles.length} new books.`);
     } catch (error) {
       console.error('Failed to save books to WatermelonDB:', error);
       throw error;
@@ -58,6 +57,11 @@ class BookService {
   async getBookByUri(uri: string): Promise<Book> {
     const book = await this.bookRepository.fetchBookByUri(uri);
     return book[0];
+  }
+
+  async getMetadataByUri(uri: string): Promise<Metadata | undefined> {
+    const metadata = await this.metadataRepository.fetchMetadataByUri(uri);
+    return metadata[0];
   }
 
   async getBooksinProgress(): Promise<Book[]> {

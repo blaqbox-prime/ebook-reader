@@ -9,11 +9,12 @@ import {
 } from '@/components/ui/actionsheet';
 import { SearchResult as SearchResultType } from '@epubjs-react-native/core';
 import SearchResult from '@/src/components/SearchResult';
+import { ReaderContext } from '@/src/types/reader.types';
 
 type SearchedTermSheetProps = {
   isOpen: boolean;
   handleClose: () => void;
-  reader: any;
+  reader: ReaderContext;
   searchTerm: string;
 };
 

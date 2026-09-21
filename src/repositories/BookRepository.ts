@@ -1,5 +1,6 @@
 import { Database, Q } from '@nozbe/watermelondb';
 import { Book } from '@/src/data/watermelondb/models';
+import { BookFile } from '@/src/types/book.types';
 
 class BookRepository {
   private database: Database;
@@ -29,10 +30,15 @@ class BookRepository {
     await this.database.write(async () => {
       const creations = books.map(book =>
         this.booksCollection.prepareCreate(b => {
+          const now = new Date();
           b.title = book.title;
           b.author = book.author;
           b.uri = book.uri;
           b.coverImage = book.coverImage;
+          b.lastRead = now;
+          b.progress = 0;
+          b.createdAt = now;
+          b.updatedAt = now;
         })
       );
       await this.database.batch(...creations);

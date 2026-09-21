@@ -1,4 +1,11 @@
-export const home_tab_items = [
+import Feather from '@expo/vector-icons/Feather';
+
+type HomeTabItem = {
+  name: string;
+  iconName: keyof typeof Feather.glyphMap;
+};
+
+export const home_tab_items: HomeTabItem[] = [
   {
     name: 'index',
     iconName: 'home',

@@ -6,6 +6,8 @@ import {
   ActionsheetDragIndicatorWrapper,
 } from '@/components/ui/actionsheet';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Section, Toc } from '@epubjs-react-native/core';
+import { ReaderContext } from '@/src/types/reader.types';
 
 export const TOCActionSheet = ({
   isOpen,
@@ -13,13 +15,13 @@ export const TOCActionSheet = ({
   toc,
   reader,
 }: {
-  toc: any[];
+  toc: Toc;
   isOpen: boolean;
   handleClose: () => void;
-  reader: any;
+  reader: ReaderContext;
 }) => {
-  const handleChapterSelect = (href: any) => {
-    reader.goToLocation(href.href);
+  const handleChapterSelect = (item: Section) => {
+    reader.goToLocation(item.href);
     handleClose();
   };
 

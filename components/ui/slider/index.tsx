@@ -1,9 +1,10 @@
 'use client';
 import { createSlider } from '@gluestack-ui/core/slider/creator';
-import { Pressable , View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 import React from 'react';
-import { tva ,
+import {
+  tva,
   withStyleContext,
   useStyleContext,
 } from '@gluestack-ui/utils/nativewind-utils';

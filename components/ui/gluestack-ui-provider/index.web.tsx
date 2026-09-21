@@ -27,7 +27,7 @@ export function GluestackUIProvider({
   children?: React.ReactNode;
 }) {
   let cssVariablesWithMode = ``;
-  Object.keys(config).forEach((configKey) => {
+  Object.keys(config).forEach(configKey => {
     cssVariablesWithMode +=
       configKey === 'dark' ? `\n .dark {\n ` : `\n:root {\n`;
     const cssVariables = Object.keys(

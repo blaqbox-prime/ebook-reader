@@ -1,13 +1,8 @@
-import Book from '@/src/Models/Book';
 import { Model } from '@nozbe/watermelondb';
-import { date, field, relation } from '@nozbe/watermelondb/decorators';
-import { Associations } from '@nozbe/watermelondb/Model';
+import { date, field } from '@nozbe/watermelondb/decorators';
 
 class Metadata extends Model {
   static table = 'metadata';
-  static associations: Associations = {
-    books: { type: 'belongs_to', key: 'book_uri' },
-  };
 
   @field('book_uri') bookUri?: string;
   @field('title') title?: string;
@@ -22,8 +17,6 @@ class Metadata extends Model {
   @field('cover_image') coverImage?: string;
   @date('created_at') createdAt?: Date;
   @date('updated_at') updatedAt?: Date;
-
-  @relation('books', 'book_uri') book?: Book;
 }
 
 export default Metadata;
