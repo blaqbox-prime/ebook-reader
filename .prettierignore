@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+web-build/
+coverage/
+*.tsbuildinfo
+
+# Expo
+.expo/
+expo-env.d.ts
+metro.config.js
+babel.config.js
+nativewind-env.d.ts
+
+# Native projects (generated)
+/android/
+/ios/
+
+# Generated / declaration files
+**/*.d.ts
+**/__generated__/
+
+# Lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Misc
+*.log
+.DS_Store
+.env
+.env.*
+.idea/
+.vscode/
