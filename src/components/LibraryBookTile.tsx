@@ -15,7 +15,7 @@ const LibraryBookTile = ({ book, onOptionsPress }: LibraryBookTileProps) => {
   const inProgress = progress > 0 && !finished;
 
   return (
-    <View className="bg-m3-surface-low rounded-2xl p-2.5 shadow-sm">
+    <View className="rounded-2xl p-2.5 bg-m3-surface-low">
       <Link
         href={{
           pathname: '/book/[uri]',
@@ -25,19 +25,19 @@ const LibraryBookTile = ({ book, onOptionsPress }: LibraryBookTileProps) => {
         key={book.uri}
       >
         <TouchableOpacity>
-          <View className="relative w-full">
+          <View className="relative w-full ">
             <Image
               source={book.coverImage ? { uri: book.coverImage } : images.cover}
               resizeMode="cover"
               style={{ width: '100%', aspectRatio: 2 / 3 }}
-              className="rounded-xl bg-m3-surface-container"
+              className="rounded-xl"
             />
 
             <TouchableOpacity
               onPress={() => onOptionsPress(book)}
-              className="absolute top-2 right-2 w-8 h-8 rounded-full bg-m3-surface-lowest/90 items-center justify-center shadow-sm"
+              className="absolute top-2 right-2 w-8 h-8 rounded-full bg-m3-on-surface-variant/80 items-center justify-center shadow-sm"
             >
-              <MaterialIcons name="more-vert" size={18} color="#1b1c1a" />
+              <MaterialIcons name="more-vert" size={18} color="white" />
             </TouchableOpacity>
 
             {finished && (
@@ -53,7 +53,7 @@ const LibraryBookTile = ({ book, onOptionsPress }: LibraryBookTileProps) => {
               <View className="absolute bottom-2 left-2 flex-row items-center gap-1 bg-[#26221e]/85 px-2 py-0.5 rounded-full">
                 <MaterialIcons name="auto-stories" size={12} color="#fdb37b" />
                 <Text className="text-[11px] leading-4 text-white">
-                  {book.lastLocation || 'In progress'}
+                  {'In progress'}
                 </Text>
               </View>
             )}

@@ -7,14 +7,11 @@ import {
 import { useLibraryStore, useUserStatsStore } from '@/src/store';
 import { Book } from '@/src/data/watermelondb/models';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { useNavigation } from '@react-navigation/native';
 import Feather from '@expo/vector-icons/Feather';
 import { useEffect, useState } from 'react';
 import {
   Alert,
   FlatList,
-  Image,
-  Modal,
   Text,
   TextInput,
   TouchableOpacity,
@@ -22,6 +19,13 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '@/src/components/Header';
+import {
+  Actionsheet,
+  ActionsheetBackdrop,
+  ActionsheetContent,
+  ActionsheetDragIndicator,
+  ActionsheetDragIndicatorWrapper,
+} from '@/components/ui/actionsheet';
 
 type ChipFilter = 'all' | 'in-progress' | 'finished';
 
@@ -43,7 +47,6 @@ const Library = () => {
     removeBook,
   } = useLibraryStore();
   const { todayMinutesRead, currentStreak } = useUserStatsStore();
-  const nav = useNavigation();
 
   const [query, setQuery] = useState('');
   const [activeChip, setActiveChip] = useState<ChipFilter>('all');
@@ -144,7 +147,7 @@ const Library = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-m3-surface" edges={['top']}>
+    <SafeAreaView className="flex-1 " edges={['top']}>
       <Header />
       <View className="flex-1 px-6">
         <FlatList
@@ -266,23 +269,18 @@ const Library = () => {
         />
       </View>
 
-      <Modal
-        visible={sheetBook !== null}
-        transparent
-        animationType="slide"
-        onRequestClose={closeSheet}
+      <Actionsheet
+        isOpen={sheetBook !== null}
+        onClose={closeSheet}
+        snapPoints={[35]}
       >
-        <TouchableOpacity
-          activeOpacity={1}
-          onPress={closeSheet}
-          className="flex-1 justify-end bg-black/40"
-        >
-          <TouchableOpacity
-            activeOpacity={1}
-            onPress={() => {}}
-            className="bg-m3-surface-high rounded-t-3xl px-5 pt-3 pb-8"
-          >
-            <View className="w-10 h-1 bg-m3-outline/40 rounded-full mx-auto mb-3" />
+        <ActionsheetBackdrop />
+        <ActionsheetContent className="bg-m3-surface-high px-5 pb-8 pt-3">
+          <ActionsheetDragIndicatorWrapper>
+            <ActionsheetDragIndicator className="bg-m3-outline/40" />
+          </ActionsheetDragIndicatorWrapper>
+
+          <View className="w-full">
             <View className="flex-row items-center justify-between pb-2">
               <Text
                 numberOfLines={1}
@@ -325,9 +323,9 @@ const Library = () => {
                 Remove from Device
               </Text>
             </TouchableOpacity>
-          </TouchableOpacity>
-        </TouchableOpacity>
-      </Modal>
+          </View>
+        </ActionsheetContent>
+      </Actionsheet>
     </SafeAreaView>
   );
 };
