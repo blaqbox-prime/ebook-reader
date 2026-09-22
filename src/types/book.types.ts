@@ -21,5 +21,6 @@ export interface GoogleBooksMetadata {
   averageRating?: number;
   description?: string;
   language?: string;
+  isbn?: string;
   uri?: string;
 }

@@ -35,6 +35,7 @@ class BookRepository {
           b.author = book.author;
           b.uri = book.uri;
           b.coverImage = book.coverImage;
+          b.fileSize = book.size;
           b.lastRead = now;
           b.progress = 0;
           b.createdAt = now;

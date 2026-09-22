@@ -15,6 +15,8 @@ class Metadata extends Model {
   @field('page_count') pageCount?: number;
   @field('categories') categories?: string[];
   @field('cover_image') coverImage?: string;
+  @field('average_rating') averageRating?: number;
+  @field('isbn') isbn?: string;
   @date('created_at') createdAt?: Date;
   @date('updated_at') updatedAt?: Date;
 }
