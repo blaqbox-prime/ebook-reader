@@ -1,27 +1,20 @@
-import { View, Text, TouchableOpacity, Alert } from 'react-native';
-import React, { useEffect } from 'react';
-import Fontisto from '@expo/vector-icons/Fontisto';
-import { colors } from '@/src/constants';
-import { useBookmarksStore } from '@/src/store';
-import Animated from 'react-native-reanimated';
-import EmptyStateView from '@/src/components/EmptyStateView';
-import { images } from '@/assets';
 import { BookmarkWithContext } from '@/src/types/reader.types';
+import { useBookmarksStore } from '@/src/store';
+import { Alert, View } from 'react-native';
+import BookmarkCard from '@/src/components/BookmarkCard';
 
-const BookmarkList = () => {
-  // const [items, setItems] = React.useState<Bookmark[]>(bookmarks);
-  const { bookmarks, loadBookmarks, removeBookmark } = useBookmarksStore();
-  const [refreshing, setRefreshing] = React.useState(false);
-
-  useEffect(() => {
-    loadBookmarks();
-  }, [loadBookmarks]);
-
-  const handleRefresh = () => {
-    setRefreshing(true);
-    loadBookmarks();
-    setRefreshing(false);
-  };
+const BookmarkList = ({
+  data,
+  onShare,
+  onJump,
+  onDeleted,
+}: {
+  data: BookmarkWithContext[];
+  onShare: (bookmark: BookmarkWithContext) => void;
+  onJump: (bookmark: BookmarkWithContext) => void;
+  onDeleted: (bookmark: BookmarkWithContext) => void;
+}) => {
+  const { removeBookmark } = useBookmarksStore();
 
   const handleDeleteBookmark = (bookmark: BookmarkWithContext) => {
     Alert.alert(
@@ -29,19 +22,17 @@ const BookmarkList = () => {
       'Are you sure you want to delete this bookmark?',
       [
         {
+          text: 'CANCEL',
+          onPress: () => {},
+          style: 'cancel',
+        },
+        {
           text: 'DELETE',
           onPress: () => {
             removeBookmark(bookmark);
-            Alert.alert('Bookmark Deleted', 'The bookmark has been deleted.');
+            onDeleted(bookmark);
           },
           style: 'destructive',
-        },
-        {
-          text: 'CANCEL',
-          onPress: () => {
-            Alert.alert('Cancelled', 'Bookmark deletion cancelled.');
-          },
-          style: 'cancel',
         },
       ],
       { cancelable: true }
@@ -49,50 +40,17 @@ const BookmarkList = () => {
   };
 
   return (
-    <Animated.FlatList
-      className="mt-8"
-      data={bookmarks}
-      extraData={bookmarks}
-      keyExtractor={bookmark => `${bookmark.id}`}
-      showsVerticalScrollIndicator={false}
-      ItemSeparatorComponent={() => (
-        <View className="border-b border-gray-200"></View>
-      )}
-      ListEmptyComponent={
-        <EmptyStateView
-          image={images.bookshelf}
-          message={'No bookmarks available.'}
-          showButton={false}
+    <View className="flex-col gap-3">
+      {data.map(item => (
+        <BookmarkCard
+          key={item.id}
+          bookmark={item}
+          onShare={onShare}
+          onJump={onJump}
+          onDelete={handleDeleteBookmark}
         />
-      }
-      refreshing={refreshing}
-      onRefresh={handleRefresh}
-      renderItem={({ item }: { item: BookmarkWithContext }) => {
-        return (
-          <View className="px-4 py-2 flex-row gap-4 items-center">
-            <TouchableOpacity className="flex-1">
-              <View>
-                <Text className="text-lg font-semibold mb-1 line-clamp-2">
-                  {item.bookTitle.trim() || 'Untitled'}
-                </Text>
-                <Text className="text-secondary-500 font-semibold mb-2 line-clamp-2">
-                  {item.text.trim() || 'No bookmark text'}
-                </Text>
-              </View>
-            </TouchableOpacity>
-            <View className="w-14 bg-blue h-full flex items-center justify-center">
-              <TouchableOpacity onPress={() => handleDeleteBookmark(item)}>
-                <Fontisto
-                  name="bookmark-alt"
-                  size={28}
-                  color={colors.graphite[800]}
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
-        );
-      }}
-    />
+      ))}
+    </View>
   );
 };
 

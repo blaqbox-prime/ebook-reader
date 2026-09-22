@@ -8,8 +8,15 @@ import { useRouter } from 'expo-router';
 import { useEffect, useRef } from 'react';
 import { Alert, AppState } from 'react-native';
 
-// 1. Create an Inner Component to use the useReader hook
-const ReaderContent = ({ book, uri }: { book: Book | null; uri: string }) => {
+const ReaderContent = ({
+  book,
+  uri,
+  initialLocation,
+}: {
+  book: Book | null;
+  uri: string;
+  initialLocation?: string;
+}) => {
   const router = useRouter();
   const { addBookmark, removeBookmark, getBookmarksByBookUri } =
     useBookmarksStore();
@@ -53,7 +60,7 @@ const ReaderContent = ({ book, uri }: { book: Book | null; uri: string }) => {
     <Reader
       src={uri}
       fileSystem={useFileSystem}
-      initialLocation={book.lastLocation}
+      initialLocation={initialLocation ?? book.lastLocation}
       initialBookmarks={getBookmarksByBookUri(uri)}
       onAddBookmark={bookmark => {
         addBookmark(bookmark, book.uri, book.title);
