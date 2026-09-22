@@ -12,6 +12,7 @@ interface LibraryState {
   searchBooks: (text: string) => void;
   addBooks: () => Promise<void>;
   refreshBooks: () => Promise<void>;
+  removeBook: (book: Book) => Promise<void>;
 }
 
 const bookService = new BookService();
@@ -70,6 +71,15 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
       console.error(error);
     } finally {
       set({ refreshing: false });
+    }
+  },
+
+  removeBook: async (book: Book) => {
+    try {
+      await bookService.deleteBook(book.id);
+      await get().fetchBooks();
+    } catch (error) {
+      console.error(error);
     }
   },
 }));

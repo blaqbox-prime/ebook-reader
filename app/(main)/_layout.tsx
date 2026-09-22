@@ -1,3 +1,4 @@
+import Header from '@/src/components/Header';
 import { m3 } from '@/src/constants';
 import { home_tab_items } from '@/src/constants/data';
 import Feather from '@expo/vector-icons/Feather';

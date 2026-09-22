@@ -203,17 +203,45 @@ class EPUBParser {
   async getCoverImage(): Promise<string | null> {
     if (!this.zip) throw new Error('ZIP not loaded');
 
-    // Try standard EPUB cover metadata
-    const coverId = this.metadata['cover'];
-    if (coverId && this.manifest[coverId]) {
-      const coverItem = this.manifest[coverId];
-      const coverFile = this.zip.file(coverItem.href);
+    const candidateIds = new Set<string>();
 
-      if (coverFile) {
-        const imageData = await coverFile.async('base64');
-        return `data:${coverItem.mediaType};base64,${imageData}`;
+    const coverMetaValue = this.metadata['cover'];
+    if (coverMetaValue) candidateIds.add(coverMetaValue);
+
+    const coverProperties = ['cover', 'cover-image', 'cover_image'];
+    for (const key of coverProperties) {
+      const value = this.metadata[key];
+      if (value) candidateIds.add(value);
+    }
+
+    for (const id of candidateIds) {
+      const coverItem = this.manifest[id];
+      if (coverItem && this.zip.file(coverItem.href)) {
+        const imageFile = this.zip.file(coverItem.href);
+        const imageData = imageFile ? await imageFile.async('base64') : null;
+        if (imageData) {
+          return `data:${coverItem.mediaType};base64,${imageData}`;
+        }
       }
     }
+
+    for (const [id, item] of Object.entries(this.manifest)) {
+      const isCoverCandidate =
+        id.toLowerCase().includes('cover') ||
+        item.href.toLowerCase().includes('cover') ||
+        (item.mediaType && item.mediaType.startsWith('image/'));
+
+      if (!isCoverCandidate) continue;
+
+      const imageFile = this.zip.file(item.href);
+      if (!imageFile) continue;
+
+      const imageData = await imageFile.async('base64');
+      if (imageData) {
+        return `data:${item.mediaType};base64,${imageData}`;
+      }
+    }
+
     return null;
   }
 }

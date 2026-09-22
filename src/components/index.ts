@@ -17,6 +17,7 @@ import FontAdjuster from '@/src/components/FontAdjuster';
 import Greeting from '@/src/components/Greeting';
 import ContinueReadingList from '@/src/components/ContinueReadingList';
 import BookmarkList from '@/src/components/BookmarkList';
+import LibraryBookTile from '@/src/components/LibraryBookTile';
 
 export {
   BookTile,
@@ -38,4 +39,5 @@ export {
   MinutesReadToday,
   FavoritesList,
   BookmarkList,
+  LibraryBookTile,
 };
