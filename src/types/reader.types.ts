@@ -5,4 +5,5 @@ export type ReaderContext = ReturnType<typeof useReader>;
 export type BookmarkWithContext = Bookmark & {
   bookUri: string;
   bookTitle: string;
+  createdAt?: number;
 };

@@ -11,14 +11,29 @@ class BookmarkService {
     const storedBookmarks = this.storage.getString(this.storageKey);
     if (storedBookmarks) {
       this.bookmarks = JSON.parse(storedBookmarks);
+      this.backfillCreatedAt();
     }
   }
+
+  private backfillCreatedAt = () => {
+    const now = Date.now();
+    let changed = false;
+    this.bookmarks = this.bookmarks.map((bookmark, index) => {
+      if (typeof bookmark.createdAt === 'number') return bookmark;
+      changed = true;
+      return { ...bookmark, createdAt: bookmark.id ?? now - index };
+    });
+    if (changed) {
+      this.storage.set(this.storageKey, JSON.stringify(this.bookmarks));
+    }
+  };
 
   addBookmark = (bookmark: Bookmark, bookUri: string, bookTitle: string) => {
     const bookmarkWithContext: BookmarkWithContext = {
       ...bookmark,
       bookUri,
       bookTitle,
+      createdAt: Date.now(),
     };
     this.bookmarks.push(bookmarkWithContext);
     this.storage.set(this.storageKey, JSON.stringify(this.bookmarks));

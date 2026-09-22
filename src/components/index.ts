@@ -18,6 +18,10 @@ import Greeting from '@/src/components/Greeting';
 import ContinueReadingList from '@/src/components/ContinueReadingList';
 import BookmarkList from '@/src/components/BookmarkList';
 import LibraryBookTile from '@/src/components/LibraryBookTile';
+import SegmentedTabs from '@/src/components/SegmentedTabs';
+import BookmarkCard from '@/src/components/BookmarkCard';
+import ActionToast, { ToastIconName } from '@/src/components/ActionToast';
+import Header from '@/src/components/Header';
 
 export {
   BookTile,
@@ -40,4 +44,10 @@ export {
   FavoritesList,
   BookmarkList,
   LibraryBookTile,
+  SegmentedTabs,
+  BookmarkCard,
+  ActionToast,
+  Header,
 };
+
+export type { ToastIconName };

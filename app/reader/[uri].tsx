@@ -11,7 +11,7 @@ import SessionTrackingService from '@/src/services/SessionTrackingService';
 import { getNextReaderTheme } from '@/src/utils/readerTheme';
 
 const BookReader = () => {
-  const { uri } = useLocalSearchParams();
+  const { uri, location } = useLocalSearchParams();
   const [book, setBook] = useState<Book | null>(null);
   const [isTOCVisible, setTOCVisible] = useState(false);
   const [isReaderSettingsVisible, setReaderSettingsVisible] = useState(false);
@@ -70,7 +70,11 @@ const BookReader = () => {
       className="flex flex-1 bg-white"
       style={{ backgroundColor: reader.theme.body.background }}
     >
-      <ReaderContent book={book} uri={uri as string} />
+      <ReaderContent
+        book={book}
+        uri={uri as string}
+        initialLocation={Array.isArray(location) ? location[0] : location}
+      />
       <ReaderOptionsFAB
         showFab={true}
         reader={reader}
