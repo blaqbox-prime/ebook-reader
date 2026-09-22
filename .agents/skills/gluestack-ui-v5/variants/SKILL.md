@@ -1,23 +1,31 @@
 ---
 name: gluestack-ui-v5:variants
-description: Guide for creating custom variants for gluestack-ui v5 components - covers tva usage, extending components, variant patterns, and customization strategies.
+description:
+  Guide for creating custom variants for gluestack-ui v5 components - covers tva
+  usage, extending components, variant patterns, and customization strategies.
 ---
 
 # Gluestack UI v5 — Creating Component Variants
 
-This sub-skill focuses on creating custom variants for existing gluestack-ui v5 components, allowing you to extend the design system with project-specific styling patterns while maintaining consistency and type safety.
+This sub-skill focuses on creating custom variants for existing gluestack-ui v5
+components, allowing you to extend the design system with project-specific
+styling patterns while maintaining consistency and type safety.
 
 ## When to Create a Variant
 
 Create a new variant when:
 
-1. **Repeating the same style combination** - Multiple places use the same className pattern
-2. **Project-specific design patterns** - Brand-specific button styles, card types, etc.
+1. **Repeating the same style combination** - Multiple places use the same
+   className pattern
+2. **Project-specific design patterns** - Brand-specific button styles, card
+   types, etc.
 3. **Conditional styling** - Component appearance changes based on props
-4. **Extending existing components** - Adding new visual styles to Gluestack components
+4. **Extending existing components** - Adding new visual styles to Gluestack
+   components
 5. **Theme-specific variations** - Different appearances for specific contexts
 
 **Don't create variants for:**
+
 - One-off custom styles (use className instead)
 - Simple modifications (use existing props + className)
 - Styles that should be in the global design system
@@ -41,9 +49,9 @@ Define your variant system:
 ```tsx
 // Example: Planning a Badge component with variants
 {
-  variant: ['default', 'success', 'warning', 'error', 'info']
-  size: ['sm', 'md', 'lg']
-  shape: ['rounded', 'pill', 'square']
+  variant: ['default', 'success', 'warning', 'error', 'info'];
+  size: ['sm', 'md', 'lg'];
+  shape: ['rounded', 'pill', 'square'];
 }
 ```
 
@@ -103,7 +111,7 @@ export const Badge = ({
   size,
   shape,
   className,
-  children
+  children,
 }: BadgeProps) => {
   return (
     <Box className={badgeStyles({ variant, size, shape, class: className })}>
@@ -118,6 +126,7 @@ export const Badge = ({
 ```
 
 **Key Points:**
+
 - ✅ Uses `tva` for variant management
 - ✅ Base styles apply to all variants
 - ✅ Multiple variant dimensions (variant, size, shape)
@@ -153,7 +162,16 @@ const customButtonStyles = tva({
 });
 
 interface CustomButtonProps {
-  readonly variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link' | 'gradient' | 'glass' | 'neon';
+  readonly variant?:
+    | 'default'
+    | 'destructive'
+    | 'outline'
+    | 'secondary'
+    | 'ghost'
+    | 'link'
+    | 'gradient'
+    | 'glass'
+    | 'neon';
   readonly size?: 'default' | 'sm' | 'lg' | 'icon' | 'xs' | 'xl';
   readonly className?: string;
   readonly onPress?: () => void;
@@ -170,11 +188,24 @@ export const CustomButton = ({
   children,
 }: CustomButtonProps) => {
   // Use Gluestack Button for built-in variants
-  if (['default', 'destructive', 'outline', 'secondary', 'ghost', 'link'].includes(variant)) {
+  if (
+    [
+      'default',
+      'destructive',
+      'outline',
+      'secondary',
+      'ghost',
+      'link',
+    ].includes(variant)
+  ) {
     return (
       <GluestackButton
         variant={variant as any}
-        size={['default', 'sm', 'lg', 'icon'].includes(size) ? size as any : 'default'}
+        size={
+          ['default', 'sm', 'lg', 'icon'].includes(size)
+            ? (size as any)
+            : 'default'
+        }
         onPress={onPress}
         isDisabled={isDisabled}
         className={className}
@@ -189,7 +220,11 @@ export const CustomButton = ({
     <GluestackButton
       onPress={onPress}
       isDisabled={isDisabled}
-      className={customButtonStyles({ variant: variant as any, size: size as any, class: className })}
+      className={customButtonStyles({
+        variant: variant as any,
+        size: size as any,
+        class: className,
+      })}
     >
       {children}
     </GluestackButton>
@@ -207,6 +242,7 @@ export const CustomButton = ({
 ```
 
 **Key Points:**
+
 - ✅ Extends existing component
 - ✅ Preserves original variants
 - ✅ Adds new custom variants
@@ -215,7 +251,8 @@ export const CustomButton = ({
 
 ## Parent-Child Variant Relationships
 
-When creating components with sub-components, use `parentVariants` to style children based on parent state.
+When creating components with sub-components, use `parentVariants` to style
+children based on parent state.
 
 ### Template: Card with Variant-Aware Children
 
@@ -315,7 +352,9 @@ const cardBodyStyles = tva({
 });
 
 // Context to share variant state with children
-const CardContext = React.createContext<Pick<CardProps, 'variant' | 'colorScheme'>>({
+const CardContext = React.createContext<
+  Pick<CardProps, 'variant' | 'colorScheme'>
+>({
   variant: 'default',
   colorScheme: 'neutral',
 });
@@ -324,7 +363,7 @@ export const Card = ({
   variant = 'default',
   colorScheme = 'neutral',
   className,
-  children
+  children,
 }: CardProps) => {
   return (
     <CardContext.Provider value={{ variant, colorScheme }}>
@@ -338,7 +377,12 @@ export const Card = ({
 export const CardHeader = ({ className, children }: CardHeaderProps) => {
   const { variant, colorScheme } = React.useContext(CardContext);
   return (
-    <Box className={cardHeaderStyles({ parentVariants: { variant, colorScheme }, class: className })}>
+    <Box
+      className={cardHeaderStyles({
+        parentVariants: { variant, colorScheme },
+        class: className,
+      })}
+    >
       {children}
     </Box>
   );
@@ -347,7 +391,12 @@ export const CardHeader = ({ className, children }: CardHeaderProps) => {
 export const CardBody = ({ className, children }: CardBodyProps) => {
   const { variant, colorScheme } = React.useContext(CardContext);
   return (
-    <Box className={cardBodyStyles({ parentVariants: { colorScheme }, class: className })}>
+    <Box
+      className={cardBodyStyles({
+        parentVariants: { colorScheme },
+        class: className,
+      })}
+    >
       {children}
     </Box>
   );
@@ -365,6 +414,7 @@ export const CardBody = ({ className, children }: CardBodyProps) => {
 ```
 
 **Key Points:**
+
 - ✅ Parent context shares variant state
 - ✅ Children use `parentVariants` to style based on parent
 - ✅ Compound variants for complex combinations
@@ -418,7 +468,8 @@ const actionButtonStyles = tva({
     {
       variant: 'solid',
       colorScheme: 'primary',
-      class: 'bg-primary text-primary-foreground data-[hover=true]:bg-primary/90',
+      class:
+        'bg-primary text-primary-foreground data-[hover=true]:bg-primary/90',
     },
     // Solid + Destructive
     {
@@ -436,7 +487,8 @@ const actionButtonStyles = tva({
     {
       variant: 'outline',
       colorScheme: 'destructive',
-      class: 'border-destructive text-destructive data-[hover=true]:bg-destructive/10',
+      class:
+        'border-destructive text-destructive data-[hover=true]:bg-destructive/10',
     },
     // Ghost + Primary
     {
@@ -472,7 +524,12 @@ export const ActionButton = ({
     <Button
       onPress={onPress}
       isDisabled={isDisabled || isLoading}
-      className={actionButtonStyles({ variant, colorScheme, size, class: className })}
+      className={actionButtonStyles({
+        variant,
+        colorScheme,
+        size,
+        class: className,
+      })}
     >
       {isLoading && <ButtonIcon as={Loader2Icon} className="animate-spin" />}
       {children}
@@ -491,6 +548,7 @@ export const ActionButton = ({
 ```
 
 **Key Points:**
+
 - ✅ Compound variants handle specific combinations
 - ✅ Base variants provide defaults
 - ✅ Hover states with data attributes
@@ -602,15 +660,17 @@ const avatarStyles = tva({
 ### ✅ Do's
 
 1. **Use semantic variant names**
+
    ```tsx
    // ✅ GOOD: Semantic names
-   variant: 'primary' | 'secondary' | 'destructive'
+   variant: 'primary' | 'secondary' | 'destructive';
 
    // ❌ BAD: Generic names
-   variant: 'blue' | 'red' | 'green'
+   variant: 'blue' | 'red' | 'green';
    ```
 
 2. **Provide default variants**
+
    ```tsx
    // ✅ GOOD: Always specify defaults
    defaultVariants: {
@@ -620,6 +680,7 @@ const avatarStyles = tva({
    ```
 
 3. **Use compound variants for combinations**
+
    ```tsx
    // ✅ GOOD: Handle specific combinations
    compoundVariants: [
@@ -628,10 +689,11 @@ const avatarStyles = tva({
        colorScheme: 'primary',
        class: 'border-primary text-primary',
      },
-   ]
+   ];
    ```
 
 4. **Keep variant dimensions focused**
+
    ```tsx
    // ✅ GOOD: Clear separation
    variants: {
@@ -642,27 +704,29 @@ const avatarStyles = tva({
    ```
 
 5. **Use ONLY semantic tokens in variant styles - NO EXCEPTIONS**
+
    ```tsx
    // ✅ CORRECT: Semantic tokens with alpha values
-   success: 'bg-primary/10 text-primary border-primary/20'
-   error: 'bg-destructive/10 text-destructive border-destructive/20'
-   muted: 'bg-muted text-muted-foreground border-border'
+   success: 'bg-primary/10 text-primary border-primary/20';
+   error: 'bg-destructive/10 text-destructive border-destructive/20';
+   muted: 'bg-muted text-muted-foreground border-border';
 
    // ❌ PROHIBITED: Numbered color tokens
-   success: 'bg-green-100 text-green-800 border-green-200'
-   error: 'bg-red-100 text-red-800 border-red-200'
+   success: 'bg-green-100 text-green-800 border-green-200';
+   error: 'bg-red-100 text-red-800 border-red-200';
 
    // ❌ PROHIBITED: Generic tokens
-   muted: 'bg-neutral-100 text-neutral-600 border-neutral-300'
-   muted: 'bg-gray-100 text-gray-600 border-gray-300'
+   muted: 'bg-neutral-100 text-neutral-600 border-neutral-300';
+   muted: 'bg-gray-100 text-gray-600 border-gray-300';
 
    // ❌ PROHIBITED: Typography tokens
-   text: 'text-typography-900'
+   text: 'text-typography-900';
    ```
 
 ### ❌ Don'ts
 
 1. **Don't create too many variant dimensions**
+
    ```tsx
    // ❌ BAD: Too many dimensions
    variants: {
@@ -682,16 +746,18 @@ const avatarStyles = tva({
    ```
 
 2. **Don't mix concerns in variant names**
+
    ```tsx
    // ❌ BAD: Mixing visual and semantic
-   variant: 'primary' | 'large-primary' | 'small-secondary'
+   variant: 'primary' | 'large-primary' | 'small-secondary';
 
    // ✅ GOOD: Separate dimensions
-   variant: 'primary' | 'secondary'
-   size: 'sm' | 'md' | 'lg'
+   variant: 'primary' | 'secondary';
+   size: 'sm' | 'md' | 'lg';
    ```
 
 3. **Don't duplicate existing component props**
+
    ```tsx
    // ❌ BAD: Duplicating Button's variant prop
    const CustomButton = ({ variant, ... }: { variant: 'new1' | 'new2' })
@@ -732,8 +798,8 @@ const badgeStyles = tva({
   variants: {
     variant: {
       success: 'bg-green-100 text-green-800 border-green-200', // ❌ NO
-      error: 'bg-red-100 text-red-800 border-red-200',         // ❌ NO
-      warning: 'bg-yellow-100 text-yellow-800',                // ❌ NO
+      error: 'bg-red-100 text-red-800 border-red-200', // ❌ NO
+      warning: 'bg-yellow-100 text-yellow-800', // ❌ NO
     },
   },
 });
@@ -742,8 +808,8 @@ const badgeStyles = tva({
 const badgeStyles = tva({
   variants: {
     variant: {
-      default: 'bg-neutral-100 text-neutral-700',              // ❌ NO
-      muted: 'bg-gray-100 text-gray-600',                      // ❌ NO
+      default: 'bg-neutral-100 text-neutral-700', // ❌ NO
+      muted: 'bg-gray-100 text-gray-600', // ❌ NO
     },
   },
 });
@@ -752,8 +818,8 @@ const badgeStyles = tva({
 const textStyles = tva({
   variants: {
     variant: {
-      heading: 'text-typography-900',                          // ❌ NO
-      body: 'text-typography-700',                             // ❌ NO
+      heading: 'text-typography-900', // ❌ NO
+      body: 'text-typography-700', // ❌ NO
     },
   },
 });
@@ -761,25 +827,28 @@ const textStyles = tva({
 
 ### Token Replacement Guide for Variants
 
-| Prohibited Pattern | Use Instead |
-| ------------------ | ----------- |
-| `bg-green-100 text-green-800` | `bg-primary/10 text-primary` |
-| `bg-red-100 text-red-800` | `bg-destructive/10 text-destructive` |
-| `bg-yellow-100 text-yellow-800` | `bg-accent/10 text-accent-foreground` |
-| `bg-blue-100 text-blue-800` | `bg-primary/10 text-primary` |
-| `bg-neutral-100 text-neutral-700` | `bg-muted text-muted-foreground` |
-| `bg-gray-100 text-gray-900` | `bg-muted text-foreground` |
-| `text-typography-900` | `text-foreground` |
-| `text-typography-600` | `text-muted-foreground` |
-| `border-gray-300` | `border-border` |
+| Prohibited Pattern                | Use Instead                           |
+| --------------------------------- | ------------------------------------- |
+| `bg-green-100 text-green-800`     | `bg-primary/10 text-primary`          |
+| `bg-red-100 text-red-800`         | `bg-destructive/10 text-destructive`  |
+| `bg-yellow-100 text-yellow-800`   | `bg-accent/10 text-accent-foreground` |
+| `bg-blue-100 text-blue-800`       | `bg-primary/10 text-primary`          |
+| `bg-neutral-100 text-neutral-700` | `bg-muted text-muted-foreground`      |
+| `bg-gray-100 text-gray-900`       | `bg-muted text-foreground`            |
+| `text-typography-900`             | `text-foreground`                     |
+| `text-typography-600`             | `text-muted-foreground`               |
+| `border-gray-300`                 | `border-border`                       |
 
 ## Validation Checklist for Variants
 
 When creating variants, verify:
 
-- [ ] **CRITICAL: NO prohibited tokens** - No `typography-*`, `neutral-*`, `gray-*`, `slate-*`, numbered colors
-- [ ] **All colors are semantic tokens** - Every color uses semantic tokens from the approved list
-- [ ] **Alpha values instead of opacity** - Uses `/70`, `/90` instead of `opacity-*` utilities
+- [ ] **CRITICAL: NO prohibited tokens** - No `typography-*`, `neutral-*`,
+      `gray-*`, `slate-*`, numbered colors
+- [ ] **All colors are semantic tokens** - Every color uses semantic tokens from
+      the approved list
+- [ ] **Alpha values instead of opacity** - Uses `/70`, `/90` instead of
+      `opacity-*` utilities
 - [ ] Variant names are semantic (not color names)
 - [ ] Default variants specified
 - [ ] Spacing uses scale values (no arbitrary values)
@@ -857,6 +926,7 @@ const StatusPill = ({ status, children }: StatusPillProps) => {
 **Problem**: Variant classes not showing up
 
 **Solution**:
+
 1. Check Tailwind config includes tva patterns
 2. Verify className merge order
 3. Ensure no conflicting inline styles
@@ -866,6 +936,7 @@ const StatusPill = ({ status, children }: StatusPillProps) => {
 **Problem**: Child components don't respond to parent variants
 
 **Solution**:
+
 1. Use context to share parent state
 2. Pass parentVariants object correctly
 3. Verify context provider wraps children
@@ -875,6 +946,7 @@ const StatusPill = ({ status, children }: StatusPillProps) => {
 **Problem**: TypeScript errors with variant options
 
 **Solution**:
+
 1. Define variant types in interface
 2. Use literal types for variant values
 3. Ensure defaultVariants match types
@@ -883,4 +955,5 @@ const StatusPill = ({ status, children }: StatusPillProps) => {
 
 - **tva Documentation**: https://www.tailwind-variants.org/
 - **Gluestack v5 Docs**: https://gluestack.io/ui/docs
-- **Component Examples**: `https://gluestack.io/ui/docs/components/${componentName}/`
+- **Component Examples**:
+  `https://gluestack.io/ui/docs/components/${componentName}/`

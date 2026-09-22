@@ -23,7 +23,11 @@ const BookDetails = () => {
         const bookInfo = await service.getBookByUri(uri as string);
         if (bookInfo) {
           const [metadataInfo, sessions] = await Promise.all([
-            service.getOrFetchMetadata(uri as string, bookInfo.title, bookInfo.author),
+            service.getOrFetchMetadata(
+              uri as string,
+              bookInfo.title,
+              bookInfo.author
+            ),
             sessionService.getSessionsByBookUri(uri as string),
           ]);
           const latestNote = sessions
@@ -57,7 +61,11 @@ const BookDetails = () => {
   if (loading) return <LoadingPulse />;
 
   return book && !loading ? (
-    <BookDetailsScreen book={book} metadata={metadata} readingNote={readingNote} />
+    <BookDetailsScreen
+      book={book}
+      metadata={metadata}
+      readingNote={readingNote}
+    />
   ) : (
     <Redirect href="/(main)" />
   );

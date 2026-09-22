@@ -1,27 +1,36 @@
 ---
 name: gluestack-ui-v5:performance
-description: Performance optimization and cross-platform patterns for gluestack-ui v5 - covers NativeWind v5 / UniWind, TypeScript, memoization, animations, and best practices.
+description:
+  Performance optimization and cross-platform patterns for gluestack-ui v5 -
+  covers NativeWind v5 / UniWind, TypeScript, memoization, animations, and best
+  practices.
 ---
 
 # Gluestack UI v5 — Performance & Cross-Platform
 
-This sub-skill focuses on performance optimization, cross-platform compatibility, and React Native best practices for gluestack-ui v5 (NativeWind v5 / UniWind).
+This sub-skill focuses on performance optimization, cross-platform
+compatibility, and React Native best practices for gluestack-ui v5 (NativeWind
+v5 / UniWind).
 
 ## Rule 12: Cross-Platform Rendering (Native & Web)
 
-Gluestack UI v5 components are designed to work seamlessly on both React Native (iOS/Android) and Web platforms. Always use Gluestack wrapper components instead of direct React Native imports to ensure cross-platform compatibility.
+Gluestack UI v5 components are designed to work seamlessly on both React Native
+(iOS/Android) and Web platforms. Always use Gluestack wrapper components instead
+of direct React Native imports to ensure cross-platform compatibility.
 
 ### Critical Rule: Always Use Gluestack Wrappers
 
-**NEVER import components directly from `react-native`** when a Gluestack wrapper exists. Gluestack wrappers handle platform-specific differences automatically.
+**NEVER import components directly from `react-native`** when a Gluestack
+wrapper exists. Gluestack wrappers handle platform-specific differences
+automatically.
 
 ### Platform-Specific Component Mapping
 
-| React Native Import | Gluestack Wrapper | Notes |
-|---------------------|-------------------|-------|
-| `KeyboardAvoidingView` from `react-native` | `KeyboardAvoidingView` from `@/components/ui/keyboard-avoiding-view` | Required for web compatibility |
-| `Platform` from `react-native` | Use only when absolutely necessary | Prefer Gluestack's built-in platform handling |
-| `View`, `Text`, etc. | `Box`, `Text` from `@/components/ui/*` | Always use Gluestack components |
+| React Native Import                        | Gluestack Wrapper                                                    | Notes                                         |
+| ------------------------------------------ | -------------------------------------------------------------------- | --------------------------------------------- |
+| `KeyboardAvoidingView` from `react-native` | `KeyboardAvoidingView` from `@/components/ui/keyboard-avoiding-view` | Required for web compatibility                |
+| `Platform` from `react-native`             | Use only when absolutely necessary                                   | Prefer Gluestack's built-in platform handling |
+| `View`, `Text`, etc.                       | `Box`, `Text` from `@/components/ui/*`                               | Always use Gluestack components               |
 
 ### Correct Pattern: Cross-Platform Components
 
@@ -34,10 +43,8 @@ import { Platform } from 'react-native'; // Only when needed for platform-specif
   behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
   className="flex-1"
 >
-  <ScrollView>
-    {/* Content */}
-  </ScrollView>
-</KeyboardAvoidingView>
+  <ScrollView>{/* Content */}</ScrollView>
+</KeyboardAvoidingView>;
 ```
 
 ### Incorrect Pattern: Direct React Native Imports
@@ -48,15 +55,18 @@ import { KeyboardAvoidingView, Platform } from 'react-native';
 
 <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
   {/* This may not work correctly on web */}
-</KeyboardAvoidingView>
+</KeyboardAvoidingView>;
 ```
 
 ### Web-Specific Considerations
 
-1. **KeyboardAvoidingView**: The Gluestack wrapper handles web gracefully (web doesn't need keyboard avoidance)
-2. **SafeAreaView**: Works on both native and web (web treats it as a regular View)
+1. **KeyboardAvoidingView**: The Gluestack wrapper handles web gracefully (web
+   doesn't need keyboard avoidance)
+2. **SafeAreaView**: Works on both native and web (web treats it as a regular
+   View)
 3. **ScrollView**: Works identically on both platforms
-4. **Platform.select**: Only use when absolutely necessary; prefer Gluestack's built-in handling
+4. **Platform.select**: Only use when absolutely necessary; prefer Gluestack's
+   built-in handling
 
 ### Testing Cross-Platform Compatibility
 
@@ -64,7 +74,8 @@ Always test components on both platforms:
 
 1. **Native**: Run `npm run ios` or `npm run android`
 2. **Web**: Run `npm run web` and verify in browser
-3. **Verify**: Check that all components render correctly and interactions work on both platforms
+3. **Verify**: Check that all components render correctly and interactions work
+   on both platforms
 
 ### Platform-Specific Code (When Necessary)
 
@@ -78,13 +89,14 @@ const keyboardBehavior = Platform.OS === 'ios' ? 'padding' : 'height';
 
 <KeyboardAvoidingView behavior={keyboardBehavior} className="flex-1">
   {/* Content */}
-</KeyboardAvoidingView>
+</KeyboardAvoidingView>;
 ```
 
 ### Common Cross-Platform Issues to Avoid
 
 1. **Direct React Native imports** - Always use Gluestack wrappers
-2. **Platform-specific styling without fallbacks** - Ensure web has equivalent styles
+2. **Platform-specific styling without fallbacks** - Ensure web has equivalent
+   styles
 3. **Native-only APIs** - Check if web alternatives exist
 4. **Missing web polyfills** - Gluestack handles most of these automatically
 
@@ -100,11 +112,13 @@ const keyboardBehavior = Platform.OS === 'ios' ? 'padding' : 'height';
 
 ## Rule 13: Performance & Best Practices
 
-Follow these best practices to ensure optimal performance, type safety, and maintainability in React Native/Expo applications.
+Follow these best practices to ensure optimal performance, type safety, and
+maintainability in React Native/Expo applications.
 
 ### Use TypeScript
 
-Define navigation and prop types for type safety. This catches errors at compile time and improves developer experience.
+Define navigation and prop types for type safety. This catches errors at compile
+time and improves developer experience.
 
 #### Correct Pattern
 
@@ -137,7 +151,8 @@ const LoginForm = ({ onSubmit, isLoading }) => {
 
 ### Memoize Components
 
-Use `React.memo` and `useCallback` to prevent unnecessary rerenders, especially for expensive components or frequently re-rendered parent components.
+Use `React.memo` and `useCallback` to prevent unnecessary rerenders, especially
+for expensive components or frequently re-rendered parent components.
 
 #### Correct Pattern
 
@@ -176,7 +191,8 @@ const ParentComponent = () => {
 
 ### Run Animations on UI Thread
 
-Use Reanimated worklets for 60fps animations. This keeps animations smooth by running on the native UI thread instead of the JavaScript thread.
+Use Reanimated worklets for 60fps animations. This keeps animations smooth by
+running on the native UI thread instead of the JavaScript thread.
 
 #### Correct Pattern
 
@@ -223,7 +239,8 @@ const Component = () => {
 
 ### Handle Safe Areas
 
-Use `SafeAreaView` or `useSafeAreaInsets` to handle device notches, status bars, and home indicators properly.
+Use `SafeAreaView` or `useSafeAreaInsets` to handle device notches, status bars,
+and home indicators properly.
 
 #### Correct Pattern
 
@@ -233,9 +250,7 @@ import { SafeAreaView } from '@/components/ui/safe-area-view';
 
 const Screen = () => (
   <SafeAreaView className="flex-1 bg-background">
-    <VStack className="p-4">
-      {/* Content */}
-    </VStack>
+    <VStack className="p-4">{/* Content */}</VStack>
   </SafeAreaView>
 );
 
@@ -245,17 +260,14 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 const CustomLayout = () => {
   const insets = useSafeAreaInsets();
 
-  return (
-    <Box style={{ paddingTop: insets.top }}>
-      {/* Content */}
-    </Box>
-  );
+  return <Box style={{ paddingTop: insets.top }}>{/* Content */}</Box>;
 };
 ```
 
 ### Test on Real Devices
 
-Simulator/emulator performance differs from real devices. Always test on physical devices before releasing.
+Simulator/emulator performance differs from real devices. Always test on
+physical devices before releasing.
 
 #### Testing Checklist
 
@@ -268,7 +280,8 @@ Simulator/emulator performance differs from real devices. Always test on physica
 
 ### Use FlatList for Lists
 
-Never use `ScrollView` with `map` for long lists. `FlatList` provides virtualization, which only renders visible items.
+Never use `ScrollView` with `map` for long lists. `FlatList` provides
+virtualization, which only renders visible items.
 
 #### Correct Pattern
 
@@ -284,7 +297,7 @@ const ItemList = ({ items }: { items: Item[] }) => (
         <Text>{item.name}</Text>
       </Box>
     )}
-    keyExtractor={(item) => item.id}
+    keyExtractor={item => item.id}
     ListEmptyComponent={<Text>No items found</Text>}
   />
 );
@@ -298,7 +311,7 @@ import { ScrollView } from '@/components/ui/scroll-view';
 
 const ItemList = ({ items }: { items: Item[] }) => (
   <ScrollView>
-    {items.map((item) => (
+    {items.map(item => (
       <Box key={item.id} className="p-4">
         <Text>{item.name}</Text>
       </Box>
@@ -307,11 +320,13 @@ const ItemList = ({ items }: { items: Item[] }) => (
 );
 ```
 
-**Why this is bad**: All items are rendered at once, causing performance issues with long lists.
+**Why this is bad**: All items are rendered at once, causing performance issues
+with long lists.
 
 ### Platform-Specific Code
 
-Use `Platform.select` for iOS/Android differences. This provides a clean, declarative way to handle platform-specific code.
+Use `Platform.select` for iOS/Android differences. This provides a clean,
+declarative way to handle platform-specific code.
 
 #### Correct Pattern
 
@@ -331,9 +346,7 @@ const styles = Platform.select({
   },
 });
 
-<Box style={styles}>
-  {/* Content */}
-</Box>
+<Box style={styles}>{/* Content */}</Box>;
 
 // ✅ CORRECT: Platform.select for values
 const keyboardBehavior = Platform.select({
@@ -359,16 +372,16 @@ if (Platform.OS === 'ios') {
 
 ## Best Practices Summary
 
-| Practice | Why It Matters | When to Use |
-|----------|---------------|-------------|
-| **TypeScript** | Type safety, catch errors early | Always |
-| **React.memo** | Prevent unnecessary rerenders | Components with stable props |
-| **useCallback** | Stable function references | Callbacks passed to children |
-| **Reanimated worklets** | 60fps animations | All animations |
-| **SafeAreaView** | Handle device notches/bars | All screens |
-| **FlatList** | Virtualization for performance | Lists with 10+ items |
-| **Platform.select** | Clean platform-specific code | iOS/Android differences |
-| **Real device testing** | Accurate performance metrics | Before release |
+| Practice                | Why It Matters                  | When to Use                  |
+| ----------------------- | ------------------------------- | ---------------------------- |
+| **TypeScript**          | Type safety, catch errors early | Always                       |
+| **React.memo**          | Prevent unnecessary rerenders   | Components with stable props |
+| **useCallback**         | Stable function references      | Callbacks passed to children |
+| **Reanimated worklets** | 60fps animations                | All animations               |
+| **SafeAreaView**        | Handle device notches/bars      | All screens                  |
+| **FlatList**            | Virtualization for performance  | Lists with 10+ items         |
+| **Platform.select**     | Clean platform-specific code    | iOS/Android differences      |
+| **Real device testing** | Accurate performance metrics    | Before release               |
 
 ## Performance Optimization Patterns
 
@@ -404,10 +417,8 @@ const ItemList = ({ items }: { items: Item[] }) => {
   return (
     <FlatList
       data={items}
-      renderItem={({ item }) => (
-        <ListItem item={item} onPress={handlePress} />
-      )}
-      keyExtractor={(item) => item.id}
+      renderItem={({ item }) => <ListItem item={item} onPress={handlePress} />}
+      keyExtractor={item => item.id}
     />
   );
 };
@@ -465,9 +476,7 @@ const Screen = () => {
         </Box>
 
         {/* Content */}
-        <ScrollView className="flex-1">
-          {/* Content */}
-        </ScrollView>
+        <ScrollView className="flex-1">{/* Content */}</ScrollView>
 
         {/* Footer with safe bottom padding */}
         <Box
@@ -521,7 +530,7 @@ const Screen = () => {
 // ❌ INCORRECT: New function on every render
 <Button onPress={() => handlePress(id)}>
   <ButtonText>Press</ButtonText>
-</Button>
+</Button>;
 
 // ✅ CORRECT: Memoized callback
 const memoizedPress = useCallback(() => {
@@ -530,7 +539,7 @@ const memoizedPress = useCallback(() => {
 
 <Button onPress={memoizedPress}>
   <ButtonText>Press</ButtonText>
-</Button>
+</Button>;
 ```
 
 ### ❌ Don't: Use Animated API for Complex Animations
@@ -549,20 +558,28 @@ const animValue = useSharedValue(0);
 
 ### NativeWind v5
 
-- **Pin `lightningcss` to exactly `1.30.1`** in `package.json` `overrides` and `resolutions`. Mismatched versions cause CSS transformation errors and build failures.
-- Tailwind v4 uses **CSS-first configuration** via `global.css` — there is no `tailwind.config.js` overhead.
-- `@tailwindcss/postcss` handles CSS processing; keep the `postcss.config.js` file minimal.
+- **Pin `lightningcss` to exactly `1.30.1`** in `package.json` `overrides` and
+  `resolutions`. Mismatched versions cause CSS transformation errors and build
+  failures.
+- Tailwind v4 uses **CSS-first configuration** via `global.css` — there is no
+  `tailwind.config.js` overhead.
+- `@tailwindcss/postcss` handles CSS processing; keep the `postcss.config.js`
+  file minimal.
 
 ### UniWind
 
-- **No PostCSS / lightningcss** — UniWind processes CSS at Metro/Babel time, eliminating the PostCSS build step entirely. This can reduce build times for Expo projects.
-- Uses `:where()` selectors for theme scoping, which have zero CSS specificity — no specificity wars between themes.
-- Consider UniWind for simpler Expo-only projects where build-step reduction matters.
+- **No PostCSS / lightningcss** — UniWind processes CSS at Metro/Babel time,
+  eliminating the PostCSS build step entirely. This can reduce build times for
+  Expo projects.
+- Uses `:where()` selectors for theme scoping, which have zero CSS specificity —
+  no specificity wars between themes.
+- Consider UniWind for simpler Expo-only projects where build-step reduction
+  matters.
 
 ## Reference
 
-- **Reanimated Documentation**: https://docs.swmansion.com/react-native-reanimated/
+- **Reanimated Documentation**:
+  https://docs.swmansion.com/react-native-reanimated/
 - **React Native Performance**: https://reactnative.dev/docs/performance
 - **Expo Router**: https://docs.expo.dev/router/introduction/
 - **NativeWind v5**: https://www.nativewind.dev/
-

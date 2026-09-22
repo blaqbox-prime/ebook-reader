@@ -93,9 +93,7 @@ export const computeCurrentPage = (
  * Formats a published date into a long human readable form
  * (e.g. "August 13, 2020"). Returns null when unavailable.
  */
-export const formatPublishedDate = (
-  date?: string | Date
-): string | null => {
+export const formatPublishedDate = (date?: string | Date): string | null => {
   if (date === undefined || date === null) {
     return null;
   }
@@ -121,7 +119,5 @@ export const getCoverUri = (
 /**
  * Returns up to `max` category chips for the genre badges.
  */
-export const getCategoryChips = (
-  categories?: string[],
-  max = 3
-): string[] => (categories ?? []).slice(0, max);
+export const getCategoryChips = (categories?: string[], max = 3): string[] =>
+  (categories ?? []).slice(0, max);
