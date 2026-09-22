@@ -36,6 +36,8 @@ class MetadataRepository {
         m.pageCount = metadata.pageCount;
         m.categories = metadata.categories;
         m.coverImage = metadata.coverImage;
+        m.averageRating = metadata.averageRating;
+        m.isbn = metadata.isbn;
       })
     );
   }
@@ -60,6 +62,8 @@ class MetadataRepository {
           m.pageCount = metadata.pageCount;
           m.categories = metadata.categories;
           m.coverImage = metadata.coverImage;
+          m.averageRating = metadata.averageRating;
+          m.isbn = metadata.isbn;
         })
       );
       await this.database.batch(...creations);
@@ -84,6 +88,10 @@ class MetadataRepository {
           m.description = newData.description;
         if (newData.pageCount !== undefined) m.pageCount = newData.pageCount;
         if (newData.categories !== undefined) m.categories = newData.categories;
+        if (newData.coverImage !== undefined) m.coverImage = newData.coverImage;
+        if (newData.averageRating !== undefined)
+          m.averageRating = newData.averageRating;
+        if (newData.isbn !== undefined) m.isbn = newData.isbn;
       });
       return updatedMetadata;
     });

@@ -64,6 +64,28 @@ class BookService {
     return metadata[0];
   }
 
+  /**
+   * Returns the stored metadata for a book, or fetches it from Google Books
+   * (persisting it) when no record exists yet.
+   */
+  async getOrFetchMetadata(
+    uri: string,
+    title: string,
+    author: string
+  ): Promise<Metadata | undefined> {
+    const existing = await this.getMetadataByUri(uri);
+    if (existing) {
+      return existing;
+    }
+
+    const fetched = await fetchGoogleBookMetadata(author, title, uri);
+    if (!fetched) {
+      return undefined;
+    }
+
+    return this.metadataRepository.createNewMetadata(uri, fetched);
+  }
+
   async getBooksinProgress(): Promise<Book[]> {
     const books = await this.bookRepository.fetchBooksInProgress();
     return books;

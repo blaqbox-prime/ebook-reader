@@ -1,23 +1,32 @@
 ---
 name: gluestack-ui-v5:setup
-description: Guide for installing gluestack-ui v5 — CLI and manual paths for NativeWind v5 and UniWind. Tailwind CSS v4 (CSS-first, no tailwind.config.js).
+description:
+  Guide for installing gluestack-ui v5 — CLI and manual paths for NativeWind v5
+  and UniWind. Tailwind CSS v4 (CSS-first, no tailwind.config.js).
 ---
 
 # Gluestack UI v5 — Setup & Installation
 
-This sub-skill covers gluestack-ui v5 setup. v5 runs on **Tailwind CSS v4** (CSS-first, no `tailwind.config.js`) with two supported styling engines:
+This sub-skill covers gluestack-ui v5 setup. v5 runs on **Tailwind CSS v4**
+(CSS-first, no `tailwind.config.js`) with two supported styling engines:
 
-| Engine | Tailwind | Platforms | When to choose |
-|---|---|---|---|
-| **NativeWind v5** | v4 | Expo, React Native CLI | Recommended default |
-| **UniWind** | v4 | Expo only | No PostCSS build step, simpler setup |
+| Engine            | Tailwind | Platforms              | When to choose                       |
+| ----------------- | -------- | ---------------------- | ------------------------------------ |
+| **NativeWind v5** | v4       | Expo, React Native CLI | Recommended default                  |
+| **UniWind**       | v4       | Expo only              | No PostCSS build step, simpler setup |
 
-> **Next.js support is pending** NativeWind v5 web support. Use gluestack-ui v4 for Next.js projects for now.
+> **Next.js support is pending** NativeWind v5 web support. Use gluestack-ui v4
+> for Next.js projects for now.
 
 ## v5 only — do not use v1/v2/v3/v4 packages or docs
 
-- **Never** use or suggest: `@gluestack/styled`, `@gluestack-ui/themed`, `@gluestack-ui/nativewind-utils` (v4 package), `tailwind.config.js` (Tailwind v3), or any packages/docs from **v4.gluestack.io** (v4 docs, still available for reference).
-- **v5** packages: `@gluestack-ui/core@^5`, `@gluestack-ui/utils@^5`, plus the styling engine (`nativewind@^5.0.0-preview.2` + `react-native-css@^3.0.4` OR `uniwind@^1.3.0`).
+- **Never** use or suggest: `@gluestack/styled`, `@gluestack-ui/themed`,
+  `@gluestack-ui/nativewind-utils` (v4 package), `tailwind.config.js` (Tailwind
+  v3), or any packages/docs from **v4.gluestack.io** (v4 docs, still available
+  for reference).
+- **v5** packages: `@gluestack-ui/core@^5`, `@gluestack-ui/utils@^5`, plus the
+  styling engine (`nativewind@^5.0.0-preview.2` + `react-native-css@^3.0.4` OR
+  `uniwind@^1.3.0`).
 
 ---
 
@@ -25,11 +34,11 @@ This sub-skill covers gluestack-ui v5 setup. v5 runs on **Tailwind CSS v4** (CSS
 
 ### Prerequisites
 
-| Package Name   | Supported Versions   |
-|---|---|
-| react-native   | versions >= 0.76     |
-| expo           | versions >= 52       |
-| node           | versions >= 18       |
+| Package Name | Supported Versions |
+| ------------ | ------------------ |
+| react-native | versions >= 0.76   |
+| expo         | versions >= 52     |
+| node         | versions >= 18     |
 
 ### Step 1: Initialize
 
@@ -39,7 +48,9 @@ From your project root:
 npx gluestack-ui@latest init
 ```
 
-This adds **GluestackUIProvider** and essential components (**icon**, **overlay**, **toast**). The `@latest` tag is for greenfield projects. During migration from older versions, use `@alpha`.
+This adds **GluestackUIProvider** and essential components (**icon**,
+**overlay**, **toast**). The `@latest` tag is for greenfield projects. During
+migration from older versions, use `@alpha`.
 
 ### Step 2: Add Components
 
@@ -60,7 +71,8 @@ npx gluestack-ui@alpha add gluestack-ui-provider
 npx gluestack-ui@alpha add --all
 ```
 
-After migration, delete `tailwind.config.js` — Tailwind v4 is CSS-first. See the `migrate-to-v5` skill for full details.
+After migration, delete `tailwind.config.js` — Tailwind v4 is CSS-first. See the
+`migrate-to-v5` skill for full details.
 
 ---
 
@@ -89,13 +101,14 @@ NativeWind v5 requires exactly `lightningcss@1.30.1`. Add to `package.json`:
 
 ### `global.css`
 
-Create at project root. This replaces `tailwind.config.js` — all tokens are defined here:
+Create at project root. This replaces `tailwind.config.js` — all tokens are
+defined here:
 
 ```css
-@import "tailwindcss/theme.css" layer(theme);
-@import "tailwindcss/preflight.css" layer(base);
-@import "tailwindcss/utilities.css";
-@import "nativewind/theme";
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/preflight.css' layer(base);
+@import 'tailwindcss/utilities.css';
+@import 'nativewind/theme';
 
 @layer theme {
   :root {
@@ -203,7 +216,9 @@ Create at project root. This replaces `tailwind.config.js` — all tokens are de
 }
 ```
 
-The `@theme inline {}` block maps CSS custom properties to Tailwind utility classes — so `bg-primary` resolves to `var(--color-primary)` which is `rgb(var(--primary))`.
+The `@theme inline {}` block maps CSS custom properties to Tailwind utility
+classes — so `bg-primary` resolves to `var(--color-primary)` which is
+`rgb(var(--primary))`.
 
 ### `postcss.config.js`
 
@@ -212,7 +227,7 @@ Create at project root (required for NativeWind v5):
 ```js
 export default {
   plugins: {
-    "@tailwindcss/postcss": {},
+    '@tailwindcss/postcss': {},
   },
 };
 ```
@@ -220,8 +235,8 @@ export default {
 ### `metro.config.js`
 
 ```js
-const { getDefaultConfig } = require("expo/metro-config");
-const { withNativewind } = require("nativewind/metro");
+const { getDefaultConfig } = require('expo/metro-config');
+const { withNativewind } = require('nativewind/metro');
 
 const config = getDefaultConfig(__dirname);
 module.exports = withNativewind(config);
@@ -239,7 +254,8 @@ Create at project root:
 
 ### `babel.config.js`
 
-Remove the `'tailwind.config': './tailwind.config.js'` alias if present — it was a v3/v4 workaround. Tailwind v4 doesn't use a config file.
+Remove the `'tailwind.config': './tailwind.config.js'` alias if present — it was
+a v3/v4 workaround. Tailwind v4 doesn't use a config file.
 
 ### Rebuild (bare Expo / React Native CLI only)
 
@@ -254,7 +270,8 @@ npx expo run:android
 
 ## Manual: UniWind (Expo only)
 
-UniWind is an alternative styling engine that **does not require PostCSS**, making the setup simpler than NativeWind v5.
+UniWind is an alternative styling engine that **does not require PostCSS**,
+making the setup simpler than NativeWind v5.
 
 ### Packages
 
@@ -381,13 +398,15 @@ No `lightningcss` pin or PostCSS config needed.
 }
 ```
 
-> **Important**: The `.dark {}` / `.light {}` selectors must be **top-level** inside `@layer theme`, never nested inside `:root {}`. Nested selectors won't match when UniWind transforms them for web.
+> **Important**: The `.dark {}` / `.light {}` selectors must be **top-level**
+> inside `@layer theme`, never nested inside `:root {}`. Nested selectors won't
+> match when UniWind transforms them for web.
 
 ### `metro.config.js`
 
 ```js
-const { getDefaultConfig } = require("expo/metro-config");
-const { withUniwindConfig } = require("uniwind/metro");
+const { getDefaultConfig } = require('expo/metro-config');
+const { withUniwindConfig } = require('uniwind/metro');
 
 const config = getDefaultConfig(__dirname);
 module.exports = withUniwindConfig(config, {
@@ -404,11 +423,11 @@ module.exports = withUniwindConfig(config, {
 
 declare module 'uniwind' {
   export interface UniwindConfig {
-    themes: readonly ['light', 'dark']
+    themes: readonly ['light', 'dark'];
   }
 }
 
-export {}
+export {};
 ```
 
 ### `babel.config.js`
@@ -419,9 +438,7 @@ module.exports = {
     // Remove 'nativewind/babel' if present
     ['babel-preset-expo', { jsxImportSource: 'nativewind' }],
   ],
-  plugins: [
-    'react-native-worklets/plugin',
-  ],
+  plugins: ['react-native-worklets/plugin'],
 };
 ```
 
@@ -433,52 +450,60 @@ With UniWind, use `Uniwind.setTheme()` instead of `Appearance.setColorScheme()`:
 import { Uniwind } from 'uniwind';
 
 // In your GluestackUIProvider or theme toggle
-Uniwind.setTheme('dark');   // Force dark
-Uniwind.setTheme('light');  // Force light
+Uniwind.setTheme('dark'); // Force dark
+Uniwind.setTheme('light'); // Force light
 Uniwind.setTheme('system'); // Follow device setting
 ```
 
-After re-adding the provider via `npx gluestack-ui@alpha add gluestack-ui-provider`, the UniWind version handles this automatically.
+After re-adding the provider via
+`npx gluestack-ui@alpha add gluestack-ui-provider`, the UniWind version handles
+this automatically.
 
 ---
 
 ## Engine Comparison
 
-| Feature | NativeWind v5 | UniWind |
-|---|---|---|
-| Tailwind version | v4 (CSS-first) | v4 (CSS-first) |
-| PostCSS required | Yes | **No** |
-| lightningcss pin | Yes (`1.30.1`) | **No** |
-| Platforms | Expo + RN CLI | **Expo only** |
-| Next.js | Pending | Pending |
-| `global.css` | `@import "tailwindcss/..."` | `@import 'tailwindcss'; @import 'uniwind'` |
-| `metro.config.js` | `withNativewind` from `nativewind/metro` | `withUniwindConfig` from `uniwind/metro` |
-| Dark mode selectors | `@media` + `.dark`/`.light` | `:where(.dark, .dark *)` |
-| Theme switching | `Appearance.setColorScheme()` | `Uniwind.setTheme()` |
-| Type defs file | `react-native-css-env.d.ts` | `uniwind-types.d.ts` |
+| Feature             | NativeWind v5                            | UniWind                                    |
+| ------------------- | ---------------------------------------- | ------------------------------------------ |
+| Tailwind version    | v4 (CSS-first)                           | v4 (CSS-first)                             |
+| PostCSS required    | Yes                                      | **No**                                     |
+| lightningcss pin    | Yes (`1.30.1`)                           | **No**                                     |
+| Platforms           | Expo + RN CLI                            | **Expo only**                              |
+| Next.js             | Pending                                  | Pending                                    |
+| `global.css`        | `@import "tailwindcss/..."`              | `@import 'tailwindcss'; @import 'uniwind'` |
+| `metro.config.js`   | `withNativewind` from `nativewind/metro` | `withUniwindConfig` from `uniwind/metro`   |
+| Dark mode selectors | `@media` + `.dark`/`.light`              | `:where(.dark, .dark *)`                   |
+| Theme switching     | `Appearance.setColorScheme()`            | `Uniwind.setTheme()`                       |
+| Type defs file      | `react-native-css-env.d.ts`              | `uniwind-types.d.ts`                       |
 
 ## Common Issues
 
 **"Mismatch between JavaScript part and native part of Worklets"**
 
-`react-native-worklets` version must match the minor of `react-native-reanimated`. For Expo: `npx expo install react-native-reanimated && npx expo install --fix`.
+`react-native-worklets` version must match the minor of
+`react-native-reanimated`. For Expo:
+`npx expo install react-native-reanimated && npx expo install --fix`.
 
 **Theme not applying on Expo Web (UniWind)**
 
-`.dark {}` / `.light {}` selectors in `global.css` must be **top-level** inside `@layer theme`, not nested inside `:root {}`.
+`.dark {}` / `.light {}` selectors in `global.css` must be **top-level** inside
+`@layer theme`, not nested inside `:root {}`.
 
 **NativeWind v5 build errors**
 
-Ensure `lightningcss` is pinned to exactly `1.30.1` in both `overrides` and `resolutions`, then `rm -rf node_modules && npm install`.
+Ensure `lightningcss` is pinned to exactly `1.30.1` in both `overrides` and
+`resolutions`, then `rm -rf node_modules && npm install`.
 
 **`tailwind.config.js` still referenced after migration**
 
-Delete it. Remove any `'tailwind.config': './tailwind.config.js'` alias from `babel.config.js` presets.
+Delete it. Remove any `'tailwind.config': './tailwind.config.js'` alias from
+`babel.config.js` presets.
 
 ---
 
 ## Reference
 
-- **Migration guide**: Use the `migrate-to-v5` skill for step-by-step v2/v3/v4 → v5 migration
+- **Migration guide**: Use the `migrate-to-v5` skill for step-by-step v2/v3/v4 →
+  v5 migration
 - **NativeWind v5 docs**: https://www.nativewind.dev/
 - **UniWind docs**: Check the UniWind package documentation

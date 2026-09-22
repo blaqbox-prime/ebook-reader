@@ -1,51 +1,61 @@
 ---
 name: gluestack-ui-v5:styling
-description: Styling patterns for gluestack-ui v5 - covers semantic tokens, spacing, dark mode (NativeWind v5 + UniWind), variants with tva, CSS variables, and className merging.
+description:
+  Styling patterns for gluestack-ui v5 - covers semantic tokens, spacing, dark
+  mode (NativeWind v5 + UniWind), variants with tva, CSS variables, and
+  className merging.
 ---
 
 # Gluestack UI v5 — Styling Patterns
 
-This sub-skill focuses on styling patterns, theming, colors, spacing, dark mode, and variant management for gluestack-ui v5 (Tailwind v4 CSS-first).
+This sub-skill focuses on styling patterns, theming, colors, spacing, dark mode,
+and variant management for gluestack-ui v5 (Tailwind v4 CSS-first).
 
 ## Rule 3: Semantic Color Tokens Over Raw Values (v5)
 
-**CRITICAL**: You MUST use only Gluestack v5 semantic tokens. In v5, these tokens are defined as CSS custom properties in `global.css` via `@layer theme` and mapped to Tailwind utilities via `@theme inline` — not in a `tailwind.config.js`. Generic tokens like `typography-*`, `neutral-*`, `gray-*`, `slate-*`, or any numbered color tokens (`red-500`, `blue-600`, etc.) are **STRICTLY PROHIBITED**.
+**CRITICAL**: You MUST use only Gluestack v5 semantic tokens. In v5, these
+tokens are defined as CSS custom properties in `global.css` via `@layer theme`
+and mapped to Tailwind utilities via `@theme inline` — not in a
+`tailwind.config.js`. Generic tokens like `typography-*`, `neutral-*`, `gray-*`,
+`slate-*`, or any numbered color tokens (`red-500`, `blue-600`, etc.) are
+**STRICTLY PROHIBITED**.
 
 ### Prohibited Token Patterns
 
 **NEVER use these token patterns:**
 
-| Prohibited Pattern | Why It's Wrong | Use Instead |
-| ------------------ | -------------- | ----------- |
-| `typography-*` | Generic, not semantic | `text-foreground`, `text-muted-foreground`, `text-card-foreground` |
-| `neutral-*` | Generic, not semantic | `text-foreground`, `bg-background`, `bg-muted` |
-| `gray-*`, `slate-*` | Raw color, not semantic | `text-muted-foreground`, `bg-muted`, `border-border` |
-| `text-red-500`, `bg-red-600` | Numbered colors, not semantic | `text-destructive`, `bg-destructive` |
-| `text-green-500`, `bg-green-600` | Numbered colors, not semantic | `text-primary` (for success states) |
-| `text-blue-500`, `bg-blue-600` | Numbered colors, not semantic | `text-primary`, `bg-primary` |
-| `border-gray-200` | Raw color, not semantic | `border-border` |
-| `#DC2626`, `#3b82f6` (inline) | Hex values, not semantic | `text-destructive`, `bg-primary` |
-| `bg-white`, `bg-black` | Raw colors, not semantic | `bg-background`, `text-foreground` |
-| `text-opacity-*` | Opacity utilities | Use alpha values: `text-foreground/70` |
+| Prohibited Pattern               | Why It's Wrong                | Use Instead                                                        |
+| -------------------------------- | ----------------------------- | ------------------------------------------------------------------ |
+| `typography-*`                   | Generic, not semantic         | `text-foreground`, `text-muted-foreground`, `text-card-foreground` |
+| `neutral-*`                      | Generic, not semantic         | `text-foreground`, `bg-background`, `bg-muted`                     |
+| `gray-*`, `slate-*`              | Raw color, not semantic       | `text-muted-foreground`, `bg-muted`, `border-border`               |
+| `text-red-500`, `bg-red-600`     | Numbered colors, not semantic | `text-destructive`, `bg-destructive`                               |
+| `text-green-500`, `bg-green-600` | Numbered colors, not semantic | `text-primary` (for success states)                                |
+| `text-blue-500`, `bg-blue-600`   | Numbered colors, not semantic | `text-primary`, `bg-primary`                                       |
+| `border-gray-200`                | Raw color, not semantic       | `border-border`                                                    |
+| `#DC2626`, `#3b82f6` (inline)    | Hex values, not semantic      | `text-destructive`, `bg-primary`                                   |
+| `bg-white`, `bg-black`           | Raw colors, not semantic      | `bg-background`, `text-foreground`                                 |
+| `text-opacity-*`                 | Opacity utilities             | Use alpha values: `text-foreground/70`                             |
 
 ### Correct Semantic Token Replacement Guide
 
-Use Gluestack v5 semantic tokens instead of raw Tailwind colors or arbitrary values:
+Use Gluestack v5 semantic tokens instead of raw Tailwind colors or arbitrary
+values:
 
-| Instead of | Use |
-| ---------- | --- |
-| text-red-500 | text-destructive |
-| text-green-500 | text-primary (for success) |
-| text-blue-500 | text-primary |
-| text-gray-500, text-neutral-500 | text-muted-foreground |
-| text-gray-900, text-typography-900 | text-foreground |
-| bg-blue-600 | bg-primary |
-| bg-gray-100, bg-neutral-100 | bg-muted |
-| bg-gray-50 | bg-background |
-| border-gray-200, border-neutral-200 | border-border |
-| #DC2626 (inline) | text-destructive |
-| bg-white | bg-background |
-| text-black | text-foreground |
+| Instead of                          | Use                        |
+| ----------------------------------- | -------------------------- |
+| text-red-500                        | text-destructive           |
+| text-green-500                      | text-primary (for success) |
+| text-blue-500                       | text-primary               |
+| text-gray-500, text-neutral-500     | text-muted-foreground      |
+| text-gray-900, text-typography-900  | text-foreground            |
+| bg-blue-600                         | bg-primary                 |
+| bg-gray-100, bg-neutral-100         | bg-muted                   |
+| bg-gray-50                          | bg-background              |
+| border-gray-200, border-neutral-200 | border-border              |
+| #DC2626 (inline)                    | text-destructive           |
+| bg-white                            | bg-background              |
+| text-black                          | text-foreground            |
 
 ### Available Semantic Token Categories (v5)
 
@@ -76,11 +86,14 @@ Use Gluestack v5 semantic tokens instead of raw Tailwind colors or arbitrary val
 
 1. **Theme Consistency** - Tokens automatically adapt to light/dark modes
 2. **Maintainability** - Change theme once, update everywhere
-3. **Intent Expression** - `text-destructive` communicates purpose, `text-red-500` doesn't
+3. **Intent Expression** - `text-destructive` communicates purpose,
+   `text-red-500` doesn't
 4. **Future-Proofing** - Theme changes don't require code updates
 5. **Accessibility** - Tokens ensure proper contrast ratios
 
-**If you use generic tokens (`typography-*`, `neutral-*`) or numbered colors (`gray-500`, `blue-600`), the component will:**
+**If you use generic tokens (`typography-*`, `neutral-*`) or numbered colors
+(`gray-500`, `blue-600`), the component will:**
+
 - Break in dark mode
 - Fail to match the design system
 - Create maintenance debt
@@ -165,10 +178,13 @@ Avoid inline `style` props when className can achieve the same result.
 1. **Component props** - Use built-in props (size, variant, space)
 2. **className utilities** - Use existing Tailwind/NativeWind classes
 3. **Gluestack component variants** - Use built-in component variants
-4. **CSS variables (`@theme inline`)** - Tailwind v4 auto-resolves `@theme inline` tokens into utility classes (`bg-primary`, `text-foreground`, etc.)
+4. **CSS variables (`@theme inline`)** - Tailwind v4 auto-resolves
+   `@theme inline` tokens into utility classes (`bg-primary`, `text-foreground`,
+   etc.)
 5. **tva (Tailwind Variant Authority)** - Create reusable variant patterns
 6. **NativeWind interop** - Enable className on third-party components
-7. **Inline styles** - Only as absolute last resort with documented justification
+7. **Inline styles** - Only as absolute last resort with documented
+   justification
 
 ### Correct Pattern
 
@@ -201,8 +217,10 @@ Avoid inline `style` props when className can achieve the same result.
 
 Inline styles are acceptable for:
 
-1. **Dynamic values** - Values computed at runtime (e.g., animation values, safe area insets)
-2. **Third-party component requirements** - Components that don't support className
+1. **Dynamic values** - Values computed at runtime (e.g., animation values, safe
+   area insets)
+2. **Third-party component requirements** - Components that don't support
+   className
 3. **Platform-specific overrides** - When Platform.select is needed
 
 ```tsx
@@ -218,7 +236,8 @@ Inline styles are acceptable for:
 
 ## Rule 4: Spacing Scale Adherence
 
-Use only values from the standard spacing scale. Arbitrary values create maintenance burden.
+Use only values from the standard spacing scale. Arbitrary values create
+maintenance burden.
 
 ### Allowed Spacing Values
 
@@ -280,12 +299,20 @@ Use only values from the standard spacing scale. Arbitrary values create mainten
 
 ## Rule 5: Dark Mode in v5 (NativeWind v5 + UniWind)
 
-In v5, Tailwind v4 uses CSS-first configuration with `@layer theme` custom properties in `global.css`. The `dark:` prefix still works identically for all className usage. However, the underlying implementation differs by engine:
+In v5, Tailwind v4 uses CSS-first configuration with `@layer theme` custom
+properties in `global.css`. The `dark:` prefix still works identically for all
+className usage. However, the underlying implementation differs by engine:
 
-- **NativeWind v5**: Uses `@media (prefers-color-scheme: dark)` in `global.css` for system-level theming, plus explicit `.dark`/`.light` class selectors for web overrides. Theme switching via `Appearance.setColorScheme()`.
-- **UniWind**: Uses `:where(.dark, .dark *)` and `:where(.light, .light *)` selectors for per-theme CSS variables. Theme switching via `Uniwind.setTheme()`.
+- **NativeWind v5**: Uses `@media (prefers-color-scheme: dark)` in `global.css`
+  for system-level theming, plus explicit `.dark`/`.light` class selectors for
+  web overrides. Theme switching via `Appearance.setColorScheme()`.
+- **UniWind**: Uses `:where(.dark, .dark *)` and `:where(.light, .light *)`
+  selectors for per-theme CSS variables. Theme switching via
+  `Uniwind.setTheme()`.
 
-Both engines use the SAME semantic token names (`--primary`, `--foreground`, etc.) mapped through `@theme inline` — so your className never changes regardless of engine.
+Both engines use the SAME semantic token names (`--primary`, `--foreground`,
+etc.) mapped through `@theme inline` — so your className never changes
+regardless of engine.
 
 ### Correct Pattern
 
@@ -300,8 +327,8 @@ Both engines use the SAME semantic token names (`--primary`, `--foreground`, etc
 
 ```tsx
 const CardView = ({ isDark }: { readonly isDark: boolean }) => (
-  <Box className={isDark ? "bg-card" : "bg-background"}>
-    <Text className={isDark ? "text-card-foreground" : "text-foreground"}>
+  <Box className={isDark ? 'bg-card' : 'bg-background'}>
+    <Text className={isDark ? 'text-card-foreground' : 'text-foreground'}>
       Content
     </Text>
   </Box>
@@ -310,7 +337,8 @@ const CardView = ({ isDark }: { readonly isDark: boolean }) => (
 
 ### Using Data Attributes for States
 
-Gluestack components use data attributes for interactive states. These are automatically applied by the components based on user interaction:
+Gluestack components use data attributes for interactive states. These are
+automatically applied by the components based on user interaction:
 
 | State Prop     | Data Attribute       | Usage in className                       |
 | -------------- | -------------------- | ---------------------------------------- |
@@ -346,31 +374,32 @@ const buttonStyle = tva({
 
 ## Rule 7: Variant-Based Styling with tva
 
-For components with multiple style variants, use `tva` (Tailwind Variant Authority).
+For components with multiple style variants, use `tva` (Tailwind Variant
+Authority).
 
 ### Correct Pattern
 
 ```tsx
-import { tva } from "@gluestack-ui/utils/nativewind-utils";
+import { tva } from '@gluestack-ui/utils/nativewind-utils';
 
 const cardStyles = tva({
-  base: "rounded-lg p-4",
+  base: 'rounded-lg p-4',
   variants: {
     variant: {
-      default: "bg-card border border-border shadow-sm",
-      elevated: "bg-card shadow-hard-2",
-      outlined: "bg-transparent border border-border",
-      filled: "bg-muted",
+      default: 'bg-card border border-border shadow-sm',
+      elevated: 'bg-card shadow-hard-2',
+      outlined: 'bg-transparent border border-border',
+      filled: 'bg-muted',
     },
     size: {
-      sm: "p-2",
-      md: "p-4",
-      lg: "p-6",
+      sm: 'p-2',
+      md: 'p-4',
+      lg: 'p-6',
     },
   },
   defaultVariants: {
-    variant: "default",
-    size: "md",
+    variant: 'default',
+    size: 'md',
   },
 });
 
@@ -385,17 +414,17 @@ For sub-components that inherit parent styles:
 
 ```tsx
 const buttonTextStyle = tva({
-  base: "font-sans",
+  base: 'font-sans',
   parentVariants: {
     variant: {
-      default: "text-primary-foreground",
-      destructive: "text-white",
-      outline: "text-foreground",
+      default: 'text-primary-foreground',
+      destructive: 'text-white',
+      outline: 'text-foreground',
     },
     size: {
-      sm: "text-xs",
-      md: "text-sm",
-      lg: "text-base",
+      sm: 'text-xs',
+      md: 'text-sm',
+      lg: 'text-base',
     },
   },
 });
@@ -403,7 +432,8 @@ const buttonTextStyle = tva({
 
 ## Rule 8: className Merging for Custom Components
 
-Allow className override in custom components using the `class` parameter in tva.
+Allow className override in custom components using the `class` parameter in
+tva.
 
 ### Correct Pattern
 
@@ -415,7 +445,7 @@ interface BoxCardProps {
 
 const BoxCard = ({ className, children }: BoxCardProps) => {
   const cardStyles = tva({
-    base: "rounded-lg bg-card p-4",
+    base: 'rounded-lg bg-card p-4',
   });
 
   return <Box className={cardStyles({ class: className })}>{children}</Box>;
@@ -430,9 +460,9 @@ For components that need to share context with children:
 import {
   withStyleContext,
   useStyleContext,
-} from "@gluestack-ui/utils/nativewind-utils";
+} from '@gluestack-ui/utils/nativewind-utils';
 
-const SCOPE = "CUSTOM_COMPONENT";
+const SCOPE = 'CUSTOM_COMPONENT';
 const Root = withStyleContext(View, SCOPE);
 
 const Parent = ({ variant, children }) => (
@@ -575,29 +605,27 @@ const Child = () => {
 
 ```tsx
 const buttonStyles = tva({
-  base: "rounded-md px-4 py-2",
+  base: 'rounded-md px-4 py-2',
   variants: {
     variant: {
-      default: "bg-primary text-primary-foreground",
-      destructive: "bg-destructive text-white",
-      outline: "border border-border bg-transparent text-foreground",
-      ghost: "bg-transparent text-foreground",
+      default: 'bg-primary text-primary-foreground',
+      destructive: 'bg-destructive text-white',
+      outline: 'border border-border bg-transparent text-foreground',
+      ghost: 'bg-transparent text-foreground',
     },
   },
 });
 
-<Button className={buttonStyles({ variant: "outline" })}>
+<Button className={buttonStyles({ variant: 'outline' })}>
   <ButtonText>Click Me</ButtonText>
-</Button>
+</Button>;
 ```
 
 ### Dark Mode Support
 
 ```tsx
 <Box className="bg-background dark:bg-background">
-  <Text className="text-foreground dark:text-foreground">
-    Adaptive content
-  </Text>
+  <Text className="text-foreground dark:text-foreground">Adaptive content</Text>
   <Box className="border border-border dark:border-border">
     <Text className="text-muted-foreground dark:text-muted-foreground">
       Muted text
@@ -613,6 +641,7 @@ const buttonStyles = tva({
 Before committing any code, verify that you're using ONLY semantic tokens:
 
 **✅ ALLOWED Token Patterns:**
+
 - `text-foreground`, `text-muted-foreground`, `text-card-foreground`
 - `text-primary`, `text-primary-foreground`
 - `text-secondary`, `text-secondary-foreground`
@@ -623,6 +652,7 @@ Before committing any code, verify that you're using ONLY semantic tokens:
 - Alpha values: `text-foreground/70`, `bg-primary/90`, `border-border/50`
 
 **❌ PROHIBITED Token Patterns:**
+
 - ❌ `typography-*` (typography-900, typography-700, etc.)
 - ❌ `neutral-*` (neutral-100, neutral-600, etc.)
 - ❌ `gray-*` (gray-50, gray-900, etc.)
@@ -636,7 +666,8 @@ Before committing any code, verify that you're using ONLY semantic tokens:
 
 Before submitting code, verify:
 
-- [ ] **No `typography-*` tokens** - Replace with `text-foreground` or `text-muted-foreground`
+- [ ] **No `typography-*` tokens** - Replace with `text-foreground` or
+      `text-muted-foreground`
 - [ ] **No `neutral-*` tokens** - Replace with semantic equivalents
 - [ ] **No `gray-*` or `slate-*` tokens** - Replace with semantic equivalents
 - [ ] **No numbered color tokens** - Replace with semantic tokens
@@ -694,12 +725,17 @@ Before submitting code, verify:
 When a design request cannot be satisfied with existing patterns:
 
 1. **Push back early** - Explain performance and maintenance implications
-2. **Propose alternatives** - Map to existing tokens or suggest new semantic tokens
-3. **Add to design system** - If truly needed, add the CSS custom property to `global.css` `@layer theme` and map it in `@theme inline`, then update `gluestack-ui-provider/config.ts`
-4. **Document exception** - If inline style is unavoidable, add JSDoc explaining why
+2. **Propose alternatives** - Map to existing tokens or suggest new semantic
+   tokens
+3. **Add to design system** - If truly needed, add the CSS custom property to
+   `global.css` `@layer theme` and map it in `@theme inline`, then update
+   `gluestack-ui-provider/config.ts`
+4. **Document exception** - If inline style is unavoidable, add JSDoc explaining
+   why
 
 ## Reference
 
 - **Theme Configuration**: `@/components/ui/gluestack-ui-provider/config.ts`
-- **CSS Theme**: `./global.css` (`@layer theme { … }` + `@theme inline { … }`) — Tailwind v4 is CSS-first; `tailwind.config.js` is deleted in v5
+- **CSS Theme**: `./global.css` (`@layer theme { … }` + `@theme inline { … }`) —
+  Tailwind v4 is CSS-first; `tailwind.config.js` is deleted in v5
 - **Documentation**: https://gluestack.io/ui/docs

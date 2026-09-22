@@ -1,11 +1,15 @@
 ---
 name: gluestack-ui-v5:creating-components
-description: Step-by-step guide for creating components with gluestack-ui v5 (Tailwind v4 CSS-first) - covers planning, structure, styling, TypeScript, and common component patterns.
+description:
+  Step-by-step guide for creating components with gluestack-ui v5 (Tailwind v4
+  CSS-first) - covers planning, structure, styling, TypeScript, and common
+  component patterns.
 ---
 
 # Gluestack UI v5 — Creating Components
 
-This sub-skill provides practical guidance for creating new components using gluestack-ui v5 (Tailwind v4 CSS-first), from planning to implementation.
+This sub-skill provides practical guidance for creating new components using
+gluestack-ui v5 (Tailwind v4 CSS-first), from planning to implementation.
 
 ## Component Creation Workflow
 
@@ -17,7 +21,8 @@ Before writing code, answer these questions:
    - Form input, data display, navigation, layout, etc.
 
 2. **Which Gluestack components do I need?**
-   - Check official docs: `https://gluestack.io/ui/docs/components/${componentName}/`
+   - Check official docs:
+     `https://gluestack.io/ui/docs/components/${componentName}/`
    - Use Gluestack wrappers, not React Native primitives
 
 3. **Does it need compound components?**
@@ -45,6 +50,7 @@ https://gluestack.io/ui/docs/components/${componentName}/
 ```
 
 Check for:
+
 - Latest API and props
 - Required sub-components
 - Usage examples
@@ -87,7 +93,9 @@ interface ProfileCardProps {
 
 export const ProfileCard = ({ name, email, className }: ProfileCardProps) => {
   return (
-    <Box className={`bg-card rounded-lg border border-border p-4 ${className || ''}`}>
+    <Box
+      className={`bg-card rounded-lg border border-border p-4 ${className || ''}`}
+    >
       <Heading size="lg" className="text-card-foreground">
         {name}
       </Heading>
@@ -100,6 +108,7 @@ export const ProfileCard = ({ name, email, className }: ProfileCardProps) => {
 ```
 
 **Key points:**
+
 - ✅ Uses Gluestack components (Box, Text, Heading)
 - ✅ TypeScript interface with `readonly` props
 - ✅ Semantic tokens (bg-card, text-card-foreground)
@@ -173,6 +182,7 @@ export const Alert = ({ variant, size, className, children }: AlertProps) => {
 ```
 
 **Key points:**
+
 - ✅ Uses tva for variant management
 - ✅ Base styles + variant options
 - ✅ Default variants specified
@@ -198,7 +208,9 @@ interface CardProps {
 
 export const Card = ({ className, children }: CardProps) => {
   return (
-    <Box className={`bg-card rounded-lg border border-border shadow-sm ${className || ''}`}>
+    <Box
+      className={`bg-card rounded-lg border border-border shadow-sm ${className || ''}`}
+    >
       {children}
     </Box>
   );
@@ -225,11 +237,7 @@ interface CardBodyProps {
 }
 
 export const CardBody = ({ className, children }: CardBodyProps) => {
-  return (
-    <Box className={`p-4 ${className || ''}`}>
-      {children}
-    </Box>
-  );
+  return <Box className={`p-4 ${className || ''}`}>{children}</Box>;
 };
 
 // Card Footer Sub-component
@@ -240,7 +248,10 @@ interface CardFooterProps {
 
 export const CardFooter = ({ className, children }: CardFooterProps) => {
   return (
-    <HStack space="md" className={`p-4 border-t border-border ${className || ''}`}>
+    <HStack
+      space="md"
+      className={`p-4 border-t border-border ${className || ''}`}
+    >
       {children}
     </HStack>
   );
@@ -261,6 +272,7 @@ export const CardFooter = ({ className, children }: CardFooterProps) => {
 ```
 
 **Key points:**
+
 - ✅ Main component + sub-components
 - ✅ Each sub-component is independent
 - ✅ Consistent styling across sub-components
@@ -272,9 +284,20 @@ Use for form inputs with labels, validation, and error messages.
 
 ```tsx
 import React, { useState } from 'react';
-import { FormControl, FormControlLabel, FormControlLabelText } from '@/components/ui/form-control';
-import { FormControlError, FormControlErrorIcon, FormControlErrorText } from '@/components/ui/form-control';
-import { FormControlHelper, FormControlHelperText } from '@/components/ui/form-control';
+import {
+  FormControl,
+  FormControlLabel,
+  FormControlLabelText,
+} from '@/components/ui/form-control';
+import {
+  FormControlError,
+  FormControlErrorIcon,
+  FormControlErrorText,
+} from '@/components/ui/form-control';
+import {
+  FormControlHelper,
+  FormControlHelperText,
+} from '@/components/ui/form-control';
 import { Input, InputField, InputSlot, InputIcon } from '@/components/ui/input';
 import { MailIcon, AlertCircleIcon } from '@/components/ui/icon';
 
@@ -341,6 +364,7 @@ export const EmailInput = ({
 ```
 
 **Key points:**
+
 - ✅ FormControl wrapper for validation
 - ✅ InputIcon wrapped in InputSlot (CRITICAL)
 - ✅ Error and helper text handling
@@ -377,12 +401,11 @@ export const Accordion = ({
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
   return (
-    <Box className={`border border-border rounded-lg overflow-hidden ${className || ''}`}>
+    <Box
+      className={`border border-border rounded-lg overflow-hidden ${className || ''}`}
+    >
       <Pressable onPress={() => setIsExpanded(!isExpanded)}>
-        <HStack
-          space="md"
-          className="p-4 bg-card items-center justify-between"
-        >
+        <HStack space="md" className="p-4 bg-card items-center justify-between">
           <Text size="md" bold className="text-card-foreground flex-1">
             {title}
           </Text>
@@ -405,6 +428,7 @@ export const Accordion = ({
 ```
 
 **Key points:**
+
 - ✅ Internal state management
 - ✅ Conditional rendering
 - ✅ Interactive elements (Pressable)
@@ -417,7 +441,12 @@ Use for components that fetch data or perform async operations.
 
 ```tsx
 import React from 'react';
-import { Button, ButtonText, ButtonSpinner, ButtonIcon } from '@/components/ui/button';
+import {
+  Button,
+  ButtonText,
+  ButtonSpinner,
+  ButtonIcon,
+} from '@/components/ui/button';
 import { CheckIcon } from '@/components/ui/icon';
 
 interface SubmitButtonProps {
@@ -452,6 +481,7 @@ export const SubmitButton = ({
 ```
 
 **Key points:**
+
 - ✅ Loading state with ButtonSpinner
 - ✅ Success state with icon
 - ✅ Disabled during loading
@@ -486,7 +516,9 @@ export const ProfileCard = ({
   className,
 }: ProfileCardProps) => {
   return (
-    <Box className={`bg-card rounded-lg border border-border p-4 ${className || ''}`}>
+    <Box
+      className={`bg-card rounded-lg border border-border p-4 ${className || ''}`}
+    >
       <HStack space="lg" className="items-start">
         <Image
           source={{ uri: avatarUrl }}
@@ -686,6 +718,7 @@ export const ListItem = ({
 Use ONLY these semantic token patterns:
 
 **Text Colors:**
+
 - `text-foreground` - Main text color
 - `text-muted-foreground` - Muted/secondary text
 - `text-card-foreground` - Text on card backgrounds
@@ -696,6 +729,7 @@ Use ONLY these semantic token patterns:
 - With alpha: `text-foreground/70`, `text-primary/90`
 
 **Background Colors:**
+
 - `bg-background` - Main background
 - `bg-card` - Card backgrounds
 - `bg-muted` - Muted backgrounds
@@ -704,6 +738,7 @@ Use ONLY these semantic token patterns:
 - With alpha: `bg-primary/10`, `bg-muted/50`
 
 **Border Colors:**
+
 - `border-border` - Standard borders
 - `border-input` - Input borders
 - `ring-ring` - Focus rings
@@ -749,12 +784,14 @@ text-opacity-80
 ### Why This Matters
 
 Using prohibited tokens will:
+
 - ❌ Break dark mode
 - ❌ Violate design system
 - ❌ Create maintenance debt
 - ❌ Fail code review
 
 Using semantic tokens will:
+
 - ✅ Work in light AND dark mode
 - ✅ Match design system
 - ✅ Be maintainable
@@ -765,21 +802,27 @@ Using semantic tokens will:
 When creating a component, verify:
 
 ### Structure
+
 - [ ] Uses Gluestack components (not React Native primitives)
 - [ ] Imports from `@/components/ui/*`
 - [ ] Follows compound component pattern when needed
 - [ ] InputIcon wrapped in InputSlot (if using Input)
 
 ### TypeScript
+
 - [ ] Interface defined with `readonly` props
 - [ ] All props typed correctly
 - [ ] Optional props have `?` marker
 - [ ] Default values specified in function params
 
 ### Styling
-- [ ] **CRITICAL: Uses ONLY semantic tokens** - NO `typography-*`, `neutral-*`, `gray-*`, `slate-*`, or numbered colors (`red-500`, `blue-600`)
-- [ ] All color tokens are semantic (text-foreground, bg-card, text-muted-foreground, etc.)
-- [ ] Alpha values used instead of opacity utilities (text-foreground/70 instead of opacity-70)
+
+- [ ] **CRITICAL: Uses ONLY semantic tokens** - NO `typography-*`, `neutral-*`,
+      `gray-*`, `slate-*`, or numbered colors (`red-500`, `blue-600`)
+- [ ] All color tokens are semantic (text-foreground, bg-card,
+      text-muted-foreground, etc.)
+- [ ] Alpha values used instead of opacity utilities (text-foreground/70 instead
+      of opacity-70)
 - [ ] Spacing uses scale values (p-4, m-2, etc.) - no arbitrary values
 - [ ] Component props used (space, size, variant)
 - [ ] className prop for customization
@@ -787,6 +830,7 @@ When creating a component, verify:
 - [ ] Dark mode compatible (semantic tokens work in both themes)
 
 ### Props
+
 - [ ] Accepts className for overrides
 - [ ] Size variants: `sm`, `md`, `lg`
 - [ ] Visual variants if applicable
@@ -794,12 +838,14 @@ When creating a component, verify:
 - [ ] Callback props for interactions
 
 ### Accessibility
+
 - [ ] Meaningful alt text for images
 - [ ] Proper keyboard types for inputs
 - [ ] Focus states handled
 - [ ] ARIA labels when needed
 
 ### Performance
+
 - [ ] Memoized with React.memo if expensive
 - [ ] Callbacks wrapped in useCallback
 - [ ] No unnecessary rerenders
@@ -872,6 +918,7 @@ export const Component = () => (
 
 ## Reference
 
-- **Component Documentation**: `https://gluestack.io/ui/docs/components/${componentName}/`
+- **Component Documentation**:
+  `https://gluestack.io/ui/docs/components/${componentName}/`
 - **Complete Docs**: https://gluestack.io/ui/docs
 - **tva Documentation**: https://www.tailwind-variants.org/

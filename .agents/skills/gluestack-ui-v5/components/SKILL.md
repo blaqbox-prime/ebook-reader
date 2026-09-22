@@ -1,11 +1,15 @@
 ---
 name: gluestack-ui-v5:components
-description: Component usage patterns for gluestack-ui v5 - covers component selection, props vs className, compound patterns, icons, and provider setup (NativeWind v5 + UniWind).
+description:
+  Component usage patterns for gluestack-ui v5 - covers component selection,
+  props vs className, compound patterns, icons, and provider setup (NativeWind
+  v5 + UniWind).
 ---
 
 # Gluestack UI v5 — Component Patterns
 
-This sub-skill focuses on component usage, compound component patterns, icon handling, and provider setup for gluestack-ui v5 (NativeWind v5 / UniWind).
+This sub-skill focuses on component usage, compound component patterns, icon
+handling, and provider setup for gluestack-ui v5 (NativeWind v5 / UniWind).
 
 ## Rule 1: Gluestack Components Over React Native Primitives
 
@@ -24,9 +28,9 @@ Always use Gluestack components instead of direct React Native imports:
 ### Correct Pattern
 
 ```tsx
-import { Box } from "@/components/ui/box";
-import { Text } from "@/components/ui/text";
-import { Pressable } from "@/components/ui/pressable";
+import { Box } from '@/components/ui/box';
+import { Text } from '@/components/ui/text';
+import { Pressable } from '@/components/ui/pressable';
 
 const Component = () => (
   <Box className="p-4">
@@ -41,11 +45,11 @@ const Component = () => (
 ### Incorrect Pattern
 
 ```tsx
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity } from 'react-native';
 
 const Component = () => (
   <View style={{ padding: 16 }}>
-    <Text style={{ color: "#333" }}>Hello</Text>
+    <Text style={{ color: '#333' }}>Hello</Text>
     <TouchableOpacity onPress={handlePress}>
       <Text>Press Me</Text>
     </TouchableOpacity>
@@ -57,26 +61,30 @@ const Component = () => (
 
 - Platform-specific code where RN primitives are explicitly required
 - Deep integration with native modules
-- Performance-critical paths where wrapper overhead matters (rare, must document)
+- Performance-critical paths where wrapper overhead matters (rare, must
+  document)
 
 ## Rule 2: Use Component Props Over className Utilities
 
-Always prefer component props over className utilities when a component provides built-in props. This ensures type safety, better maintainability, and consistent styling.
+Always prefer component props over className utilities when a component provides
+built-in props. This ensures type safety, better maintainability, and consistent
+styling.
 
 ### Component Props vs className
 
-Many Gluestack components provide props that map to common styling needs. Use these props instead of className utilities:
+Many Gluestack components provide props that map to common styling needs. Use
+these props instead of className utilities:
 
-| Component | Use Prop Instead of className | Available Values |
-|-----------|------------------------------|-----------------|
-| `VStack` / `HStack` | `space` instead of `gap-*` | `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl` |
-| `Button` | `variant` instead of `bg-*` classes | `default`, `destructive`, `outline`, `secondary`, `ghost`, `link` |
-| `Button` | `size` instead of `px-* py-*` classes | `default`, `sm`, `lg`, `icon` |
-| `Heading` | `size` instead of `text-*` classes | `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `5xl` |
-| `Text` | `size` instead of `text-*` classes | `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `5xl`, `6xl` |
-| `Heading` / `Text` | `bold` prop instead of `font-bold` | boolean |
-| `Heading` / `Text` | `isTruncated` prop instead of `truncate` | boolean |
-| `VStack` / `HStack` | `reversed` prop instead of `flex-*-reverse` | boolean |
+| Component           | Use Prop Instead of className               | Available Values                                                       |
+| ------------------- | ------------------------------------------- | ---------------------------------------------------------------------- |
+| `VStack` / `HStack` | `space` instead of `gap-*`                  | `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`                      |
+| `Button`            | `variant` instead of `bg-*` classes         | `default`, `destructive`, `outline`, `secondary`, `ghost`, `link`      |
+| `Button`            | `size` instead of `px-* py-*` classes       | `default`, `sm`, `lg`, `icon`                                          |
+| `Heading`           | `size` instead of `text-*` classes          | `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `5xl`               |
+| `Text`              | `size` instead of `text-*` classes          | `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `5xl`, `6xl` |
+| `Heading` / `Text`  | `bold` prop instead of `font-bold`          | boolean                                                                |
+| `Heading` / `Text`  | `isTruncated` prop instead of `truncate`    | boolean                                                                |
+| `VStack` / `HStack` | `reversed` prop instead of `flex-*-reverse` | boolean                                                                |
 
 ### Correct Pattern: Using Component Props
 
@@ -142,11 +150,14 @@ Many Gluestack components provide props that map to common styling needs. Use th
 ### When to Use className vs Props
 
 **Use Props When:**
-- Component provides a built-in prop for the styling (size, variant, space, etc.)
+
+- Component provides a built-in prop for the styling (size, variant, space,
+  etc.)
 - You want type safety and autocomplete
 - The styling is part of the component's design system
 
 **Use className When:**
+
 - Component doesn't provide a prop for the specific styling needed
 - You need custom styling not covered by props
 - Combining multiple utilities that don't have prop equivalents
@@ -174,15 +185,15 @@ You can combine props with className for additional styling:
 The `space` prop on VStack/HStack maps to standard spacing:
 
 | space prop | Gap Value | Equivalent className |
-|------------|-----------|---------------------|
-| `xs` | 4px | `gap-1` |
-| `sm` | 8px | `gap-2` |
-| `md` | 12px | `gap-3` |
-| `lg` | 16px | `gap-4` |
-| `xl` | 20px | `gap-5` |
-| `2xl` | 24px | `gap-6` |
-| `3xl` | 28px | `gap-7` |
-| `4xl` | 32px | `gap-8` |
+| ---------- | --------- | -------------------- |
+| `xs`       | 4px       | `gap-1`              |
+| `sm`       | 8px       | `gap-2`              |
+| `md`       | 12px      | `gap-3`              |
+| `lg`       | 16px      | `gap-4`              |
+| `xl`       | 20px      | `gap-5`              |
+| `2xl`      | 24px      | `gap-6`              |
+| `3xl`      | 28px      | `gap-7`              |
+| `4xl`      | 32px      | `gap-8`              |
 
 ### Benefits of Using Props
 
@@ -195,11 +206,16 @@ The `space` prop on VStack/HStack maps to standard spacing:
 
 ## Rule 6: Gluestack Compound Component Pattern
 
-Use Gluestack's composable compound component pattern for complex components. This is **REQUIRED** for proper rendering, styling, and functionality. Compound components provide proper context sharing, styling inheritance, and accessibility.
+Use Gluestack's composable compound component pattern for complex components.
+This is **REQUIRED** for proper rendering, styling, and functionality. Compound
+components provide proper context sharing, styling inheritance, and
+accessibility.
 
 ### Critical Rule: InputIcon MUST Be Wrapped in InputSlot
 
-**ALL InputIcon components MUST be wrapped in InputSlot**, regardless of whether they're on the left or right side of the input. This is required for proper styling, positioning, and interaction handling.
+**ALL InputIcon components MUST be wrapped in InputSlot**, regardless of whether
+they're on the left or right side of the input. This is required for proper
+styling, positioning, and interaction handling.
 
 ### Input Component Patterns
 
@@ -382,8 +398,8 @@ Use Gluestack's composable compound component pattern for complex components. Th
 ```tsx
 // ❌ INCORRECT: Direct children without sub-components
 <Card>
-  <Heading>Title</Heading>  {/* ❌ Must use CardHeader */}
-  <Text>Content</Text>  {/* ❌ Must use CardBody */}
+  <Heading>Title</Heading> {/* ❌ Must use CardHeader */}
+  <Text>Content</Text> {/* ❌ Must use CardBody */}
 </Card>
 ```
 
@@ -396,7 +412,7 @@ Use Gluestack's composable compound component pattern for complex components. Th
 <Checkbox
   value="terms"
   isChecked={accepted}
-  onChange={(isChecked) => setAccepted(isChecked)}
+  onChange={isChecked => setAccepted(isChecked)}
 >
   <CheckboxIndicator>
     <CheckboxIcon as={CheckIcon} />
@@ -450,24 +466,27 @@ Use Gluestack's composable compound component pattern for complex components. Th
 
 ### Compound Component Reference Table
 
-| Component | Required Sub-Components | Optional Sub-Components | Notes |
-|-----------|------------------------|------------------------|-------|
-| **Input** | `InputField` | `InputSlot`, `InputIcon` | **InputIcon MUST be inside InputSlot** |
-| **Button** | `ButtonText` | `ButtonIcon`, `ButtonSpinner` | Text content must use ButtonText |
-| **Card** | None | `CardHeader`, `CardBody`, `CardFooter` | Structure for organization |
-| **FormControl** | None | `FormControlLabel`, `FormControlError`, `FormControlHelper` | Wrapper for form fields |
-| **Checkbox** | `CheckboxIndicator`, `CheckboxLabel` | `CheckboxIcon` | Icon goes inside Indicator |
-| **Select** | `SelectTrigger`, `SelectInput` | `SelectIcon`, `SelectContent`, `SelectItem` | Complex structure required |
-| **Alert** | `AlertText` | `AlertIcon`, `AlertTitle` | Text must use AlertText |
-| **Toast** | `ToastTitle` | `ToastDescription`, `ToastCloseButton` | Title required for display |
+| Component       | Required Sub-Components              | Optional Sub-Components                                     | Notes                                  |
+| --------------- | ------------------------------------ | ----------------------------------------------------------- | -------------------------------------- |
+| **Input**       | `InputField`                         | `InputSlot`, `InputIcon`                                    | **InputIcon MUST be inside InputSlot** |
+| **Button**      | `ButtonText`                         | `ButtonIcon`, `ButtonSpinner`                               | Text content must use ButtonText       |
+| **Card**        | None                                 | `CardHeader`, `CardBody`, `CardFooter`                      | Structure for organization             |
+| **FormControl** | None                                 | `FormControlLabel`, `FormControlError`, `FormControlHelper` | Wrapper for form fields                |
+| **Checkbox**    | `CheckboxIndicator`, `CheckboxLabel` | `CheckboxIcon`                                              | Icon goes inside Indicator             |
+| **Select**      | `SelectTrigger`, `SelectInput`       | `SelectIcon`, `SelectContent`, `SelectItem`                 | Complex structure required             |
+| **Alert**       | `AlertText`                          | `AlertIcon`, `AlertTitle`                                   | Text must use AlertText                |
+| **Toast**       | `ToastTitle`                         | `ToastDescription`, `ToastCloseButton`                      | Title required for display             |
 
 ### Key Principles
 
-1. **Always use sub-components** - Never place raw text, icons, or elements directly as children
+1. **Always use sub-components** - Never place raw text, icons, or elements
+   directly as children
 2. **InputIcon requires InputSlot** - This is mandatory, not optional
 3. **Text content requires text sub-components** - ButtonText, AlertText, etc.
-4. **Icons require icon sub-components** - ButtonIcon, InputIcon (inside InputSlot), etc.
-5. **Check official docs** - Component structures may vary; always verify at `https://gluestack.io/ui/docs/components/${componentName}/`
+4. **Icons require icon sub-components** - ButtonIcon, InputIcon (inside
+   InputSlot), etc.
+5. **Check official docs** - Component structures may vary; always verify at
+   `https://gluestack.io/ui/docs/components/${componentName}/`
 
 ### Common Mistakes to Avoid
 
@@ -495,38 +514,44 @@ Use Gluestack's composable compound component pattern for complex components. Th
 
 ## Rule 9: Copy-Paste Philosophy
 
-Gluestack-ui uses a copy-paste approach. Components are copied into your codebase, not installed as npm packages.
+Gluestack-ui uses a copy-paste approach. Components are copied into your
+codebase, not installed as npm packages.
 
-**IMPORTANT**: Before copying or using any component, verify the latest usage patterns, sub-components, and API at `https://gluestack.io/ui/docs/components/${componentName}/`
+**IMPORTANT**: Before copying or using any component, verify the latest usage
+patterns, sub-components, and API at
+`https://gluestack.io/ui/docs/components/${componentName}/`
 
 ### Correct Pattern
 
-1. **Check official v5 docs** - Visit `https://gluestack.io/ui/docs/components/${componentName}/` to verify latest API and patterns
+1. **Check official v5 docs** - Visit
+   `https://gluestack.io/ui/docs/components/${componentName}/` to verify latest
+   API and patterns
 2. Copy component files from gluestack-ui into your `components/ui/` directory
 3. Import from your local components directory
 4. Customize as needed
 
 ```tsx
 // Import from your local components
-import { Button, ButtonText } from "@/components/ui/button";
-import { Box } from "@/components/ui/box";
+import { Button, ButtonText } from '@/components/ui/button';
+import { Box } from '@/components/ui/box';
 ```
 
 ### Incorrect Pattern
 
 ```tsx
 // Don't try to import from a package
-import { Button } from "@gluestack-ui/button"; // ❌ This doesn't exist
+import { Button } from '@gluestack-ui/button'; // ❌ This doesn't exist
 ```
 
 ## Rule 10: Provider Setup
 
-Always wrap your app with `GluestackUIProvider` to enable theming and component functionality.
+Always wrap your app with `GluestackUIProvider` to enable theming and component
+functionality.
 
 ### Correct Pattern
 
 ```tsx
-import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
+import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
 
 export default function App() {
   return (
@@ -541,22 +566,32 @@ export default function App() {
 
 v5 supports two styling engines with different theme-switching APIs:
 
-- **NativeWind v5**: Uses `Appearance.setColorScheme()` (same as v4). Theme tokens in `global.css` use `@media (prefers-color-scheme: dark)` + `.dark`/`.light` class selectors for web.
-- **UniWind**: Uses `Uniwind.setTheme('light' | 'dark' | 'system')`. Theme tokens use `:where(.dark, .dark *)` / `:where(.light, .light *)` selectors.
+- **NativeWind v5**: Uses `Appearance.setColorScheme()` (same as v4). Theme
+  tokens in `global.css` use `@media (prefers-color-scheme: dark)` +
+  `.dark`/`.light` class selectors for web.
+- **UniWind**: Uses `Uniwind.setTheme('light' | 'dark' | 'system')`. Theme
+  tokens use `:where(.dark, .dark *)` / `:where(.light, .light *)` selectors.
 
-After re-adding `GluestackUIProvider` via `npx gluestack-ui@alpha add gluestack-ui-provider`, the provider handles theme switching automatically for your chosen engine.
+After re-adding `GluestackUIProvider` via
+`npx gluestack-ui@alpha add gluestack-ui-provider`, the provider handles theme
+switching automatically for your chosen engine.
 
 ## Rule 11: Icon Usage
 
 Use icons from `@/components/ui/icon` following this priority:
 
-1. **Pre-built icons** - Use icons already exported from `components/ui/icon/index.tsx` (e.g., `ChevronRightIcon`, `SearchIcon`, `CheckIcon`)
-2. **Lucide Icons (Recommended)** - If the icon is not available in `components/ui/icon/index.tsx`, use Lucide Icons if available
-3. **Custom icons with createIcon** - If neither is available, create custom icons using the `createIcon` function
+1. **Pre-built icons** - Use icons already exported from
+   `components/ui/icon/index.tsx` (e.g., `ChevronRightIcon`, `SearchIcon`,
+   `CheckIcon`)
+2. **Lucide Icons (Recommended)** - If the icon is not available in
+   `components/ui/icon/index.tsx`, use Lucide Icons if available
+3. **Custom icons with createIcon** - If neither is available, create custom
+   icons using the `createIcon` function
 
 ### Icon Resolution Hierarchy
 
-1. Check if icon exists in `@/components/ui/icon` (e.g., `ChevronRightIcon`, `SearchIcon`)
+1. Check if icon exists in `@/components/ui/icon` (e.g., `ChevronRightIcon`,
+   `SearchIcon`)
 2. Use Lucide Icons if available (recommended for missing icons)
 3. Create custom icon using `createIcon` function
 
@@ -577,26 +612,28 @@ import { Button, ButtonIcon } from '@/components/ui/button';
 
 ### Using Lucide Icons (Recommended)
 
-When an icon is not available in `components/ui/icon/index.tsx`, use Lucide Icons:
+When an icon is not available in `components/ui/icon/index.tsx`, use Lucide
+Icons:
 
 ```tsx
-import { Icon } from "@/components/ui/icon";
-import { Heart } from "lucide-react-native";
+import { Icon } from '@/components/ui/icon';
+import { Heart } from 'lucide-react-native';
 
 <Icon as={Heart} size="md" className="text-foreground" />;
 ```
 
 ### Creating Custom Icons with createIcon
 
-If an icon is not available in `components/ui/icon/index.tsx` and not available in Lucide Icons, create a custom icon using the `createIcon` function:
+If an icon is not available in `components/ui/icon/index.tsx` and not available
+in Lucide Icons, create a custom icon using the `createIcon` function:
 
 ```tsx
-import { Icon, createIcon } from "@/components/ui/icon";
-import { Path } from "react-native-svg";
+import { Icon, createIcon } from '@/components/ui/icon';
+import { Path } from 'react-native-svg';
 
 function App() {
   const CustomIcon = createIcon({
-    viewBox: "0 0 32 32",
+    viewBox: '0 0 32 32',
     path: (
       <>
         <Path
@@ -619,8 +656,8 @@ function App() {
 
 ```tsx
 // Using pre-built icon
-import { ChevronRightIcon } from "@/components/ui/icon";
-import { Button, ButtonIcon } from "@/components/ui/button";
+import { ChevronRightIcon } from '@/components/ui/icon';
+import { Button, ButtonIcon } from '@/components/ui/button';
 
 <Button>
   <ButtonText>Continue</ButtonText>
@@ -628,17 +665,17 @@ import { Button, ButtonIcon } from "@/components/ui/button";
 </Button>;
 
 // Using Lucide icon (when not in components/ui/icon)
-import { Icon } from "@/components/ui/icon";
-import { Heart } from "lucide-react-native";
+import { Icon } from '@/components/ui/icon';
+import { Heart } from 'lucide-react-native';
 
 <Icon as={Heart} size="md" className="text-foreground" />;
 
 // Creating custom icon
-import { Icon, createIcon } from "@/components/ui/icon";
-import { Path } from "react-native-svg";
+import { Icon, createIcon } from '@/components/ui/icon';
+import { Path } from 'react-native-svg';
 
 const CustomIcon = createIcon({
-  viewBox: "0 0 24 24",
+  viewBox: '0 0 24 24',
   path: (
     <Path
       d="M12 2L2 7L12 12L22 7L12 2Z"
@@ -656,10 +693,10 @@ const CustomIcon = createIcon({
 
 ```tsx
 // ❌ Don't import icons from external packages directly
-import { Heart } from "@some-icon-package";
+import { Heart } from '@some-icon-package';
 
 // ❌ Don't use raw SVG components without createIcon
-import Svg, { Path } from "react-native-svg";
+import Svg, { Path } from 'react-native-svg';
 
 <Svg>
   <Path d="..." />
@@ -763,4 +800,5 @@ import Svg, { Path } from "react-native-svg";
 
 ## Reference
 
-**Always verify component usage at:** `https://gluestack.io/ui/docs/components/${componentName}/`
+**Always verify component usage at:**
+`https://gluestack.io/ui/docs/components/${componentName}/`

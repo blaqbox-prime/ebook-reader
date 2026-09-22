@@ -12,6 +12,7 @@ class Book extends Model {
   @field('progress') progress!: number;
   @field('last_location') lastLocation!: string;
   @field('is_favorite') isFavorite!: boolean;
+  @field('file_size') fileSize?: number;
   @date('created_at') createdAt!: Date;
   @date('updated_at') updatedAt!: Date;
 

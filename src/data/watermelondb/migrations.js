@@ -22,5 +22,21 @@ export default schemaMigrations({
         }),
       ],
     },
+    {
+      toVersion: 8,
+      steps: [
+        addColumns({
+          table: 'books',
+          columns: [{ name: 'file_size', type: 'number', isOptional: true }],
+        }),
+        addColumns({
+          table: 'metadata',
+          columns: [
+            { name: 'average_rating', type: 'number', isOptional: true },
+            { name: 'isbn', type: 'string', isOptional: true },
+          ],
+        }),
+      ],
+    },
   ],
 });

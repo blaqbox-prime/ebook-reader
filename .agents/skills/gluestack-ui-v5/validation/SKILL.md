@@ -1,11 +1,16 @@
 ---
 name: gluestack-ui-v5:validation
-description: Validation checklist and anti-patterns for gluestack-ui v5 - use for code review, checking implementation quality, and identifying common mistakes including Tailwind v4-specific issues.
+description:
+  Validation checklist and anti-patterns for gluestack-ui v5 - use for code
+  review, checking implementation quality, and identifying common mistakes
+  including Tailwind v4-specific issues.
 ---
 
 # Gluestack UI v5 — Validation & Anti-Patterns
 
-This sub-skill focuses on validating implementations, identifying anti-patterns, and ensuring code quality for gluestack-ui v5 (Tailwind CSS v4, NativeWind v5 / UniWind).
+This sub-skill focuses on validating implementations, identifying anti-patterns,
+and ensuring code quality for gluestack-ui v5 (Tailwind CSS v4, NativeWind v5 /
+UniWind).
 
 ## Validation Checklist
 
@@ -13,7 +18,8 @@ When reviewing code, check for:
 
 ### Component Usage
 
-- [ ] Component usage verified against official v5 docs at `https://gluestack.io/ui/docs/components/${componentName}/`
+- [ ] Component usage verified against official v5 docs at
+      `https://gluestack.io/ui/docs/components/${componentName}/`
 - [ ] All React Native primitives replaced with Gluestack components
 - [ ] Components imported from local `@/components/ui/` directory
 - [ ] GluestackUIProvider wraps the app
@@ -30,7 +36,8 @@ When reviewing code, check for:
 ### Styling
 
 - [ ] **CRITICAL: All colors use ONLY semantic tokens** - NO exceptions:
-  - [ ] No `typography-*` tokens (use `text-foreground`, `text-muted-foreground`)
+  - [ ] No `typography-*` tokens (use `text-foreground`,
+        `text-muted-foreground`)
   - [ ] No `neutral-*` tokens (use semantic equivalents)
   - [ ] No `gray-*` or `slate-*` tokens (use semantic equivalents)
   - [ ] No numbered colors: `red-500`, `blue-600`, `green-400`
@@ -38,7 +45,8 @@ When reviewing code, check for:
   - [ ] No opacity utilities (use alpha values: `/70`, `/90`)
 - [ ] All spacing values use the standard scale (no arbitrary values)
 - [ ] No inline styles where className can be used
-- [ ] Dark mode support using `dark:` prefix (semantic tokens ensure compatibility)
+- [ ] Dark mode support using `dark:` prefix (semantic tokens ensure
+      compatibility)
 - [ ] Variants defined using `tva` when needed
 - [ ] className properly merged in custom components
 
@@ -47,14 +55,17 @@ When reviewing code, check for:
 - [ ] **Compound components used correctly:**
   - [ ] InputIcon always wrapped in InputSlot (CRITICAL)
   - [ ] ButtonText used for all button text content
-  - [ ] FormControl sub-components used (FormControlLabel, FormControlError, etc.)
+  - [ ] FormControl sub-components used (FormControlLabel, FormControlError,
+        etc.)
   - [ ] Card sub-components used (CardHeader, CardBody, CardFooter)
-  - [ ] Checkbox sub-components used (CheckboxIndicator, CheckboxIcon, CheckboxLabel)
+  - [ ] Checkbox sub-components used (CheckboxIndicator, CheckboxIcon,
+        CheckboxLabel)
   - [ ] All other component sub-components as per official docs
 
 ### Icons
 
-- [ ] Icons follow priority: pre-built icons → Lucide Icons → createIcon for custom icons
+- [ ] Icons follow priority: pre-built icons → Lucide Icons → createIcon for
+      custom icons
 - [ ] Icons imported from `@/components/ui/icon`
 
 ### Cross-Platform Compatibility
@@ -83,30 +94,31 @@ When reviewing code, check for:
 
 ```tsx
 // ❌ INCORRECT: Mixing React Native and Gluestack components
-import { View, Text } from "react-native";
-import { Button } from "@/components/ui/button";
+import { View, Text } from 'react-native';
+import { Button } from '@/components/ui/button';
 
 <View>
   <Text>Mixed usage</Text>
   <Button>Click</Button>
-</View>
+</View>;
 ```
 
 **Why it's bad**: Loses theming, accessibility, and cross-platform consistency.
 
 **Correct approach**:
+
 ```tsx
 // ✅ CORRECT: Use Gluestack components consistently
-import { Box } from "@/components/ui/box";
-import { Text } from "@/components/ui/text";
-import { Button, ButtonText } from "@/components/ui/button";
+import { Box } from '@/components/ui/box';
+import { Text } from '@/components/ui/text';
+import { Button, ButtonText } from '@/components/ui/button';
 
 <Box>
   <Text>Consistent usage</Text>
   <Button>
     <ButtonText>Click</ButtonText>
   </Button>
-</Box>
+</Box>;
 ```
 
 ### ❌ Don't: Use Non-Semantic Color Tokens
@@ -148,12 +160,14 @@ import { Button, ButtonText } from "@/components/ui/button";
 ```
 
 **Why it's bad**:
+
 - ❌ Breaks theming and dark mode
 - ❌ Creates maintenance debt
 - ❌ Violates design system
 - ❌ Inconsistent colors across app
 
 **Correct approach**:
+
 ```tsx
 // ✅ CORRECT: Use ONLY semantic tokens
 <Text className="text-foreground">Heading</Text>
@@ -196,9 +210,11 @@ import { Button, ButtonText } from "@/components/ui/button";
 </FormControl>
 ```
 
-**Why it's bad**: Components won't render correctly, breaks styling and accessibility.
+**Why it's bad**: Components won't render correctly, breaks styling and
+accessibility.
 
 **Correct approach**:
+
 ```tsx
 // ✅ CORRECT: Proper sub-component usage
 <Button>
@@ -235,6 +251,7 @@ import { Button, ButtonText } from "@/components/ui/button";
 **Why it's bad**: Bypasses optimization, breaks theming, harder to maintain.
 
 **Correct approach**:
+
 ```tsx
 // ✅ CORRECT: Use className
 <Box className="p-4 bg-background" />
@@ -253,6 +270,7 @@ import { Button, ButtonText } from "@/components/ui/button";
 **Why it's bad**: Creates maintenance burden, inconsistent spacing across app.
 
 **Correct approach**:
+
 ```tsx
 // ✅ CORRECT: Use spacing scale
 <Box className="p-3 m-6" />
@@ -277,6 +295,7 @@ import { Button, ButtonText } from "@/components/ui/button";
 **Why it's bad**: Loses type safety, harder to maintain, bypasses design system.
 
 **Correct approach**:
+
 ```tsx
 // ✅ CORRECT: Use component props
 <VStack space="lg">
@@ -300,12 +319,14 @@ import { KeyboardAvoidingView, View, Text } from 'react-native';
   <View>
     <Text>Content</Text>
   </View>
-</KeyboardAvoidingView>
+</KeyboardAvoidingView>;
 ```
 
-**Why it's bad**: Breaks cross-platform compatibility, loses theming and accessibility.
+**Why it's bad**: Breaks cross-platform compatibility, loses theming and
+accessibility.
 
 **Correct approach**:
+
 ```tsx
 // ✅ CORRECT: Use Gluestack wrappers
 import { KeyboardAvoidingView } from '@/components/ui/keyboard-avoiding-view';
@@ -316,7 +337,7 @@ import { Text } from '@/components/ui/text';
   <Box>
     <Text>Content</Text>
   </Box>
-</KeyboardAvoidingView>
+</KeyboardAvoidingView>;
 ```
 
 ### ❌ Don't: Use ScrollView for Long Lists
@@ -324,7 +345,7 @@ import { Text } from '@/components/ui/text';
 ```tsx
 // ❌ INCORRECT: ScrollView with map for long lists
 <ScrollView>
-  {items.map((item) => (
+  {items.map(item => (
     <Box key={item.id}>
       <Text>{item.name}</Text>
     </Box>
@@ -332,9 +353,11 @@ import { Text } from '@/components/ui/text';
 </ScrollView>
 ```
 
-**Why it's bad**: No virtualization, all items rendered at once, poor performance.
+**Why it's bad**: No virtualization, all items rendered at once, poor
+performance.
 
 **Correct approach**:
+
 ```tsx
 // ✅ CORRECT: Use FlatList for long lists
 <FlatList
@@ -344,7 +367,7 @@ import { Text } from '@/components/ui/text';
       <Text>{item.name}</Text>
     </Box>
   )}
-  keyExtractor={(item) => item.id}
+  keyExtractor={item => item.id}
 />
 ```
 
@@ -365,6 +388,7 @@ Animated.timing(animValue, {
 **Why it's bad**: Runs on JavaScript thread, can cause jank and dropped frames.
 
 **Correct approach**:
+
 ```tsx
 // ✅ CORRECT: Use Reanimated (runs on UI thread)
 import { useSharedValue, withTiming } from 'react-native-reanimated';
@@ -375,24 +399,24 @@ animValue.value = withTiming(100, { duration: 300 });
 
 ## Common Mistakes Summary
 
-| Mistake | Impact | Correct Approach |
-|---------|--------|-----------------|
-| Using React Native primitives | Loses theming, accessibility, cross-platform support | Use Gluestack components |
-| **Using `typography-*`, `neutral-*`, `gray-*` tokens** | **Breaks theming and dark mode** | **Use ONLY semantic tokens** |
-| **Using numbered colors (`red-500`, `blue-600`)** | **Breaks theming and dark mode** | **Use semantic tokens** |
-| **Using opacity utilities (`opacity-70`)** | **Inconsistent transparency** | **Use alpha values (`/70`, `/90`)** |
-| Raw color values | Breaks theming and dark mode | Use semantic tokens |
-| Skipping sub-components | Components won't render correctly | Use proper compound components |
-| Inline styles for static values | Bypasses optimization, harder to maintain | Use className |
-| Arbitrary spacing values | Creates maintenance burden | Use spacing scale |
-| className instead of props | Loses type safety | Use component props when available |
-| Direct react-native imports | Breaks cross-platform compatibility | Use Gluestack wrappers |
-| ScrollView for long lists | Poor performance | Use FlatList |
-| Animated API | Janky animations | Use Reanimated worklets |
-| **Still using `tailwind.config.js` in v5** | **Tailwind v4 is CSS-first; config ignored** | **Delete it, use `global.css` `@theme inline`** |
-| **Missing `lightningcss` pin (NativeWind v5)** | **Build errors, CSS mismatch** | **Pin `lightningcss@1.30.1` in overrides/resolutions** |
-| **Using `@tailwind base/components/utilities`** | **Tailwind v4 uses `@import` syntax** | **Use `@import "tailwindcss/..."`** |
-| **Missing `postcss.config.js` (NativeWind v5)** | **CSS not processed** | **Create with `@tailwindcss/postcss` plugin** |
+| Mistake                                                | Impact                                               | Correct Approach                                       |
+| ------------------------------------------------------ | ---------------------------------------------------- | ------------------------------------------------------ |
+| Using React Native primitives                          | Loses theming, accessibility, cross-platform support | Use Gluestack components                               |
+| **Using `typography-*`, `neutral-*`, `gray-*` tokens** | **Breaks theming and dark mode**                     | **Use ONLY semantic tokens**                           |
+| **Using numbered colors (`red-500`, `blue-600`)**      | **Breaks theming and dark mode**                     | **Use semantic tokens**                                |
+| **Using opacity utilities (`opacity-70`)**             | **Inconsistent transparency**                        | **Use alpha values (`/70`, `/90`)**                    |
+| Raw color values                                       | Breaks theming and dark mode                         | Use semantic tokens                                    |
+| Skipping sub-components                                | Components won't render correctly                    | Use proper compound components                         |
+| Inline styles for static values                        | Bypasses optimization, harder to maintain            | Use className                                          |
+| Arbitrary spacing values                               | Creates maintenance burden                           | Use spacing scale                                      |
+| className instead of props                             | Loses type safety                                    | Use component props when available                     |
+| Direct react-native imports                            | Breaks cross-platform compatibility                  | Use Gluestack wrappers                                 |
+| ScrollView for long lists                              | Poor performance                                     | Use FlatList                                           |
+| Animated API                                           | Janky animations                                     | Use Reanimated worklets                                |
+| **Still using `tailwind.config.js` in v5**             | **Tailwind v4 is CSS-first; config ignored**         | **Delete it, use `global.css` `@theme inline`**        |
+| **Missing `lightningcss` pin (NativeWind v5)**         | **Build errors, CSS mismatch**                       | **Pin `lightningcss@1.30.1` in overrides/resolutions** |
+| **Using `@tailwind base/components/utilities`**        | **Tailwind v4 uses `@import` syntax**                | **Use `@import "tailwindcss/..."`**                    |
+| **Missing `postcss.config.js` (NativeWind v5)**        | **CSS not processed**                                | **Create with `@tailwindcss/postcss` plugin**          |
 
 ## Critical Issues (Must Fix Immediately)
 
@@ -471,7 +495,8 @@ import { Text } from '@/components/ui/text';
 
 1. **TypeScript types** - All props and components typed
 2. **Spacing scale** - No arbitrary spacing values
-3. **Performance** - FlatList for long lists, memoization for expensive components
+3. **Performance** - FlatList for long lists, memoization for expensive
+   components
 4. **Dark mode** - Proper dark mode support
 
 ### Low Priority (Nice to Have)
@@ -487,17 +512,22 @@ When a design request cannot be satisfied with existing patterns:
 ### Step 1: Push Back Early
 
 **Explain the implications:**
+
 - Performance impact
 - Maintenance burden
 - Breaks theming/dark mode
 - Inconsistent with design system
 
 **Example**:
-> "Using arbitrary spacing values like `p-[13px]` creates maintenance issues and breaks consistency. Can we use `p-3` (12px) or `p-4` (16px) from our spacing scale instead?"
+
+> "Using arbitrary spacing values like `p-[13px]` creates maintenance issues and
+> breaks consistency. Can we use `p-3` (12px) or `p-4` (16px) from our spacing
+> scale instead?"
 
 ### Step 2: Propose Alternatives
 
 **Map to existing tokens:**
+
 ```tsx
 // Request: "Make it slightly lighter red"
 // ❌ Don't use: bg-red-400
@@ -505,6 +535,7 @@ When a design request cannot be satisfied with existing patterns:
 ```
 
 **Suggest new semantic tokens:**
+
 ```tsx
 // Request: "I need a success color"
 // ✅ Propose: Add success token to design system
@@ -513,7 +544,8 @@ When a design request cannot be satisfied with existing patterns:
 
 ### Step 3: Add to Design System
 
-If truly needed, add the CSS custom property to `global.css` `@layer theme` and map it in `@theme inline`, then update `gluestack-ui-provider/config.ts`:
+If truly needed, add the CSS custom property to `global.css` `@layer theme` and
+map it in `@theme inline`, then update `gluestack-ui-provider/config.ts`:
 
 ```ts
 // 1. Add to global.css @layer theme
@@ -544,9 +576,7 @@ If inline style is unavoidable, document why:
  * Using inline style for dynamic safe area padding
  * Cannot use className as value comes from hook
  */
-<Box style={{ paddingBottom: insets.bottom }}>
-  {/* Content */}
-</Box>
+<Box style={{ paddingBottom: insets.bottom }}>{/* Content */}</Box>
 ```
 
 ## Quick Validation Script
@@ -570,4 +600,5 @@ Use this mental checklist when reviewing code:
 ## Reference
 
 - **Official Documentation**: https://gluestack.io/ui/docs
-- **Component Verification**: `https://gluestack.io/ui/docs/components/${componentName}/`
+- **Component Verification**:
+  `https://gluestack.io/ui/docs/components/${componentName}/`
