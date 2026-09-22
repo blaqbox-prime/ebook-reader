@@ -1,6 +1,8 @@
 import { GoogleBooksMetadata } from '@/src/types/book.types';
+import { getEnv } from '@/src/utils';
+const API_KEY = getEnv('EXPO_GOOGLE_BOOKS_API_KEY');
 
-const booksApiUrl = 'https://www.googleapis.com/books/v1/volumes?q=';
+const booksApiUrl = `https://www.googleapis.com/books/v1/volumes?key=${API_KEY}&q=`;
 
 export const fetchGoogleBookMetadata = async (
   author: string,
@@ -9,7 +11,7 @@ export const fetchGoogleBookMetadata = async (
 ) => {
   try {
     const res = await fetch(
-      `${booksApiUrl}${encodeURI(author) || ''}+${encodeURI(` ${title}`)}`
+      `${booksApiUrl}${encodeURI(`${title}+inauthor${encodeURI(author) || ''}`)}`
     );
     const body = await res.json();
 

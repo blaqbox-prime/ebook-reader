@@ -68,7 +68,7 @@ export const BookDetails = ({
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-m3-surface" edges={['top']}>
+    <SafeAreaView className="flex-1 pb-16 bg-m3-surface" edges={['top']}>
       {/* Header */}
       <View className="h-16 px-4 flex-row items-center justify-between">
         <View className="flex-row items-center min-w-0 flex-1">
