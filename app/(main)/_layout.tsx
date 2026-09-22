@@ -21,13 +21,13 @@ const _layout = () => {
           flexDirection: 'row',
           justifyContent: 'space-between',
           alignItems: 'center',
-          backgroundColor: m3['surface-low'],
           borderRadius: 50,
-          marginHorizontal: 24,
-          marginBottom: 24,
-          position: 'absolute',
+          // position: 'absolute',
+          // left: '15%',
+          // right: '15%',
           width: '70%',
-          transformOrigin: 'center',
+          alignSelf: 'center',
+          bottom: 24,
           height: 64,
           paddingHorizontal: 8,
           shadowColor: '#000000',
@@ -48,7 +48,7 @@ const _layout = () => {
                 style={{
                   paddingHorizontal: 7,
                   paddingVertical: 4,
-                  borderRadius: 999,
+                  borderRadius: 99,
                   backgroundColor: focused
                     ? m3['secondary-container']
                     : 'transparent',
