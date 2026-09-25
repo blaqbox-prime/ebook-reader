@@ -22,6 +22,8 @@ import SegmentedTabs from '@/src/components/SegmentedTabs';
 import BookmarkCard from '@/src/components/BookmarkCard';
 import ActionToast, { ToastIconName } from '@/src/components/ActionToast';
 import Header from '@/src/components/Header';
+import ProfileStatCard from '@/src/components/ProfileStatCard';
+import SessionRow from '@/src/components/SessionRow';
 
 export {
   BookTile,
@@ -48,6 +50,8 @@ export {
   BookmarkCard,
   ActionToast,
   Header,
+  ProfileStatCard,
+  SessionRow,
 };
 
 export type { ToastIconName };

@@ -3,9 +3,18 @@ import React from 'react';
 import { images } from '@/assets';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useNavigation } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
-const Header = () => {
+type HeaderProps = {
+  title?: string;
+  showNotifications?: boolean;
+  onNotificationsPress?: () => void;
+};
+
+const Header = ({
+  title = 'PageTurner',
+  showNotifications = false,
+  onNotificationsPress,
+}: HeaderProps) => {
   const nav = useNavigation();
 
   return (
@@ -21,10 +30,18 @@ const Header = () => {
             numberOfLines={1}
             className="font-heading text-[22px] leading-8 text-m3-primary tracking-tight"
           >
-            PageTurner
+            {title}
           </Text>
         </View>
       </View>
+      {showNotifications && (
+        <TouchableOpacity
+          onPress={onNotificationsPress}
+          className="w-11 h-11 items-center justify-center rounded-full"
+        >
+          <MaterialIcons name="notifications-none" size={22} color="#52443b" />
+        </TouchableOpacity>
+      )}
       <TouchableOpacity
         onPress={() => nav.navigate('profile/index' as never)}
         className="w-11 h-11 items-center justify-center rounded-full"

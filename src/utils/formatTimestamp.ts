@@ -35,3 +35,36 @@ export const formatTimestamp = (
   });
   return `${day} at ${time}`;
 };
+
+/**
+ * Formats a reading-session start time in a compact, human way.
+ * e.g. "Today, 8:15 AM" | "Yesterday, 9:30 PM" | "Oct 24, 7:10 PM"
+ */
+export const formatSessionTime = (
+  date: Date,
+  now: Date = new Date()
+): string => {
+  if (!date || Number.isNaN(date.getTime())) return '—';
+
+  const dayDiff = Math.round(
+    (startOfDay(now).getTime() - startOfDay(date).getTime()) / DAY_MS
+  );
+  const time = date.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+  });
+
+  if (dayDiff === 0) return `Today, ${time}`;
+  if (dayDiff === 1) return `Yesterday, ${time}`;
+  if (date.getFullYear() === now.getFullYear()) {
+    return `${date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+    })}, ${time}`;
+  }
+  return `${date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  })}, ${time}`;
+};

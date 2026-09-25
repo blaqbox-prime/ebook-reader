@@ -243,6 +243,7 @@ module.exports = {
         'm3-primary-container': '#784315',
         'm3-on-primary-container': '#fdb37b',
         'm3-secondary': '#6e5c39',
+        'm3-on-secondary': '#ffffff',
         'm3-secondary-container': '#f9dfb3',
         'm3-on-secondary-container': '#554424',
         'm3-surface': '#fbf9f6',
