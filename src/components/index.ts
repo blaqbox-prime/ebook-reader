@@ -24,6 +24,7 @@ import ActionToast, { ToastIconName } from '@/src/components/ActionToast';
 import Header from '@/src/components/Header';
 import ProfileStatCard from '@/src/components/ProfileStatCard';
 import SessionRow from '@/src/components/SessionRow';
+import UserAvatar from '@/src/components/UserAvatar';
 
 export {
   BookTile,
