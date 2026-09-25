@@ -1,7 +1,9 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { useState } from 'react';
+import { ComponentProps, useState } from 'react';
 import { Image, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { useUserProfileStore } from '@/src/store';
+
+type IconName = ComponentProps<typeof MaterialIcons>['name'];
 
 interface UserAvatarProps {
   size?: number;
@@ -17,6 +19,7 @@ const UserAvatar = ({
   accessibilityLabel,
 }: UserAvatarProps) => {
   const savedAvatarUri = useUserProfileStore(state => state.avatarUri);
+  const savedAvatarGlyph = useUserProfileStore(state => state.avatarGlyph);
   const [failedUri, setFailedUri] = useState<string | null>(null);
   const resolvedUri = uri === undefined ? savedAvatarUri : uri;
   const imageUri =
@@ -40,7 +43,7 @@ const UserAvatar = ({
       ) : (
         <View className="flex-1 items-center justify-center">
           <MaterialIcons
-            name="person"
+            name={(savedAvatarGlyph as IconName) ?? 'person'}
             size={Math.round(size * 0.55)}
             color="#52443b"
           />

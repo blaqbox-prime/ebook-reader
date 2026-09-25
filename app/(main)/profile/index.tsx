@@ -24,6 +24,7 @@ import AvatarStorageService from '@/src/services/AvatarStorageService';
 import {
   useAchievementStore,
   useBookmarksStore,
+  useOnboardingStore,
   usePreferencesStore,
   useUserProfileStore,
   useUserStatsStore,
@@ -152,7 +153,14 @@ const Profile = () => {
   const { initializeAchievements, userStats } = useAchievementStore();
   const { bookmarks } = useBookmarksStore();
   const { dailyGoalMinutes, setDailyGoalMinutes } = usePreferencesStore();
-  const { displayName, avatarUri, updateProfile } = useUserProfileStore();
+  const {
+    displayName,
+    avatarUri,
+    avatarGlyph,
+    archetype,
+    favoriteGenres,
+    updateProfile,
+  } = useUserProfileStore();
 
   const [sessions, setSessions] = useState<ReadingSession[]>([]);
   const [books, setBooks] = useState<Book[]>([]);
@@ -344,6 +352,9 @@ const Profile = () => {
       updateProfile({
         displayName: nextDisplayName,
         avatarUri: persistedAvatarUri,
+        avatarGlyph: persistedAvatarUri ? null : avatarGlyph,
+        archetype,
+        favoriteGenres,
       });
 
       if (avatarUri && avatarUri !== persistedAvatarUri) {
@@ -360,7 +371,16 @@ const Profile = () => {
     } finally {
       setIsSavingProfile(false);
     }
-  }, [avatarUri, draftAvatarUri, draftName, showToast, updateProfile]);
+  }, [
+    archetype,
+    avatarGlyph,
+    avatarUri,
+    draftAvatarUri,
+    draftName,
+    favoriteGenres,
+    showToast,
+    updateProfile,
+  ]);
 
   const handleExport = async () => {
     const markdown = buildHighlightsMarkdown(bookmarks);
@@ -407,6 +427,11 @@ const Profile = () => {
     );
   };
 
+  const handleReplayOnboarding = useCallback(() => {
+    useOnboardingStore.getState().resetOnboarding();
+    router.replace('/onboarding');
+  }, [router]);
+
   const rows = [
     {
       icon: 'folder-open' as IconName,
@@ -427,6 +452,12 @@ const Profile = () => {
       label: 'Reading Theme & Tone',
       value: 'Light Mode',
       onPress: handleTheme,
+    },
+    {
+      icon: 'replay' as IconName,
+      label: 'Replay Onboarding',
+      value: 'Restart the 2-step setup',
+      onPress: handleReplayOnboarding,
     },
   ];
 

@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import { ReaderProvider } from '@epubjs-react-native/core';
 import * as Notifications from 'expo-notifications';
 import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
+import { useOnboardingStore } from '@/src/store';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -19,6 +20,9 @@ Notifications.setNotificationHandler({
 
 export default function RootLayout() {
   const [loaded, error] = useFonts(fonts);
+  const hasCompletedOnboarding = useOnboardingStore(
+    state => state.hasCompletedOnboarding
+  );
 
   useEffect(() => {
     if (loaded || error) {
@@ -37,9 +41,13 @@ export default function RootLayout() {
           screenOptions={{
             headerShown: false,
           }}
+          initialRouteName={hasCompletedOnboarding ? '(main)' : 'onboarding'}
         >
-          <Stack.Screen name="(main)" />
-          <Stack.Screen name="reader/[uri]" />
+          <Stack.Screen name="onboarding" />
+          <Stack.Protected guard={hasCompletedOnboarding}>
+            <Stack.Screen name="(main)" />
+            <Stack.Screen name="reader/[uri]" />
+          </Stack.Protected>
         </Stack>
       </ReaderProvider>
     </GluestackUIProvider>

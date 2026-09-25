@@ -25,6 +25,7 @@ import Header from '@/src/components/Header';
 import ProfileStatCard from '@/src/components/ProfileStatCard';
 import SessionRow from '@/src/components/SessionRow';
 import UserAvatar from '@/src/components/UserAvatar';
+import OnboardingDots from '@/src/components/OnboardingDots';
 
 export {
   BookTile,
@@ -54,6 +55,7 @@ export {
   ProfileStatCard,
   SessionRow,
   UserAvatar,
+  OnboardingDots,
 };
 
 export type { ToastIconName };
