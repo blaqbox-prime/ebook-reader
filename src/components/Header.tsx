@@ -1,5 +1,6 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import React from 'react';
+import UserAvatar from '@/src/components/UserAvatar';
 import { images } from '@/assets';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useNavigation } from 'expo-router';
@@ -44,11 +45,11 @@ const Header = ({
       )}
       <TouchableOpacity
         onPress={() => nav.navigate('profile/index' as never)}
+        accessibilityRole="button"
+        accessibilityLabel="Open profile"
         className="w-11 h-11 items-center justify-center rounded-full"
       >
-        <View className="w-8 h-8 rounded-full bg-m3-surface-high items-center justify-center">
-          <MaterialIcons name="person" size={20} color="#52443b" />
-        </View>
+        <UserAvatar size={32} />
       </TouchableOpacity>
     </View>
   );

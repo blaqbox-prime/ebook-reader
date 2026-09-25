@@ -1,11 +1,20 @@
-import { View, Text } from 'react-native';
 import React from 'react';
-
-const time: number = new Date().getHours();
-const username: string = 'Natasha';
-const greeting: string = `Good ${time > 17 ? 'Evening' : time > 11 ? 'Afternoon' : time > 4 ? 'Morning' : 'Evening'} ${username}`;
+import { Text, View } from 'react-native';
+import { useUserProfileStore } from '@/src/store';
 
 const Greeting = () => {
+  const displayName = useUserProfileStore(state => state.displayName);
+  const time = new Date().getHours();
+  const greeting = `Good ${
+    time > 17
+      ? 'Evening'
+      : time > 11
+        ? 'Afternoon'
+        : time > 4
+          ? 'Morning'
+          : 'Evening'
+  } ${displayName}`;
+
   return (
     <View className="flex flex-col">
       <Text className="font-heading text-5xl text-m3-primary leading-[3rem] tracking-wider max-w-[90%]">

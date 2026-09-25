@@ -1,5 +1,6 @@
 import { images } from '@/assets';
 import { Book, Metadata } from '@/src/data/watermelondb/models';
+import UserAvatar from '@/src/components/UserAvatar';
 import {
   computeCurrentPage,
   computeTimeLeftMinutes,
@@ -92,8 +93,8 @@ export const BookDetails = ({
             </Text>
           </View>
         </View>
-        <View className="w-11 h-11 items-center justify-center rounded-full bg-m3-surface-high">
-          <MaterialIcons name="person" size={20} color="#52443b" />
+        <View className="w-11 h-11 items-center justify-center rounded-full">
+          <UserAvatar size={32} />
         </View>
       </View>
 

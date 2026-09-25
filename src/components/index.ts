@@ -53,6 +53,7 @@ export {
   Header,
   ProfileStatCard,
   SessionRow,
+  UserAvatar,
 };
 
 export type { ToastIconName };

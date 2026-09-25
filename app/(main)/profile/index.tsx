@@ -13,16 +13,19 @@ import {
   ProfileStatCard,
   SessionRow,
   ToastIconName,
+  UserAvatar,
 } from '@/src/components';
 import { DAILY_GOAL_OPTIONS } from '@/src/store/preferencesStore';
 import { Book } from '@/src/data/watermelondb/models';
 import ReadingSession from '@/src/Models/ReadingSession';
 import BookService from '@/src/services/BookService';
 import SessionTrackingService from '@/src/services/SessionTrackingService';
+import AvatarStorageService from '@/src/services/AvatarStorageService';
 import {
   useAchievementStore,
   useBookmarksStore,
   usePreferencesStore,
+  useUserProfileStore,
   useUserStatsStore,
 } from '@/src/store';
 import { buildHighlightsMarkdown } from '@/src/utils';
@@ -30,6 +33,7 @@ import { formatDuration, formatFileSize } from '@/src/utils/bookDetailsUtils';
 import { getLevelInfo } from '@/src/utils/readerLevel';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Constants from 'expo-constants';
+import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import {
   ComponentProps,
@@ -40,11 +44,13 @@ import {
 } from 'react';
 import {
   Alert,
+  KeyboardAvoidingView,
   Platform,
   RefreshControl,
   ScrollView,
   Share,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -59,7 +65,8 @@ const SORT_OPTIONS: { key: SortKey; label: string }[] = [
   { key: 'longest', label: 'Longest first' },
 ];
 
-const USER_NAME = 'Natasha';
+const MAX_NAME_LENGTH = 50;
+
 const APP_VERSION = Constants.expoConfig?.version ?? '2.0.0';
 
 const webClipboard = (
@@ -145,6 +152,7 @@ const Profile = () => {
   const { initializeAchievements, userStats } = useAchievementStore();
   const { bookmarks } = useBookmarksStore();
   const { dailyGoalMinutes, setDailyGoalMinutes } = usePreferencesStore();
+  const { displayName, avatarUri, updateProfile } = useUserProfileStore();
 
   const [sessions, setSessions] = useState<ReadingSession[]>([]);
   const [books, setBooks] = useState<Book[]>([]);
@@ -152,6 +160,12 @@ const Profile = () => {
   const [sortKey, setSortKey] = useState<SortKey>('recent');
   const [isSortOpen, setSortOpen] = useState(false);
   const [isGoalOpen, setGoalOpen] = useState(false);
+  const [isEditOpen, setEditOpen] = useState(false);
+  const [draftName, setDraftName] = useState(displayName);
+  const [draftAvatarUri, setDraftAvatarUri] = useState<string | null>(
+    avatarUri
+  );
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [toast, setToast] = useState<{
     message: string;
     icon?: ToastIconName;
@@ -282,6 +296,72 @@ const Profile = () => {
     showToast(`Daily goal set to ${minutes} minutes`, 'flag');
   };
 
+  const handleOpenProfileEditor = useCallback(() => {
+    setDraftName(displayName);
+    setDraftAvatarUri(avatarUri);
+    setEditOpen(true);
+  }, [avatarUri, displayName]);
+
+  const handleSelectProfilePhoto = useCallback(async () => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'],
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.85,
+      });
+
+      if (result.canceled) return;
+
+      const [asset] = result.assets;
+      if (asset) setDraftAvatarUri(asset.uri);
+    } catch {
+      showToast('Could not open your photo library', 'error');
+    }
+  }, [showToast]);
+
+  const handleRemoveProfilePhoto = useCallback(() => {
+    setDraftAvatarUri(null);
+  }, []);
+
+  const handleSaveProfile = useCallback(async () => {
+    const nextDisplayName = draftName.trim();
+    if (!nextDisplayName) {
+      showToast('Enter a display name', 'error');
+      return;
+    }
+
+    setIsSavingProfile(true);
+    let persistedAvatarUri = avatarUri;
+
+    try {
+      if (draftAvatarUri && draftAvatarUri !== avatarUri) {
+        persistedAvatarUri = await AvatarStorageService.save(draftAvatarUri);
+      } else {
+        persistedAvatarUri = draftAvatarUri;
+      }
+
+      updateProfile({
+        displayName: nextDisplayName,
+        avatarUri: persistedAvatarUri,
+      });
+
+      if (avatarUri && avatarUri !== persistedAvatarUri) {
+        await AvatarStorageService.remove(avatarUri);
+      }
+
+      setEditOpen(false);
+      showToast('Profile updated', 'check-circle');
+    } catch {
+      if (persistedAvatarUri && persistedAvatarUri !== avatarUri) {
+        await AvatarStorageService.remove(persistedAvatarUri);
+      }
+      showToast('Could not update your profile', 'error');
+    } finally {
+      setIsSavingProfile(false);
+    }
+  }, [avatarUri, draftAvatarUri, draftName, showToast, updateProfile]);
+
   const handleExport = async () => {
     const markdown = buildHighlightsMarkdown(bookmarks);
 
@@ -306,16 +386,19 @@ const Profile = () => {
   const handleSignOut = () => {
     Alert.alert(
       'Sign out',
-      'This clears your saved bookmarks and reading progress on this device. Your books stay in the library.',
+      'This clears your saved bookmarks, reading progress, and profile on this device. Your books stay in the library.',
       [
         { text: 'Cancel', style: 'cancel' },
         {
           text: 'Sign Out',
           style: 'destructive',
-          onPress: () => {
+          onPress: async () => {
+            const profile = useUserProfileStore.getState();
             useBookmarksStore.getState().clearBookmarks();
             useAchievementStore.getState().resetProgress();
             usePreferencesStore.getState().resetPreferences();
+            profile.resetProfile();
+            await AvatarStorageService.remove(profile.avatarUri);
             showToast('Signed out of PageTurner', 'logout');
             router.navigate('/');
           },
@@ -368,16 +451,17 @@ const Profile = () => {
         <View className="px-6 flex-col">
           <View className="bg-m3-surface-mid rounded-2xl p-5 mt-1 flex-row items-start gap-4">
             <View className="relative">
-              <View className="w-16 h-16 rounded-full bg-m3-surface-high items-center justify-center">
-                <MaterialIcons name="person" size={36} color="#52443b" />
-              </View>
+              <UserAvatar
+                size={64}
+                accessibilityLabel={`${displayName}'s profile picture`}
+              />
               <View className="absolute -bottom-0.5 -right-0.5 bg-m3-surface rounded-full">
                 <MaterialIcons name="check-circle" size={18} color="#5c2d00" />
               </View>
             </View>
             <View className="flex-col flex-1 min-w-0 gap-0.5">
               <Text className="font-heading text-[20px] leading-7 text-m3-on-surface">
-                {USER_NAME}
+                {displayName}
               </Text>
               <Text className="text-[12px] leading-4 text-m3-on-surface-variant">
                 Avid Bibliophile · Member since {memberSinceLabel}
@@ -390,7 +474,9 @@ const Profile = () => {
               </View>
             </View>
             <TouchableOpacity
-              onPress={handleNotifications}
+              onPress={handleOpenProfileEditor}
+              accessibilityRole="button"
+              accessibilityLabel="Edit profile"
               className="w-9 h-9 rounded-full bg-m3-surface-highest items-center justify-center"
             >
               <MaterialIcons name="tune" size={20} color="#52443b" />
@@ -694,6 +780,138 @@ const Profile = () => {
               );
             })}
           </View>
+        </ActionsheetContent>
+      </Actionsheet>
+
+      <Actionsheet
+        isOpen={isEditOpen}
+        onClose={() => setEditOpen(false)}
+        snapPoints={[70]}
+        isKeyboardDismissable
+      >
+        <ActionsheetBackdrop />
+        <ActionsheetContent className="bg-m3-surface-high px-5 pb-8 pt-3">
+          <ActionsheetDragIndicatorWrapper>
+            <ActionsheetDragIndicator className="bg-m3-outline/40" />
+          </ActionsheetDragIndicatorWrapper>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+            className="w-full"
+          >
+            <View className="flex-row items-center justify-between pb-2">
+              <Text className="font-lato-black text-base text-m3-on-surface flex-1">
+                Edit profile
+              </Text>
+              <TouchableOpacity
+                onPress={() => setEditOpen(false)}
+                disabled={isSavingProfile}
+                accessibilityRole="button"
+                accessibilityLabel="Close profile editor"
+                className="w-8 h-8 rounded-full items-center justify-center"
+              >
+                <MaterialIcons name="close" size={20} color="#52443b" />
+              </TouchableOpacity>
+            </View>
+
+            <View className="items-center mt-2">
+              <TouchableOpacity
+                onPress={() => void handleSelectProfilePhoto()}
+                disabled={isSavingProfile}
+                accessibilityRole="button"
+                accessibilityLabel="Choose a profile photo"
+                className="relative"
+              >
+                <UserAvatar uri={draftAvatarUri} size={80} />
+                <View className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-m3-primary items-center justify-center">
+                  <MaterialIcons
+                    name="photo-camera"
+                    size={17}
+                    color="#ffffff"
+                  />
+                </View>
+              </TouchableOpacity>
+              <Text className="text-[12px] leading-4 text-m3-on-surface-variant font-semibold mt-2">
+                {draftAvatarUri
+                  ? 'Change profile photo'
+                  : 'Add a profile photo'}
+              </Text>
+            </View>
+
+            <View className="mt-4">
+              <View className="flex-row items-center justify-between mb-1.5">
+                <Text className="text-[11px] leading-4 text-m3-on-surface-variant uppercase tracking-wide">
+                  Display name
+                </Text>
+                <Text className="text-[11px] leading-4 text-m3-on-surface-variant">
+                  {draftName.length}/{MAX_NAME_LENGTH}
+                </Text>
+              </View>
+              <TextInput
+                value={draftName}
+                onChangeText={setDraftName}
+                placeholder="Reader"
+                placeholderTextColor="#857469"
+                maxLength={MAX_NAME_LENGTH}
+                autoCapitalize="words"
+                autoCorrect={false}
+                returnKeyType="done"
+                textContentType="name"
+                onSubmitEditing={() => void handleSaveProfile()}
+                className="bg-m3-surface-mid rounded-xl px-4 py-3 text-[15px] leading-5 text-m3-on-surface font-semibold"
+              />
+            </View>
+
+            {draftAvatarUri ? (
+              <TouchableOpacity
+                onPress={handleRemoveProfilePhoto}
+                disabled={isSavingProfile}
+                accessibilityRole="button"
+                className="w-full flex-row items-center justify-center gap-2 py-3 mt-1"
+              >
+                <MaterialIcons
+                  name="delete-outline"
+                  size={18}
+                  color="#ba1a1a"
+                />
+                <Text className="text-[13px] leading-5 text-m3-error font-semibold">
+                  Remove photo
+                </Text>
+              </TouchableOpacity>
+            ) : null}
+
+            <View className="flex-row items-center gap-2 mt-3">
+              <TouchableOpacity
+                onPress={() => setEditOpen(false)}
+                disabled={isSavingProfile}
+                accessibilityRole="button"
+                className="flex-1 bg-m3-surface-mid rounded-xl py-3.5 items-center justify-center"
+              >
+                <Text className="text-[14px] leading-5 text-m3-on-surface font-semibold">
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => void handleSaveProfile()}
+                disabled={isSavingProfile || !draftName.trim()}
+                accessibilityRole="button"
+                className={`flex-1 rounded-xl py-3.5 items-center justify-center ${
+                  isSavingProfile || !draftName.trim()
+                    ? 'bg-m3-surface-highest'
+                    : 'bg-m3-primary'
+                }`}
+              >
+                <Text
+                  className={`text-[14px] leading-5 font-semibold ${
+                    isSavingProfile || !draftName.trim()
+                      ? 'text-m3-on-surface-variant'
+                      : 'text-white'
+                  }`}
+                >
+                  {isSavingProfile ? 'Saving...' : 'Save'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </KeyboardAvoidingView>
         </ActionsheetContent>
       </Actionsheet>
 

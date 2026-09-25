@@ -7,8 +7,11 @@ const profileDirectory = FileSystem.documentDirectory
 
 const getFileExtension = (uri: string): string => {
   const fileName = uri.split('?')[0].split('/').pop() ?? '';
-  const extension = fileName.split('.').pop()?.toLowerCase() ?? '';
+  const separatorIndex = fileName.lastIndexOf('.');
 
+  if (separatorIndex <= 0) return 'jpg';
+
+  const extension = fileName.slice(separatorIndex + 1).toLowerCase();
   return /^[a-z0-9]{1,5}$/.test(extension) ? extension : 'jpg';
 };
 
