@@ -170,7 +170,7 @@ const OnboardingProfileScreen = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-m3-surface" edges={['top']}>
-      <View className="h-24 px-4 justify-center">
+      <View className="h-14 px-4 justify-center">
         <View className="flex-row items-center justify-between">
           <TouchableOpacity
             onPress={() => router.back()}
@@ -194,17 +194,6 @@ const OnboardingProfileScreen = () => {
               Skip
             </Text>
           </TouchableOpacity>
-        </View>
-        <View className="pb-1">
-          <View className="flex-row items-center justify-between">
-            <Text className="font-heading text-[24px] leading-8 text-m3-on-surface">
-              Create Local Profile
-            </Text>
-            <OnboardingDots step={3} total={3} label="Step 3 of 3" />
-          </View>
-          <Text className="text-[12px] leading-4 text-m3-on-surface-variant">
-            Your sanctuary, stored entirely on device
-          </Text>
         </View>
       </View>
 
@@ -281,11 +270,11 @@ const OnboardingProfileScreen = () => {
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
+                contentContainerClassName="flex-row items-center gap-2.5"
                 contentContainerStyle={{
                   paddingHorizontal: 4,
                   paddingBottom: 4,
                 }}
-                className="flex-row items-center gap-2.5"
               >
                 {ONBOARDING_AVATAR_PRESETS.map(preset => {
                   const isActive = !hasPhoto && avatarGlyph === preset.glyph;
@@ -546,6 +535,11 @@ const OnboardingProfileScreen = () => {
         icon={toast?.icon}
         visible={toast !== null}
       />
+      <View className="py-4 px-8 h-20 flex-row items-center justify-between">
+        <View className="flex-row items-center justify-between">
+          <OnboardingDots step={3} total={3} label="Step 3 of 3" />
+        </View>
+      </View>
     </SafeAreaView>
   );
 };
