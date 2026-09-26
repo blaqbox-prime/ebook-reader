@@ -8,6 +8,7 @@ import {
   AchievementUnlockModal,
   ReaderContent,
   ReaderOptionsFAB,
+  ReaderProgress,
 } from '@/src/components';
 import { TOCActionSheet } from '@/src/components/TOCActionSheet';
 import ReaderSettingsSheet from '@/src/components/ReaderSettingsSheet';
@@ -46,7 +47,25 @@ const BookReader = () => {
   // record finished loading, splitting one read into two sessions.
   const bookRef = useRef<Book | null>(null);
   bookRef.current = book;
+  const latestPageRef = useRef<number | null>(null);
   const lastPagesWriteRef = useRef(0);
+  // Page the reader was on when this session opened. `null` until the first
+  // progress report arrives, which doubles as "session not really started".
+  const sessionStartPageRef = useRef<number | null>(null);
+
+  /**
+   * Pages advanced since this session opened, clamped at zero so jumping
+   * backwards (TOC, a bookmark) never records negative progress.
+   */
+  const getPagesReadDelta = useCallback(() => {
+    const currentPage = latestPageRef.current;
+    if (currentPage == null) return 0;
+    if (sessionStartPageRef.current == null) {
+      sessionStartPageRef.current = currentPage;
+      return 0;
+    }
+    return Math.max(0, currentPage - sessionStartPageRef.current);
+  }, []);
 
   // Theme handling — the preference is persisted, so the reader reopens in the
   // tone the reader last chose instead of always resetting to light.
@@ -62,11 +81,8 @@ const BookReader = () => {
   };
 
   const handleProgressChange = useCallback(
-    async (progress: {
-      locationIndex: number;
-      totalLocations: number;
-      progressPercent: number;
-    }) => {
+    async (progress: ReaderProgress) => {
+      latestPageRef.current = progress.page;
       const session = sessionRef.current;
       if (!session) return;
 
@@ -81,21 +97,25 @@ const BookReader = () => {
         }
       }
 
-      // Record pages read against the open session so the achievement engine has
-      // real page counts (this column was previously never written). Throttled
-      // because location changes arrive far more often than they are worth
-      // persisting, and the final value is re-read when the session closes.
+      // Record how far the reader actually advanced this session. Storing the
+      // absolute page instead would add the whole book-prefix to the lifetime
+      // total on every resume, inflating the page achievements without the
+      // reader having read anything.
+      const pagesRead = getPagesReadDelta();
+
+      // Throttled because location changes arrive far more often than they are
+      // worth persisting. The final value is flushed on unmount.
       const now = Date.now();
       if (now - lastPagesWriteRef.current < SESSION_WRITE_THROTTLE_MS) return;
       lastPagesWriteRef.current = now;
 
       try {
-        await session.updatePagesRead(progress.locationIndex);
+        await session.updatePagesRead(pagesRead);
       } catch (error) {
         console.error('Error recording pages read:', error);
       }
     },
-    []
+    [getPagesReadDelta]
   );
 
   useEffect(() => {
@@ -137,6 +157,17 @@ const BookReader = () => {
       isMounted = false;
       subscription.remove();
       void (async () => {
+        // Flush the final page count before the session is read back, otherwise
+        // the throttled write discards whatever was read since the last tick.
+        const session = sessionRef.current;
+        if (session) {
+          try {
+            await session.updatePagesRead(getPagesReadDelta());
+          } catch (error) {
+            console.error('Error recording final page count:', error);
+          }
+        }
+
         const stopped = await currentSessionService.stopSession(
           sessionRef.current
         );
@@ -157,7 +188,7 @@ const BookReader = () => {
         }
       })();
     };
-  }, [uri, processReadingSession]);
+  }, [uri, processReadingSession, getPagesReadDelta]);
 
   useEffect(() => {
     const fetchBook = async () => {

@@ -10,11 +10,31 @@ import { getReaderTheme } from '@/src/utils/readerTheme';
 import { getReaderFlow } from '@/src/utils/readerFlow';
 
 export interface ReaderProgress {
-  /** Index of the current location within the book, used as a pages-read proxy. */
-  locationIndex: number;
-  totalLocations: number;
+  /**
+   * Pages advanced through the book, on the most meaningful scale available.
+   *
+   * When a book ships a page-list, epubjs resolves the real printed page and
+   * exposes it as a top-level `page` on the location (it is absent from the
+   * library's `Location` type, hence the cast). Books without a page-list fall
+   * back to the location index, which is what epubjs paginates on internally.
+   */
+  page: number;
   /** Whole-percent completion, 0-100. */
   progressPercent: number;
+}
+
+/**
+ * `displayed.page` is the location index, not a printed page: epubjs only
+ * overwrites it via `pageList.pageFromCfi` into `location.start.page`, and only
+ * when the book actually has a page-list. `displayed.total` is scoped to the
+ * rendered view rather than the whole book, so it is deliberately not used as a
+ * progress denominator.
+ */
+function getRealPage(start: Location['start']): number {
+  const pageFromPageList = (start as { page?: number }).page;
+  return typeof pageFromPageList === 'number' && pageFromPageList > 0
+    ? pageFromPageList
+    : start.location;
 }
 
 const PERIODIC_SAVE_INTERVAL_MS = 30_000;
@@ -65,10 +85,12 @@ const ReaderContent = ({
     (totalLocations: number, current: Location) => {
       if (!onProgressChange || totalLocations <= 0) return;
       onProgressChange({
-        locationIndex: current.start.location,
-        totalLocations,
+        page: getRealPage(current.start),
+        // `start.percentage` is epubjs's own measure of how far through the
+        // book this location sits, so reuse it instead of recomputing.
         progressPercent: Math.round(
-          (current.start.location / totalLocations) * 100
+          (current.start.percentage ??
+            current.start.location / totalLocations) * 100
         ),
       });
     },

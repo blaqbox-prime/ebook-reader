@@ -28,6 +28,7 @@ import UserAvatar from '@/src/components/UserAvatar';
 import OnboardingDots from '@/src/components/OnboardingDots';
 import { AchievementUnlockModal } from '@/src/components/AchievementUnlockModal';
 import PageLayoutAdjuster from '@/src/components/PageLayoutAdjuster';
+import type { ReaderProgress } from '@/src/components/ReaderContent';
 
 export {
   BookTile,
@@ -62,4 +63,4 @@ export {
   PageLayoutAdjuster,
 };
 
-export type { ToastIconName };
+export type { ToastIconName, ReaderProgress };
