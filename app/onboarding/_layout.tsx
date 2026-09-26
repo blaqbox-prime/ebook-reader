@@ -3,6 +3,7 @@ import { Stack } from 'expo-router';
 const OnboardingLayout = () => {
   return (
     <Stack
+      initialRouteName="intro"
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',

@@ -3,11 +3,16 @@ import { View } from 'react-native';
 interface OnboardingDotsProps {
   step: number;
   total: number;
+  label?: string;
 }
 
-const OnboardingDots = ({ step, total }: OnboardingDotsProps) => {
+const OnboardingDots = ({ step, total, label }: OnboardingDotsProps) => {
   return (
-    <View className="flex-row items-center gap-1.5">
+    <View
+      className="flex-row items-center gap-1.5"
+      accessible={label !== undefined}
+      accessibilityLabel={label}
+    >
       {Array.from({ length: total }).map((_, index) => {
         const isActive = index === step - 1;
         return (

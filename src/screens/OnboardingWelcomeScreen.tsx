@@ -89,16 +89,6 @@ const OnboardingWelcomeScreen = () => {
                   accessibilityLabel="PageTurner logo"
                 />
               </View>
-              <View className="absolute -bottom-1 -right-2 bg-m3-secondary-container rounded-full px-2 py-0.5 shadow-sm flex-row items-center gap-0.5">
-                <MaterialIcons
-                  name="local-cafe"
-                  size={14}
-                  color={ICON_COLORS.onSecondaryContainer}
-                />
-                <Text className="text-[11px] leading-4 font-semibold text-m3-on-secondary-container">
-                  Cozy Flow
-                </Text>
-              </View>
             </View>
 
             <View className="w-full h-36 rounded-lg overflow-hidden bg-m3-surface-mid mb-4">
@@ -268,7 +258,7 @@ const OnboardingWelcomeScreen = () => {
       </ScrollView>
 
       <View className="h-20 px-4 flex-row items-center justify-between">
-        <OnboardingDots step={1} total={2} />
+        <OnboardingDots step={2} total={3} label="Step 2 of 3" />
         <TouchableOpacity
           onPress={handleContinue}
           activeOpacity={0.85}

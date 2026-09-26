@@ -4,7 +4,7 @@ import {
   ONBOARDING_AVATAR_PRESETS,
   ONBOARDING_GENRES,
 } from '@/src/constants/onboarding';
-import { ActionToast, ToastIconName } from '@/src/components';
+import { ActionToast, OnboardingDots, ToastIconName } from '@/src/components';
 import AvatarStorageService from '@/src/services/AvatarStorageService';
 import {
   useOnboardingStore,
@@ -196,9 +196,12 @@ const OnboardingProfileScreen = () => {
           </TouchableOpacity>
         </View>
         <View className="pb-1">
-          <Text className="font-heading text-[24px] leading-8 text-m3-on-surface">
-            Create Local Profile
-          </Text>
+          <View className="flex-row items-center justify-between">
+            <Text className="font-heading text-[24px] leading-8 text-m3-on-surface">
+              Create Local Profile
+            </Text>
+            <OnboardingDots step={3} total={3} label="Step 3 of 3" />
+          </View>
           <Text className="text-[12px] leading-4 text-m3-on-surface-variant">
             Your sanctuary, stored entirely on device
           </Text>
