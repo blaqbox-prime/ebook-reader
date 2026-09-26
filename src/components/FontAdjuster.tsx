@@ -1,19 +1,20 @@
 import { View, Text, TouchableOpacity } from 'react-native';
-import React, { useState } from 'react';
+import React from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { colors } from '@/src/constants';
 import { ReaderContext } from '@/src/types/reader.types';
+import { usePreferencesStore } from '@/src/store';
+import { FontSizePreference } from '@/src/store/preferencesStore';
 
 type FontAdjusterProps = {
   reader: ReaderContext;
 };
 
-type FontSizes = 'small' | 'medium' | 'large';
-
 const FontAdjuster = ({ reader }: FontAdjusterProps) => {
-  const [fontSize, setFontSize] = useState<FontSizes>('medium');
+  const fontSize = usePreferencesStore(state => state.fontSize);
+  const setFontSize = usePreferencesStore(state => state.setFontSize);
 
-  const handleSelectFontSize = (size: FontSizes) => {
+  const handleSelectFontSize = (size: FontSizePreference) => {
     let px = '28px';
     if (size === 'small') px = '22px';
     if (size === 'large') px = '32px';

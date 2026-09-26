@@ -25,7 +25,8 @@
       "package": "com.ex_iamprime.ebookreader",
       "permissions": [
         "android.permission.READ_EXTERNAL_STORAGE",
-        "android.permission.WRITE_EXTERNAL_STORAGE"
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.POST_NOTIFICATIONS"
       ]
     },
     "web": {
@@ -56,7 +57,15 @@
           "microphonePermission": false
         }
       ],
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/logo-transparent.png",
+          "color": "#5c2d00",
+          "defaultChannel": "daily-reading-reminder"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

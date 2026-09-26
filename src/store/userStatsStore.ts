@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { watermelondb } from '@/src/data';
 import SessionTrackingService from '@/src/services/SessionTrackingService';
 import UserStatsService from '@/src/services/UserStatsService';
+import { usePreferencesStore } from '@/src/store/preferencesStore';
 import _ from 'lodash';
 
 interface UserStatsState {
@@ -27,7 +28,7 @@ interface UserStatsState {
   }) => void;
 }
 
-export const useUserStatsStore = create<UserStatsState>((set, get) => {
+export const useUserStatsStore = create<UserStatsState>(set => {
   // Set up observation of reading sessions
   const sessionsCollection = watermelondb.get('reading_sessions');
   const service = new SessionTrackingService();
@@ -35,22 +36,27 @@ export const useUserStatsStore = create<UserStatsState>((set, get) => {
 
   const updateStats = async () => {
     try {
+      // The streak gate is the user's configured daily goal, not a hardcoded
+      // constant, so the goal they picked is the goal that counts.
+      const { dailyGoalMinutes } = usePreferencesStore.getState();
+
       const total = await service.getTotalDurationInMinutes();
       const today = await service.getTotalDurationTodayInMinutes();
-      const hasRead = await service.hasReadAtLeastToday(5); // Check if read any minutes today
+      const hasRead = await service.hasReadAtLeastToday(dailyGoalMinutes);
 
       // Refresh streak based on today's reading
-      await userStatsService.refreshDailyStreak(today);
+      await userStatsService.refreshDailyStreak(today, dailyGoalMinutes);
 
       // Get updated streak for XP calculation
       const currentStreak = await userStatsService.getCurrentStreak();
       const longestStreak = await userStatsService.getLongestStreak();
 
-      // Calculate XP with streak bonus
-      const currentXP = userStatsService.calculateXpWithStreak(
-        total,
-        currentStreak
-      );
+      // One-time, idempotent back-fill for pre-ledger installs
+      await userStatsService.ensureXpLedgerInitialized(total, longestStreak);
+
+      // XP is a persisted ledger, not a value re-derived from the live streak,
+      // so it can never shrink when a streak lapses.
+      const currentXP = await userStatsService.getTotalXp();
 
       set({
         totalMinutesRead: total,
@@ -67,6 +73,10 @@ export const useUserStatsStore = create<UserStatsState>((set, get) => {
 
   // Debounce updates triggered by session changes to avoid query storms
   const scheduledUpdateStats = _.debounce(updateStats, 400);
+
+  // Hydrate immediately so the UI never flashes a zeroed streak/XP on cold
+  // start; previously this only ran on the first table emission below.
+  void updateStats();
 
   // Subscribe to changes in reading_sessions table
   sessionsCollection

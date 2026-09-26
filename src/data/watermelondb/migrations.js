@@ -38,5 +38,16 @@ export default schemaMigrations({
         }),
       ],
     },
+    {
+      toVersion: 9,
+      steps: [
+        addColumns({
+          table: 'books',
+          columns: [
+            { name: 'first_opened_at', type: 'number', isOptional: true },
+          ],
+        }),
+      ],
+    },
   ],
 });

@@ -60,9 +60,41 @@ class SessionTrackingService {
     return await this.getTotalDurationForDate(new Date());
   }
 
-  async hasReadAtLeastToday(thresholdMinutes = 5): Promise<boolean> {
+  async hasReadAtLeastToday(thresholdMinutes: number): Promise<boolean> {
     const total = await this.getTotalDurationTodayInMinutes();
     return total >= thresholdMinutes;
+  }
+
+  /**
+   * Repairs sessions that were left open because the process was killed before
+   * the reader's unmount cleanup ran. Without this, a force-quit silently
+   * under-counts reading time, which in turn under-counts the streak and XP.
+   *
+   * @param closedAt - Timestamp to attribute the orphaned time to
+   */
+  async recoverUnclosedSessions(closedAt: Date = new Date()): Promise<number> {
+    const orphans = await this.sessionRepository.fetchUnclosedSessions();
+    for (const session of orphans) {
+      try {
+        await this.sessionRepository.closeOrphanedSession(session.id, closedAt);
+      } catch (error) {
+        console.error('Error recovering orphaned session:', error);
+      }
+    }
+    return orphans.length;
+  }
+
+  /**
+   * Stamps an in-flight session so a later crash has a real end time to fall
+   * back to. Call on background, not just on unmount.
+   */
+  async stampSession(session: ReadingSession | null): Promise<void> {
+    if (!session) return;
+    try {
+      await this.sessionRepository.updateSession(session.id, new Date());
+    } catch (error) {
+      console.error('Error stamping session:', error);
+    }
   }
 
   async getSessionsByBookUri(bookUri: string): Promise<ReadingSession[]> {

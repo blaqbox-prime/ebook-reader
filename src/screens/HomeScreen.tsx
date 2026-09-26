@@ -1,5 +1,5 @@
-import { View, ScrollView, Text, Image, TouchableOpacity } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import { View, ScrollView, Text } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import {
@@ -15,16 +15,30 @@ import NewAdded from '@/src/components/NewAdded';
 import { useLibraryStore } from '@/src/store';
 import { images } from '@/assets';
 import { useNavigation } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 import Header from '@/src/components/Header';
 
 const HomeScreen = () => {
   const { books, loading, fetchBooks } = useLibraryStore();
   const [hydrated, setHydrated] = useState(false);
   const nav = useNavigation();
+  const router = useRouter();
 
   useEffect(() => {
     fetchBooks().finally(() => setHydrated(true));
   }, [fetchBooks]);
+
+  // Search lives in the library, which has the filters and full grid. Hand the
+  // query over rather than duplicating search state on a summary screen.
+  const handleSearchSubmit = useCallback(
+    (text: string) => {
+      router.push({
+        pathname: '/(main)/(library)',
+        params: { query: text.trim() },
+      });
+    },
+    [router]
+  );
 
   return (
     <SafeAreaView className="bg-m3-surface flex-1" edges={['top']}>
@@ -36,7 +50,10 @@ const HomeScreen = () => {
           </View>
 
           <View className="mt-4">
-            <SearchBox onChangeText={() => {}} />
+            <SearchBox
+              onChangeText={() => {}}
+              onSubmitEditing={handleSearchSubmit}
+            />
           </View>
 
           <View className="flex-row gap-2 mt-5">

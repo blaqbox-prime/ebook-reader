@@ -111,7 +111,7 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
   },
   {
     title: 'Gamified Habits',
-    badge: '+50 XP / Session',
+    badge: '+1 XP / Minute',
     description:
       'Keep daily reading streaks, hit soft milestone levels, and gently elevate your daily minutes read.',
     icon: 'military-tech',

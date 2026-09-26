@@ -1,7 +1,7 @@
 import { appSchema, tableSchema } from '@nozbe/watermelondb';
 
 const schema = appSchema({
-  version: 8,
+  version: 9,
   tables: [
     tableSchema({
       name: 'books',
@@ -17,6 +17,7 @@ const schema = appSchema({
         { name: 'last_location', type: 'string', isOptional: true },
         { name: 'is_favorite', type: 'boolean', defaultValue: false },
         { name: 'file_size', type: 'number', isOptional: true },
+        { name: 'first_opened_at', type: 'number', isOptional: true },
       ],
     }),
     tableSchema({
@@ -50,6 +51,9 @@ const schema = appSchema({
         { name: 'book_completed', type: 'boolean', isOptional: true },
       ],
     }),
+    // Unused: achievement state lives in MMKV via UserStatsRepository. The
+    // table is retained so existing installs do not need a destructive
+    // migration; no model is registered for it.
     tableSchema({
       name: 'achievements',
       columns: [

@@ -6,6 +6,7 @@ import ReadingSession from '@/src/Models/ReadingSession';
 import { ACHIEVEMENT_DEFINITIONS } from '@/src/lib/achievements.config';
 import UserStatsRepository from '@/src/repositories/UserStatsRepository';
 import UserStatsService from '@/src/services/UserStatsService';
+import { usePreferencesStore } from '@/src/store/preferencesStore';
 
 const userStatsRepository = new UserStatsRepository();
 const userStatsService = new UserStatsService();
@@ -16,7 +17,13 @@ interface AchievementStore {
 
   // Actions
   initializeAchievements: () => void;
-  processReadingSession: (session: ReadingSession) => Promise<void>;
+  processReadingSession: (
+    session: ReadingSession,
+    context?: {
+      minutesReadToday?: number;
+      fastestCompletionDays?: number | null;
+    }
+  ) => Promise<void>;
   clearNewlyUnlocked: () => void;
   getTotalPoints: () => number;
   getAchievementsByCategory: (
@@ -78,33 +85,83 @@ export const useAchievementStore = create<AchievementStore>((set, get) => ({
     }
   },
 
-  processReadingSession: async (session: ReadingSession) => {
+  processReadingSession: async (
+    session: ReadingSession,
+    context?: {
+      minutesReadToday?: number;
+      fastestCompletionDays?: number | null;
+    }
+  ) => {
+    // The unlock sweep iterates `achievements`, so the map must be populated
+    // first. Previously only the Profile screen called this, which meant a user
+    // who opened a book before ever visiting Profile had an empty map and could
+    // never unlock anything.
+    get().initializeAchievements();
+
     const { userStats: userProgress } = get();
     const newlyUnlocked: Achievement[] = [];
 
-    // Update progress
+    // Make sure a persisted record exists: `updateUserStats` is a no-op that
+    // returns null when there is nothing to merge into, which would silently
+    // discard every unlock on a fresh install.
+    await userStatsService.initializeUserStats();
+
+    // `pages_read` / `book_completed` are optional columns, so both can be
+    // absent rather than zero. Normalise before doing arithmetic on them.
+    const pagesRead = session.pagesRead ?? 0;
+    const bookCompleted = session.bookCompleted ?? false;
+    const minutesRead = session.durationInMinutes ?? 0;
+    const minutesReadToday = context?.minutesReadToday ?? minutesRead;
+
     const updatedProgress: UserStats = {
       ...userProgress,
-      totalPagesRead: userProgress.totalPagesRead + session.pagesRead,
-      totalReadingTime:
-        userProgress.totalReadingTime + session.durationInMinutes,
+      totalPagesRead: userProgress.totalPagesRead + pagesRead,
+      totalReadingTime: userProgress.totalReadingTime + minutesRead,
       achievements: { ...userProgress.achievements },
     };
 
     // Update books completed
-    if (session.bookCompleted) {
+    if (bookCompleted) {
       updatedProgress.totalBooksCompleted += 1;
     }
 
+    // Keep the fastest completion on record so the speed achievements (7/3/1
+    // days) can actually be evaluated. Null means "no data yet" and must not
+    // overwrite a real value.
+    const fastestCompletionDays = context?.fastestCompletionDays;
+    if (fastestCompletionDays != null && fastestCompletionDays >= 0) {
+      updatedProgress.fastestBookCompletion = Math.min(
+        updatedProgress.fastestBookCompletion === Infinity
+          ? fastestCompletionDays
+          : Math.min(
+              updatedProgress.fastestBookCompletion,
+              fastestCompletionDays
+            )
+      );
+    }
+
     // Refresh streak through the shared stats service so the UI and the
-    // achievement engine stay in sync
+    // achievement engine stay in sync. The gate is the reader's own daily
+    // goal, not a hardcoded constant.
+    const { dailyGoalMinutes } = usePreferencesStore.getState();
     const streakStats = await userStatsService.refreshDailyStreak(
-      session.durationInMinutes
+      minutesReadToday,
+      dailyGoalMinutes
     );
     if (streakStats) {
       updatedProgress.currentStreak = streakStats.currentStreak;
       updatedProgress.longestStreak = streakStats.longestStreak;
       updatedProgress.lastReadAt = streakStats.lastReadAt;
+    }
+
+    // Accrue XP as a ledger entry, freezing the streak bonus at award time so
+    // losing a streak can never reduce XP already earned.
+    const xpStats = await userStatsService.addXpForMinutes(
+      minutesRead,
+      updatedProgress.currentStreak
+    );
+    if (xpStats) {
+      updatedProgress.totalXp = xpStats.totalXp;
     }
 
     // Check all achievements

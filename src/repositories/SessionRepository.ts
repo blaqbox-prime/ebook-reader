@@ -2,11 +2,6 @@ import { Collection, Database, Q } from '@nozbe/watermelondb';
 import { ReadingSession } from '@/src/data/watermelondb/models';
 
 class SessionRepository {
-  fetchSessionById /**
-   * Creates a new reading session record
-   */(id: string) {
-    return this.sessionsCollection.find(id);
-  }
   private database: Database;
   private sessionsCollection: Collection<ReadingSession>;
 
@@ -14,6 +9,13 @@ class SessionRepository {
     this.database = database;
     this.sessionsCollection =
       this.database.get<ReadingSession>('reading_sessions');
+  }
+
+  /**
+   * Fetches a single reading session by id
+   */
+  async fetchSessionById(id: string): Promise<ReadingSession> {
+    return this.sessionsCollection.find(id);
   }
 
   /**
@@ -37,7 +39,32 @@ class SessionRepository {
       return this.sessionsCollection.create(record => {
         record.bookUri = session.bookUri;
         record.timeStart = session.timeStart;
-        record.timeEnd = session.timeEnd ?? session.timeStart; // Default to timeStart if timeEnd is not provided
+        // An open session has no end yet. Leaving this null marks the session
+        // as "still running" so a crash can be detected and repaired, rather
+        // than silently recording a zero-minute session.
+        record.timeEnd = session.timeEnd ?? null;
+      });
+    });
+  }
+
+  /**
+   * Finds sessions that were never closed (the process died before the cleanup
+   * handler ran) so they can be repaired instead of being lost.
+   */
+  async fetchUnclosedSessions(): Promise<ReadingSession[]> {
+    return await this.sessionsCollection
+      .query(Q.where('time_end_at', null))
+      .fetch();
+  }
+
+  /**
+   * Closes an orphaned session at the given time.
+   */
+  async closeOrphanedSession(id: string, timeEnd: Date): Promise<void> {
+    await this.database.write(async () => {
+      const session = await this.sessionsCollection.find(id);
+      await session.update(record => {
+        record.timeEnd = timeEnd;
       });
     });
   }
@@ -78,14 +105,14 @@ class SessionRepository {
       .fetch();
   }
 
-  /*
-  Update Sesson End Time
-*/
+  /**
+   * Updates a reading session's end time
+   */
   async updateSession(id: string, timeEnd: Date): Promise<void> {
     await this.database.write(async () => {
       const session = await this.sessionsCollection.find(id);
-      await session.update(session => {
-        session.timeEnd = timeEnd;
+      await session.update(record => {
+        record.timeEnd = timeEnd;
       });
     });
   }

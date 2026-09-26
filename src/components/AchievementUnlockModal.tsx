@@ -148,7 +148,7 @@ export const AchievementUnlockModal: React.FC<AchievementUnlockModalProps> = ({
 
         {/* Achievement Card */}
         <Animated.View
-          className="rounded-3xl bg-stone-50 p-6 items-center"
+          className="rounded-3xl bg-m3-surface-high p-6 items-center"
           style={[
             {
               width: width * 0.85,
@@ -171,26 +171,26 @@ export const AchievementUnlockModal: React.FC<AchievementUnlockModalProps> = ({
         >
           {/* Header */}
           <View className="mb-5">
-            <Text className="text-lg font-bold text-amber-700 text-center">
+            <Text className="text-lg font-bold text-m3-primary text-center">
               🎉 Achievement Unlocked! 🎉
             </Text>
           </View>
 
           {/* Icon */}
-          <View className="w-30 h-30 rounded-full bg-amber-200 justify-center items-center mb-5 border-4 border-amber-700">
+          <View className="w-24 h-24 rounded-full bg-m3-secondary-container justify-center items-center mb-5 border-2 border-m3-primary">
             <Text className="text-6xl">{currentAchievement.icon}</Text>
           </View>
 
           {/* Content */}
           <View className="items-center mb-6">
-            <Text className="text-2xl font-black text-stone-900 mb-2 text-center">
+            <Text className="text-2xl font-black text-m3-on-surface mb-2 text-center">
               {currentAchievement.title}
             </Text>
-            <Text className="text-base text-stone-900 opacity-70 text-center mb-4">
+            <Text className="text-base text-m3-on-surface-variant text-center mb-4">
               {currentAchievement.description}
             </Text>
-            <View className="bg-amber-700 px-5 py-2 rounded-full">
-              <Text className="text-stone-50 text-base font-bold">
+            <View className="bg-m3-primary px-5 py-2 rounded-full">
+              <Text className="text-m3-on-primary text-base font-bold">
                 +{currentAchievement.points} Points
               </Text>
             </View>
@@ -218,11 +218,11 @@ export const AchievementUnlockModal: React.FC<AchievementUnlockModalProps> = ({
 
           {/* Action Button */}
           <TouchableOpacity
-            className="bg-amber-700 py-4 px-12 rounded-lg w-full"
+            className="bg-m3-primary py-4 px-12 rounded-lg w-full"
             onPress={handleNext}
             activeOpacity={0.8}
           >
-            <Text className="text-stone-50 text-lg font-bold text-center">
+            <Text className="text-m3-on-primary text-lg font-bold text-center">
               {currentIndex < achievements.length - 1 ? 'Next' : 'Awesome!'}
             </Text>
           </TouchableOpacity>

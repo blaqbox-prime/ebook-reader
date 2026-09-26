@@ -11,7 +11,8 @@ import Feather from '@expo/vector-icons/Feather';
 import Fontisto from '@expo/vector-icons/Fontisto';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { ReaderContext } from '@/src/types/reader.types';
-import { getCurrentThemeIndex } from '@/src/utils/readerTheme';
+import { getReaderThemeLabel } from '@/src/utils/readerTheme';
+import { usePreferencesStore } from '@/src/store';
 const ICON_SIZE = 20;
 
 const ReaderOptionsFAB = ({
@@ -37,7 +38,8 @@ const ReaderOptionsFAB = ({
     getCurrentLocation,
   } = reader;
 
-  const index = getCurrentThemeIndex(reader.theme);
+  const readerTheme = usePreferencesStore(state => state.readerTheme);
+  const isNightMode = readerTheme === 'dark';
 
   // Backdrops
   const Backdrop = () => (
@@ -84,13 +86,12 @@ const ReaderOptionsFAB = ({
       },
     },
     {
-      icon:
-        index === 0 ? (
-          <Feather name="moon" size={ICON_SIZE} color={'black'} />
-        ) : (
-          <Feather name="sun" size={ICON_SIZE} color={'black'} />
-        ),
-      label: index === 0 ? 'Night Mode' : 'Light Mode',
+      icon: isNightMode ? (
+        <Feather name="sun" size={ICON_SIZE} color={'black'} />
+      ) : (
+        <Feather name="moon" size={ICON_SIZE} color={'black'} />
+      ),
+      label: getReaderThemeLabel(isNightMode ? 'light' : 'dark'),
       action: () => {
         switchTheme();
       },

@@ -41,12 +41,34 @@ class UserStatsService {
     });
   }
 
+  /**
+   * Recomputes the daily streak.
+   *
+   * `thresholdMinutes` is intentionally required: it is the user's configured
+   * daily goal, and defaulting it here previously reintroduced a hardcoded
+   * 5-minute gate that silently overrode the saved preference.
+   */
   async refreshDailyStreak(
     minutesReadToday: number,
-    thresholdMinutes = 5
+    thresholdMinutes: number
   ): Promise<UserStats | null> {
     const today = new Date();
-    const currentStats = await this.initializeUserStats();
+    let currentStats = await this.initializeUserStats();
+
+    // A streak is only alive if it was touched today or yesterday. Decay first
+    // so a lapsed streak never renders as still active.
+    const yesterday = this.getYesterday(today);
+    const streakIsAlive = this.isSameDay(currentStats.lastReadAt, today)
+      ? true
+      : this.isSameDay(currentStats.lastReadAt, yesterday);
+
+    if (!streakIsAlive && currentStats.currentStreak > 0) {
+      // Re-read after resetting: returning the pre-decay snapshot would hand
+      // callers a non-zero streak and silently revive a lapsed one.
+      currentStats = (await this.userStatsRepository.updateUserStats({
+        currentStreak: 0,
+      })) ?? { ...currentStats, currentStreak: 0 };
+    }
 
     if (minutesReadToday < thresholdMinutes) {
       return currentStats;
@@ -56,7 +78,6 @@ class UserStatsService {
       return this.userStatsRepository.updateUserStats({ lastReadAt: today });
     }
 
-    const yesterday = this.getYesterday(today);
     const nextStreak = this.isSameDay(currentStats.lastReadAt, yesterday)
       ? currentStats.currentStreak + 1
       : 1;
@@ -87,15 +108,59 @@ class UserStatsService {
   }
 
   /**
-   * Adds XP points based on minutes read
-   * @param minutesRead - Number of minutes read
+   * Accrues XP for a reading session.
+   *
+   * XP is a ledger, not a derived total: the streak bonus is frozen at award
+   * time so that losing a streak can never retroactively reduce XP already
+   * earned. Total XP therefore only ever increases.
+   *
+   * @param minutesRead - Minutes read in the session being closed
+   * @param streakAtAward - Streak length at the moment of the award
    */
-  async addXpForMinutes(minutesRead: number): Promise<UserStats | null> {
+  async addXpForMinutes(
+    minutesRead: number,
+    streakAtAward: number
+  ): Promise<UserStats | null> {
     const currentStats = await this.initializeUserStats();
-    const xpEarned = Math.floor(minutesRead * this.XP_PER_MINUTE);
-    const newTotalXp = currentStats.totalXp + xpEarned;
+    if (minutesRead <= 0) {
+      return currentStats;
+    }
 
-    return this.userStatsRepository.updateUserStats({ totalXp: newTotalXp });
+    const xpEarned = this.calculateXpWithStreak(minutesRead, streakAtAward);
+    if (xpEarned <= 0) {
+      return currentStats;
+    }
+
+    return this.userStatsRepository.updateUserStats({
+      totalXp: currentStats.totalXp + xpEarned,
+    });
+  }
+
+  /**
+   * Defensive one-time seed for installs created before XP became a ledger.
+   *
+   * Those installs persisted `totalXp: 0` forever, so the first time this runs
+   * we back-fill from the historical minutes using the same curve the app used
+   * to display. The guard makes it idempotent: it only writes when XP is
+   * genuinely zero and there is reading history to convert, so re-running on
+   * every boot can never double-count or clobber earned XP.
+   *
+   * @returns true when a seed was written
+   */
+  async ensureXpLedgerInitialized(
+    totalMinutesRead: number,
+    longestStreak: number
+  ): Promise<boolean> {
+    const stats = await this.initializeUserStats();
+
+    if (stats.totalXp > 0 || totalMinutesRead <= 0) {
+      return false;
+    }
+
+    await this.userStatsRepository.updateUserStats({
+      totalXp: this.calculateXpWithStreak(totalMinutesRead, longestStreak),
+    });
+    return true;
   }
 
   /**

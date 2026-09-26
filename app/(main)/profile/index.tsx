@@ -16,6 +16,7 @@ import {
   UserAvatar,
 } from '@/src/components';
 import { DAILY_GOAL_OPTIONS } from '@/src/store/preferencesStore';
+import { ONBOARDING_ARCHETYPES } from '@/src/constants/onboarding';
 import { Book } from '@/src/data/watermelondb/models';
 import ReadingSession from '@/src/Models/ReadingSession';
 import BookService from '@/src/services/BookService';
@@ -278,16 +279,24 @@ const Profile = () => {
 
   const levelInfo = useMemo(() => getLevelInfo(currentXP), [currentXP]);
 
+  const archetypeLabel = useMemo(
+    () =>
+      ONBOARDING_ARCHETYPES.find(option => option.key === archetype)?.title ??
+      'Reader',
+    [archetype]
+  );
+
+  const { readerTheme, fontSize } = usePreferencesStore();
+  const readerThemeLabel = readerTheme === 'dark' ? 'Night Mode' : 'Light Mode';
+  const fontSizeLabel =
+    fontSize === 'small' ? 'Small' : fontSize === 'large' ? 'Large' : 'Medium';
+
   const handleNotifications = useCallback(() => {
-    showToast('No new notifications', 'notifications-none');
-  }, [showToast]);
+    router.push('/(main)/achievements');
+  }, [router]);
 
   const handleTypography = useCallback(() => {
-    showToast('Font preferences are managed in the Reader', 'text-fields');
-  }, [showToast]);
-
-  const handleAmbiance = useCallback(() => {
-    showToast('Ambiance sounds are coming soon', 'coffee');
+    showToast('Text size is adjusted in the Reader', 'text-fields');
   }, [showToast]);
 
   const handleStorage = useCallback(() => {
@@ -450,13 +459,13 @@ const Profile = () => {
     {
       icon: 'palette' as IconName,
       label: 'Reading Theme & Tone',
-      value: 'Light Mode',
+      value: readerThemeLabel,
       onPress: handleTheme,
     },
     {
       icon: 'replay' as IconName,
       label: 'Replay Onboarding',
-      value: 'Restart the 2-step setup',
+      value: 'Restart the 3-step setup',
       onPress: handleReplayOnboarding,
     },
   ];
@@ -495,7 +504,7 @@ const Profile = () => {
                 {displayName}
               </Text>
               <Text className="text-[12px] leading-4 text-m3-on-surface-variant">
-                Avid Bibliophile · Member since {memberSinceLabel}
+                {archetypeLabel} · Member since {memberSinceLabel}
               </Text>
               <View className="flex-row items-center gap-1 self-start bg-m3-primary-fixed rounded-full px-2.5 py-0.5 mt-1">
                 <MaterialIcons name="check" size={13} color="#301400" />
@@ -597,14 +606,14 @@ const Profile = () => {
               <HabitatCard
                 icon="text-fields"
                 label="Typography"
-                value="Literata"
+                value={fontSizeLabel}
                 onPress={handleTypography}
               />
               <HabitatCard
-                icon="coffee"
-                label="Ambiance"
-                value="Quiet Café"
-                onPress={handleAmbiance}
+                icon="bookmark"
+                label="Highlights"
+                value={`${bookmarks.length} saved`}
+                onPress={handleExport}
               />
             </View>
           </View>
@@ -690,7 +699,7 @@ const Profile = () => {
 
           <View className="flex-col items-center mt-8 gap-4">
             <Text className="text-[11px] leading-4 text-m3-on-surface-variant">
-              PageTurner v{APP_VERSION} · Build 2024.11
+              PageTurner v{APP_VERSION}
             </Text>
             <TouchableOpacity
               onPress={handleSignOut}

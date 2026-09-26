@@ -1,30 +1,47 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import LoadingPulse from '@/src/components/LoadingPulse';
 import { Book } from '@/src/data/watermelondb/models';
-import { useBookmarksStore } from '@/src/store';
-import { Reader, Themes, Location } from '@epubjs-react-native/core';
+import { useBookmarksStore, usePreferencesStore } from '@/src/store';
+import { Reader, Location } from '@epubjs-react-native/core';
 import { useFileSystem } from '@epubjs-react-native/expo-file-system';
 import { useRouter } from 'expo-router';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { Alert, AppState } from 'react-native';
+import { getReaderTheme } from '@/src/utils/readerTheme';
+
+export interface ReaderProgress {
+  /** Index of the current location within the book, used as a pages-read proxy. */
+  locationIndex: number;
+  totalLocations: number;
+  /** Whole-percent completion, 0-100. */
+  progressPercent: number;
+}
+
+const PERIODIC_SAVE_INTERVAL_MS = 30_000;
 
 const ReaderContent = ({
   book,
   uri,
   initialLocation,
+  onProgressChange,
 }: {
   book: Book | null;
   uri: string;
   initialLocation?: string;
+  onProgressChange?: (progress: ReaderProgress) => void;
 }) => {
   const router = useRouter();
   const { addBookmark, removeBookmark, getBookmarksByBookUri } =
     useBookmarksStore();
+  const readerTheme = usePreferencesStore(state => state.readerTheme);
+  const initialBookmarks = useMemo(
+    () => getBookmarksByBookUri(uri),
+    [getBookmarksByBookUri, uri]
+  );
   // Use a Ref to keep track of location without re-rendering
   const locationRef = useRef<Location | null>(null);
   const totalLocationsRef = useRef<number>(0);
 
-  const saveProgress = async () => {
+  const saveProgress = useCallback(async () => {
     const current = locationRef.current;
     const total = totalLocationsRef.current;
 
@@ -38,7 +55,23 @@ const ReaderContent = ({
         );
       }
     }
-  };
+  }, [book]);
+
+  // Report progress upward so the session layer can record pages read and
+  // detect completion. Kept out of render state to avoid re-render churn.
+  const reportProgress = useCallback(
+    (totalLocations: number, current: Location) => {
+      if (!onProgressChange || totalLocations <= 0) return;
+      onProgressChange({
+        locationIndex: current.start.location,
+        totalLocations,
+        progressPercent: Math.round(
+          (current.start.location / totalLocations) * 100
+        ),
+      });
+    },
+    [onProgressChange]
+  );
 
   useEffect(() => {
     // Save when user puts app in background
@@ -48,11 +81,16 @@ const ReaderContent = ({
       }
     });
 
+    // Periodically persist so a crash or force-quit cannot discard a whole
+    // chunk of reading; previously progress was only written on background.
+    const interval = setInterval(saveProgress, PERIODIC_SAVE_INTERVAL_MS);
+
     return () => {
       subscription.remove();
+      clearInterval(interval);
       saveProgress(); // Save when user navigates away
     };
-  }, [book]);
+  }, [book, saveProgress]);
 
   if (!book) return <LoadingPulse />;
 
@@ -61,7 +99,7 @@ const ReaderContent = ({
       src={uri}
       fileSystem={useFileSystem}
       initialLocation={initialLocation ?? book.lastLocation}
-      initialBookmarks={getBookmarksByBookUri(uri)}
+      initialBookmarks={initialBookmarks}
       onAddBookmark={bookmark => {
         addBookmark(bookmark, book.uri, book.title);
         Alert.alert('Bookmark Added', 'Your bookmark has been saved.');
@@ -71,10 +109,11 @@ const ReaderContent = ({
         Alert.alert('Bookmark Removed', 'Your bookmark has been removed.');
       }}
       flow="scrolled-doc"
-      defaultTheme={Themes.LIGHT}
+      defaultTheme={getReaderTheme(readerTheme)}
       onLocationChange={(totalLocations, current, __) => {
         locationRef.current = current;
         totalLocationsRef.current = totalLocations;
+        reportProgress(totalLocations, current);
       }}
       onDisplayError={reason => {
         Alert.alert('Failed To Open Book', reason);

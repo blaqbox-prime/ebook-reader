@@ -4,10 +4,15 @@ import {
   LibraryBookTile,
   LoadingPulse,
 } from '@/src/components';
-import { useLibraryStore, useUserStatsStore } from '@/src/store';
+import {
+  useLibraryStore,
+  usePreferencesStore,
+  useUserStatsStore,
+} from '@/src/store';
 import { Book } from '@/src/data/watermelondb/models';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Feather from '@expo/vector-icons/Feather';
+import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
   Alert,
@@ -29,7 +34,6 @@ import {
 
 type ChipFilter = 'all' | 'in-progress' | 'finished';
 
-const DAILY_GOAL_MINUTES = 5;
 const FILTERS: { key: ChipFilter; label: string }[] = [
   { key: 'all', label: 'All Books' },
   { key: 'in-progress', label: 'In Progress' },
@@ -47,8 +51,14 @@ const Library = () => {
     removeBook,
   } = useLibraryStore();
   const { todayMinutesRead, currentStreak } = useUserStatsStore();
+  const dailyGoalMinutes = usePreferencesStore(state => state.dailyGoalMinutes);
 
-  const [query, setQuery] = useState('');
+  // Seeded from the home screen's search box so typing there and landing here
+  // shows matching books instead of the full library.
+  const { query: initialQuery } = useLocalSearchParams();
+  const [query, setQuery] = useState(
+    typeof initialQuery === 'string' ? initialQuery : ''
+  );
   const [activeChip, setActiveChip] = useState<ChipFilter>('all');
   const [sheetBook, setSheetBook] = useState<Book | null>(null);
 
@@ -86,7 +96,7 @@ const Library = () => {
     book => book.progress > 0 && book.progress < 100
   ).length;
 
-  const remainingToday = Math.max(0, DAILY_GOAL_MINUTES - todayMinutesRead);
+  const remainingToday = Math.max(0, dailyGoalMinutes - todayMinutesRead);
   const streakSubtext =
     remainingToday > 0
       ? `Read ${remainingToday} min today to hit day ${currentStreak + 1}`

@@ -1,55 +1,16 @@
 import { Text, View } from 'react-native';
-import React, { useCallback, useEffect } from 'react';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { useUserStatsStore } from '@/src/store/userStatsStore';
-import SessionTrackingService from '@/src/services/SessionTrackingService';
-import UserStatsService from '@/src/services/UserStatsService';
-
-const DAILY_GOAL_MINUTES = 5;
+import { useUserStatsStore, usePreferencesStore } from '@/src/store';
 
 const MinutesReadToday = () => {
-  const {
-    todayMinutesRead,
-    hasReadToday,
-    setTodayMinutesRead,
-    setHasReadToday,
-    setCurrentStreak,
-    setLongestStreak,
-  } = useUserStatsStore();
-
-  const fetchDailyRead = useCallback(async () => {
-    const sessionService = new SessionTrackingService();
-    const statsService = new UserStatsService();
-
-    const todayMinutes = await sessionService.getTotalDurationTodayInMinutes();
-    const readGoalMet = todayMinutes >= DAILY_GOAL_MINUTES;
-
-    setTodayMinutesRead(todayMinutes);
-    setHasReadToday(readGoalMet);
-
-    const updatedStats = await statsService.refreshDailyStreak(
-      todayMinutes,
-      DAILY_GOAL_MINUTES
-    );
-    if (updatedStats) {
-      setCurrentStreak(updatedStats.currentStreak);
-      setLongestStreak(updatedStats.longestStreak);
-    }
-  }, [
-    setTodayMinutesRead,
-    setHasReadToday,
-    setCurrentStreak,
-    setLongestStreak,
-  ]);
-
-  useEffect(() => {
-    fetchDailyRead();
-  }, [fetchDailyRead]);
+  const { todayMinutesRead, hasReadToday } = useUserStatsStore();
+  const dailyGoalMinutes = usePreferencesStore(state => state.dailyGoalMinutes);
 
   const goalProgress = Math.min(
     100,
-    (todayMinutesRead / DAILY_GOAL_MINUTES) * 100
+    (todayMinutesRead / dailyGoalMinutes) * 100
   );
+  const remainingMinutes = Math.max(0, dailyGoalMinutes - todayMinutesRead);
 
   return (
     <View className="flex-1 bg-m3-surface-low rounded-xl p-4 shadow-sm">
@@ -65,7 +26,7 @@ const MinutesReadToday = () => {
             {todayMinutesRead.toFixed(0)}
           </Text>
           <Text className="text-[12px] leading-4 text-m3-outline ml-0.5">
-            /{DAILY_GOAL_MINUTES}m
+            /{dailyGoalMinutes}m
           </Text>
         </View>
         <View className="w-full bg-m3-secondary-container h-1.5 rounded-full mt-1.5 overflow-hidden">
@@ -79,7 +40,7 @@ const MinutesReadToday = () => {
         <Text className="text-[11px] leading-4 text-m3-outline">
           {hasReadToday
             ? 'Goal reached for today 🏆'
-            : `${Math.max(0, DAILY_GOAL_MINUTES - todayMinutesRead).toFixed(0)}m to daily goal`}
+            : `${remainingMinutes.toFixed(0)}m to daily goal`}
         </Text>
       </View>
     </View>

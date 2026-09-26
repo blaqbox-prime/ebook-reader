@@ -15,6 +15,7 @@ class Book extends Model {
   @field('file_size') fileSize?: number;
   @date('created_at') createdAt!: Date;
   @date('updated_at') updatedAt!: Date;
+  @date('first_opened_at') firstOpenedAt?: Date;
 
   @writer async updateLastRead() {
     await this.update((book: Book) => (book.lastRead = new Date()));
@@ -29,6 +30,27 @@ class Book extends Model {
   }
   @writer async toggleIsFavourite() {
     await this.update((book: Book) => (book.isFavorite = !book.isFavorite));
+  }
+
+  /**
+   * Stamps the first time this book was opened. Used as the start of the
+   * window for the speed-reading achievements, so it is deliberately
+   * write-once: later opens must not reset the clock.
+   */
+  @writer async markFirstOpened() {
+    if (this.firstOpenedAt) return;
+    await this.update((book: Book) => (book.firstOpenedAt = new Date()));
+  }
+
+  /**
+   * Whole days between the first open and now, or null when the book has never
+   * been opened. `null` means "not enough data", which is distinct from a real
+   * duration of zero.
+   */
+  getDaysSinceFirstOpened(): number | null {
+    if (!this.firstOpenedAt) return null;
+    const ms = Date.now() - this.firstOpenedAt.getTime();
+    return Math.floor(ms / 86_400_000);
   }
 }
 

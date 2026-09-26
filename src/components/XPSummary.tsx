@@ -2,9 +2,7 @@ import { Text, View } from 'react-native';
 import React from 'react';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useUserStatsStore } from '@/src/store/userStatsStore';
-
-const getLevelFromXp = (xp: number): number =>
-  Math.floor(Math.sqrt(Math.max(0, xp) / 100)) + 1;
+import { getLevelFromXp } from '@/src/utils/readerLevel';
 
 const XPSummary = () => {
   const { currentXP } = useUserStatsStore();

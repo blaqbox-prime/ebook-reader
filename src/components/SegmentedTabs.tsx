@@ -5,7 +5,7 @@ import { Text, TouchableOpacity, View } from 'react-native';
 export type SegmentedTab = {
   key: string;
   label: string;
-  icon: ComponentProps<typeof MaterialIcons>['name'];
+  icon?: ComponentProps<typeof MaterialIcons>['name'];
   iconFilled?: ComponentProps<typeof MaterialIcons>['name'];
   badge?: number;
 };
@@ -33,12 +33,15 @@ const SegmentedTabs = ({
               active ? 'bg-m3-primary shadow-sm' : ''
             }`}
           >
-            <MaterialIcons
-              name={active && tab.iconFilled ? tab.iconFilled : tab.icon}
-              size={18}
-              color={active ? '#ffffff' : '#52443b'}
-            />
+            {tab.icon ? (
+              <MaterialIcons
+                name={active && tab.iconFilled ? tab.iconFilled : tab.icon}
+                size={18}
+                color={active ? '#ffffff' : '#52443b'}
+              />
+            ) : null}
             <Text
+              numberOfLines={1}
               className={`text-[12px] leading-4 font-semibold ${
                 active ? 'text-m3-on-primary' : 'text-m3-on-surface-variant'
               }`}
