@@ -16,4 +16,5 @@ export const images = {
   bookshelf: require('./images/bookshelf.png'),
   cover: require('./images/cover.png'),
   book_lover: require('./images/book-lover.png'),
+  onboardingImage1: require('./images/onboarding_image_1.jpg'),
 };

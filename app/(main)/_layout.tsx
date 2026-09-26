@@ -1,12 +1,23 @@
-import Header from '@/src/components/Header';
 import { m3 } from '@/src/constants';
 import { home_tab_items } from '@/src/constants/data';
+import { useOnboardingStore } from '@/src/store';
 import Feather from '@expo/vector-icons/Feather';
-import { Tabs } from 'expo-router';
-import React from 'react';
+import { Tabs, useRouter } from 'expo-router';
+import React, { useEffect } from 'react';
 import { View } from 'react-native';
 
-const _layout = () => {
+const MainLayout = () => {
+  const router = useRouter();
+  const hasCompletedOnboarding = useOnboardingStore(
+    state => state.hasCompletedOnboarding
+  );
+
+  useEffect(() => {
+    if (!hasCompletedOnboarding) {
+      router.replace('/onboarding');
+    }
+  }, [hasCompletedOnboarding, router]);
+
   return (
     <Tabs
       screenOptions={{
@@ -68,4 +79,4 @@ const _layout = () => {
   );
 };
 
-export default _layout;
+export default MainLayout;
