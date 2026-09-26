@@ -33,6 +33,7 @@ import {
 import { buildHighlightsMarkdown } from '@/src/utils';
 import { formatDuration, formatFileSize } from '@/src/utils/bookDetailsUtils';
 import { getLevelInfo } from '@/src/utils/readerLevel';
+import { getPageLayoutLabel } from '@/src/utils/readerFlow';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Constants from 'expo-constants';
 import * as ImagePicker from 'expo-image-picker';
@@ -286,8 +287,9 @@ const Profile = () => {
     [archetype]
   );
 
-  const { readerTheme, fontSize } = usePreferencesStore();
+  const { readerTheme, fontSize, pageLayout } = usePreferencesStore();
   const readerThemeLabel = readerTheme === 'dark' ? 'Night Mode' : 'Light Mode';
+  const pageLayoutLabel = getPageLayoutLabel(pageLayout);
   const fontSizeLabel =
     fontSize === 'small' ? 'Small' : fontSize === 'large' ? 'Large' : 'Medium';
 
@@ -305,6 +307,10 @@ const Profile = () => {
 
   const handleTheme = useCallback(() => {
     showToast('Reading themes are managed in the Reader', 'palette');
+  }, [showToast]);
+
+  const handlePageLayout = useCallback(() => {
+    showToast('Page layout is switched in the Reader', 'view-agenda');
   }, [showToast]);
 
   const handleGoalSelected = (minutes: number) => {
@@ -461,6 +467,12 @@ const Profile = () => {
       label: 'Reading Theme & Tone',
       value: readerThemeLabel,
       onPress: handleTheme,
+    },
+    {
+      icon: 'view-agenda' as IconName,
+      label: 'Page Layout',
+      value: pageLayoutLabel,
+      onPress: handlePageLayout,
     },
     {
       icon: 'replay' as IconName,

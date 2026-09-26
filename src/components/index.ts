@@ -27,6 +27,7 @@ import SessionRow from '@/src/components/SessionRow';
 import UserAvatar from '@/src/components/UserAvatar';
 import OnboardingDots from '@/src/components/OnboardingDots';
 import { AchievementUnlockModal } from '@/src/components/AchievementUnlockModal';
+import PageLayoutAdjuster from '@/src/components/PageLayoutAdjuster';
 
 export {
   BookTile,
@@ -58,6 +59,7 @@ export {
   UserAvatar,
   OnboardingDots,
   AchievementUnlockModal,
+  PageLayoutAdjuster,
 };
 
 export type { ToastIconName };

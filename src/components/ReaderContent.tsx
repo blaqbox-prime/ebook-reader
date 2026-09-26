@@ -7,6 +7,7 @@ import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { Alert, AppState } from 'react-native';
 import { getReaderTheme } from '@/src/utils/readerTheme';
+import { getReaderFlow } from '@/src/utils/readerFlow';
 
 export interface ReaderProgress {
   /** Index of the current location within the book, used as a pages-read proxy. */
@@ -33,6 +34,7 @@ const ReaderContent = ({
   const { addBookmark, removeBookmark, getBookmarksByBookUri } =
     useBookmarksStore();
   const readerTheme = usePreferencesStore(state => state.readerTheme);
+  const pageLayout = usePreferencesStore(state => state.pageLayout);
   const initialBookmarks = useMemo(
     () => getBookmarksByBookUri(uri),
     [getBookmarksByBookUri, uri]
@@ -108,7 +110,7 @@ const ReaderContent = ({
         removeBookmark(bookmark);
         Alert.alert('Bookmark Removed', 'Your bookmark has been removed.');
       }}
-      flow="scrolled-doc"
+      flow={getReaderFlow(pageLayout)}
       defaultTheme={getReaderTheme(readerTheme)}
       onLocationChange={(totalLocations, current, __) => {
         locationRef.current = current;

@@ -10,6 +10,7 @@ import {
 
 import BrightnessAdjuster from '@/src/components/BrightnessAdjuster';
 import FontAdjuster from '@/src/components/FontAdjuster';
+import PageLayoutAdjuster from '@/src/components/PageLayoutAdjuster';
 import Feather from '@expo/vector-icons/Feather';
 import SearchBox from '@/src/components/SearchBox';
 import SearchedTermSheet from '@/src/components/SearchedTermSheet';
@@ -38,7 +39,7 @@ const ReaderSettingsSheet = ({
 
   return (
     <>
-      <Actionsheet isOpen={isOpen} onClose={handleClose} snapPoints={[35]}>
+      <Actionsheet isOpen={isOpen} onClose={handleClose} snapPoints={[45]}>
         <ActionsheetBackdrop />
         <ActionsheetContent className="py-3 bg-app-ash-brown-800 ">
           <ActionsheetDragIndicatorWrapper>
@@ -78,6 +79,9 @@ const ReaderSettingsSheet = ({
 
             {/* Fonts */}
             <FontAdjuster reader={reader} />
+
+            {/* Page layout */}
+            <PageLayoutAdjuster reader={reader} />
 
             {/* brightness */}
             <BrightnessAdjuster />
