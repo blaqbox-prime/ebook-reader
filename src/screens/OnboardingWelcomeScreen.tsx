@@ -56,7 +56,7 @@ const OnboardingWelcomeScreen = () => {
     <SafeAreaView className="flex-1 bg-m3-surface" edges={['top', 'bottom']}>
       <View className="h-14 px-4 flex-row items-center justify-between">
         <Text className="text-[12px] leading-4 font-semibold uppercase tracking-wider text-m3-on-surface-variant">
-          Onboarding
+          {''}
         </Text>
         <TouchableOpacity
           onPress={handleSkip}
@@ -73,19 +73,19 @@ const OnboardingWelcomeScreen = () => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 24 }}
-        className="flex-1"
+        className="flex-1 "
       >
-        <View className="px-4">
-          <View className="w-full rounded-xl bg-m3-surface-low p-4 shadow-sm items-center overflow-hidden">
+        <View className="px-4 gap-4">
+          <View className="w-full rounded-xl bg-m3-surface-low p-4 shadow-sm items-center overflow-hidden gap-3">
             <View className="absolute -top-10 -right-10 w-36 h-36 rounded-full bg-m3-secondary-container/40" />
             <View className="absolute -bottom-8 -left-8 w-28 h-28 rounded-full bg-m3-primary-fixed/30" />
 
             <View className="relative items-center justify-center mb-4">
-              <View className="w-20 h-20 rounded-xl bg-m3-surface-lowest shadow-md items-center justify-center p-1 overflow-hidden">
+              <View className="w-20 h-20 rounded-xl bg-m3-surface-lowest shadow-md items-center justify-center overflow-hidden">
                 <Image
-                  source={images.logo_transparent}
+                  source={images.logo}
                   style={{ width: '100%', height: '100%' }}
-                  resizeMode="contain"
+                  resizeMode="cover"
                   accessibilityLabel="PageTurner logo"
                 />
               </View>
@@ -103,7 +103,7 @@ const OnboardingWelcomeScreen = () => {
 
             <View className="w-full h-36 rounded-lg overflow-hidden bg-m3-surface-mid mb-4">
               <Image
-                source={images.bookshelf}
+                source={images.onboardingImage1}
                 style={{ width: '100%', height: '100%' }}
                 resizeMode="cover"
                 accessibilityLabel="A cozy shelf of books ready for reading"
