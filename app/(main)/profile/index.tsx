@@ -11,6 +11,7 @@ import {
   EmptyStateView,
   Header,
   ProfileStatCard,
+  ReminderSettingsSheet,
   SessionRow,
   ToastIconName,
   UserAvatar,
@@ -33,7 +34,7 @@ import {
 import { buildHighlightsMarkdown } from '@/src/utils';
 import { formatDuration, formatFileSize } from '@/src/utils/bookDetailsUtils';
 import { getLevelInfo } from '@/src/utils/readerLevel';
-import { getPageLayoutLabel } from '@/src/utils/readerFlow';
+import { formatReminderTime, getPageLayoutLabel } from '@/src/utils/readerFlow';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Constants from 'expo-constants';
 import * as ImagePicker from 'expo-image-picker';
@@ -170,6 +171,7 @@ const Profile = () => {
   const [sortKey, setSortKey] = useState<SortKey>('recent');
   const [isSortOpen, setSortOpen] = useState(false);
   const [isGoalOpen, setGoalOpen] = useState(false);
+  const [isReminderOpen, setReminderOpen] = useState(false);
   const [isEditOpen, setEditOpen] = useState(false);
   const [draftName, setDraftName] = useState(displayName);
   const [draftAvatarUri, setDraftAvatarUri] = useState<string | null>(
@@ -287,15 +289,30 @@ const Profile = () => {
     [archetype]
   );
 
-  const { readerTheme, fontSize, pageLayout } = usePreferencesStore();
+  const {
+    readerTheme,
+    fontSize,
+    pageLayout,
+    reminderEnabled,
+    reminderHour,
+    reminderMinute,
+  } = usePreferencesStore();
   const readerThemeLabel = readerTheme === 'dark' ? 'Night Mode' : 'Light Mode';
   const pageLayoutLabel = getPageLayoutLabel(pageLayout);
   const fontSizeLabel =
     fontSize === 'small' ? 'Small' : fontSize === 'large' ? 'Large' : 'Medium';
 
-  const handleNotifications = useCallback(() => {
+  const reminderLabel = reminderEnabled
+    ? `Every day at ${formatReminderTime(reminderHour, reminderMinute)}`
+    : 'Off';
+
+  const handleAchievements = useCallback(() => {
     router.push('/(main)/achievements');
   }, [router]);
+
+  const handleReminder = useCallback(() => {
+    setReminderOpen(true);
+  }, []);
 
   const handleTypography = useCallback(() => {
     showToast('Text size is adjusted in the Reader', 'text-fields');
@@ -475,6 +492,12 @@ const Profile = () => {
       onPress: handlePageLayout,
     },
     {
+      icon: 'notifications-active' as IconName,
+      label: 'Daily Reading Reminder',
+      value: reminderLabel,
+      onPress: handleReminder,
+    },
+    {
       icon: 'replay' as IconName,
       label: 'Replay Onboarding',
       value: 'Restart the 3-step setup',
@@ -486,8 +509,8 @@ const Profile = () => {
     <SafeAreaView className="flex-1 bg-m3-surface" edges={['top']}>
       <Header
         title="Profile"
-        showNotifications
-        onNotificationsPress={handleNotifications}
+        showAchievements
+        onAchievementsPress={handleAchievements}
       />
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -834,6 +857,12 @@ const Profile = () => {
           </View>
         </ActionsheetContent>
       </Actionsheet>
+
+      <ReminderSettingsSheet
+        isOpen={isReminderOpen}
+        onClose={() => setReminderOpen(false)}
+        onToast={showToast}
+      />
 
       <Actionsheet
         isOpen={isEditOpen}

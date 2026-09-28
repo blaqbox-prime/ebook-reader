@@ -1,6 +1,6 @@
 import { Achievement } from '@/src/types/achievement.types';
 
-// config/achievements.config.ts
+// lib/achievements.config.ts
 export const ACHIEVEMENT_DEFINITIONS: Omit<
   Achievement,
   'unlockedAt' | 'isUnlocked'

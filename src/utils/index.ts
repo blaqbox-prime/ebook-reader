@@ -5,6 +5,7 @@ import { env, getEnv } from './env';
 import { formatTimestamp, formatSessionTime } from './formatTimestamp';
 import { buildHighlightsMarkdown } from './highlightsExport';
 import { getLevelInfo, getLevelFromXp } from './readerLevel';
+import { formatReminderTime } from './readerFlow';
 
 export {
   BookScanner,
@@ -17,4 +18,5 @@ export {
   buildHighlightsMarkdown,
   getLevelInfo,
   getLevelFromXp,
+  formatReminderTime,
 };

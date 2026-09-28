@@ -28,6 +28,7 @@ import UserAvatar from '@/src/components/UserAvatar';
 import OnboardingDots from '@/src/components/OnboardingDots';
 import { AchievementUnlockModal } from '@/src/components/AchievementUnlockModal';
 import PageLayoutAdjuster from '@/src/components/PageLayoutAdjuster';
+import ReminderSettingsSheet from '@/src/components/ReminderSettingsSheet';
 import type { ReaderProgress } from '@/src/components/ReaderContent';
 
 export {
@@ -61,6 +62,7 @@ export {
   OnboardingDots,
   AchievementUnlockModal,
   PageLayoutAdjuster,
+  ReminderSettingsSheet,
 };
 
 export type { ToastIconName, ReaderProgress };

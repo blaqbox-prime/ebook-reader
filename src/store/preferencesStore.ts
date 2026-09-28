@@ -18,6 +18,15 @@ const DEFAULT_READER_THEME: ReaderThemePreference = 'light';
 const DEFAULT_FONT_SIZE: FontSizePreference = 'medium';
 const DEFAULT_PAGE_LAYOUT: PageLayoutPreference = 'scroll';
 
+/**
+ * The reminder defaults to on and to the 8pm slot the service shipped with, so
+ * adding this preference does not change behaviour for anyone already running
+ * the app. Turning it off is an explicit, persisted choice.
+ */
+const DEFAULT_REMINDER_ENABLED = true;
+const DEFAULT_REMINDER_HOUR = 20;
+const DEFAULT_REMINDER_MINUTE = 0;
+
 const isReaderTheme = (value: unknown): value is ReaderThemePreference =>
   value === 'light' || value === 'dark';
 
@@ -27,11 +36,31 @@ const isFontSize = (value: unknown): value is FontSizePreference =>
 const isPageLayout = (value: unknown): value is PageLayoutPreference =>
   value === 'scroll' || value === 'paginated';
 
+/**
+ * Clamps to a valid 24h clock time. The payload is read straight out of MMKV, so
+ * a hand-edited or corrupted value must never be able to reach the notification
+ * trigger, which would throw at schedule time and silently lose the reminder.
+ */
+const isHour = (value: unknown): value is number =>
+  typeof value === 'number' &&
+  Number.isInteger(value) &&
+  value >= 0 &&
+  value <= 23;
+
+const isMinute = (value: unknown): value is number =>
+  typeof value === 'number' &&
+  Number.isInteger(value) &&
+  value >= 0 &&
+  value <= 59;
+
 interface ReaderPreferences {
   dailyGoalMinutes: number;
   readerTheme: ReaderThemePreference;
   fontSize: FontSizePreference;
   pageLayout: PageLayoutPreference;
+  reminderEnabled: boolean;
+  reminderHour: number;
+  reminderMinute: number;
 }
 
 interface PreferencesStore extends ReaderPreferences {
@@ -39,6 +68,8 @@ interface PreferencesStore extends ReaderPreferences {
   setReaderTheme: (theme: ReaderThemePreference) => void;
   setFontSize: (size: FontSizePreference) => void;
   setPageLayout: (layout: PageLayoutPreference) => void;
+  setReminderEnabled: (enabled: boolean) => void;
+  setReminderTime: (hour: number, minute: number) => void;
   resetPreferences: () => void;
 }
 
@@ -47,6 +78,9 @@ const defaults: ReaderPreferences = {
   readerTheme: DEFAULT_READER_THEME,
   fontSize: DEFAULT_FONT_SIZE,
   pageLayout: DEFAULT_PAGE_LAYOUT,
+  reminderEnabled: DEFAULT_REMINDER_ENABLED,
+  reminderHour: DEFAULT_REMINDER_HOUR,
+  reminderMinute: DEFAULT_REMINDER_MINUTE,
 };
 
 const loadPreferences = (): ReaderPreferences => {
@@ -70,6 +104,16 @@ const loadPreferences = (): ReaderPreferences => {
       pageLayout: isPageLayout(parsed.pageLayout)
         ? parsed.pageLayout
         : defaults.pageLayout,
+      reminderEnabled:
+        typeof parsed.reminderEnabled === 'boolean'
+          ? parsed.reminderEnabled
+          : defaults.reminderEnabled,
+      reminderHour: isHour(parsed.reminderHour)
+        ? parsed.reminderHour
+        : defaults.reminderHour,
+      reminderMinute: isMinute(parsed.reminderMinute)
+        ? parsed.reminderMinute
+        : defaults.reminderMinute,
     };
   } catch {
     return defaults;
@@ -85,6 +129,9 @@ const pickPreferences = (state: PreferencesStore): ReaderPreferences => ({
   readerTheme: state.readerTheme,
   fontSize: state.fontSize,
   pageLayout: state.pageLayout,
+  reminderEnabled: state.reminderEnabled,
+  reminderHour: state.reminderHour,
+  reminderMinute: state.reminderMinute,
 });
 
 const persist = (state: ReaderPreferences) => {
@@ -111,6 +158,19 @@ export const usePreferencesStore = create<PreferencesStore>(set => ({
 
   setPageLayout: layout => {
     set({ pageLayout: layout });
+    persist(pickPreferences(usePreferencesStore.getState()));
+  },
+
+  setReminderEnabled: enabled => {
+    set({ reminderEnabled: enabled });
+    persist(pickPreferences(usePreferencesStore.getState()));
+  },
+
+  setReminderTime: (hour, minute) => {
+    set({
+      reminderHour: isHour(hour) ? hour : DEFAULT_REMINDER_HOUR,
+      reminderMinute: isMinute(minute) ? minute : DEFAULT_REMINDER_MINUTE,
+    });
     persist(pickPreferences(usePreferencesStore.getState()));
   },
 

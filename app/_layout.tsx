@@ -8,7 +8,11 @@ import { ReaderProvider } from '@epubjs-react-native/core';
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
-import { useOnboardingStore, useUserStatsStore } from '@/src/store';
+import {
+  useOnboardingStore,
+  usePreferencesStore,
+  useUserStatsStore,
+} from '@/src/store';
 import { NotificationsService, SessionTrackingService } from '@/src/services';
 
 const notificationsService = new NotificationsService();
@@ -77,15 +81,30 @@ export default function RootLayout() {
     void sessionTrackingService.recoverUnclosedSessions();
   }, []);
 
-  // Keep the daily reminder honest: cancelled once the goal is met, and
-  // rescheduled if the OS dropped it.
+  // Keep the daily reminder honest: cancelled once the goal is met, cancelled
+  // outright when the preference is off, and rescheduled if the OS dropped it
+  // or the user picked a different time.
+  const reminderEnabled = usePreferencesStore(state => state.reminderEnabled);
+  const reminderHour = usePreferencesStore(state => state.reminderHour);
+  const reminderMinute = usePreferencesStore(state => state.reminderMinute);
+
   useEffect(() => {
     if (!hasCompletedOnboarding) return;
     void notificationsService.refreshDailyReminder(
       todayMinutesRead > 0,
-      currentStreak
+      currentStreak,
+      reminderEnabled,
+      reminderHour,
+      reminderMinute
     );
-  }, [hasCompletedOnboarding, todayMinutesRead, currentStreak]);
+  }, [
+    hasCompletedOnboarding,
+    todayMinutesRead,
+    currentStreak,
+    reminderEnabled,
+    reminderHour,
+    reminderMinute,
+  ]);
 
   if (!loaded && !error) {
     return null;

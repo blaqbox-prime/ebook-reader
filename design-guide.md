@@ -111,8 +111,8 @@ for headings and titles.
 - **Progress Bars**: Thin bars (`h-1`, `h-[4px]`) with rounded ends, progress in
   accent colors
 - **Settings Panels**: Dark backgrounds, white text, centered titles
-- **Achievement Modals**: Light backgrounds (`bg-stone-50`), amber accents
-  (`bg-amber-200`, `text-amber-700`)
+- **Achievement Modals**: Material 3 surface tokens (`bg-m3-surface`,
+  `bg-m3-surface-high`), primary accent `m3-primary` (`#5c2d00`)
 
 ### Spacing
 

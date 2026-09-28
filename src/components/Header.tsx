@@ -7,14 +7,14 @@ import { useNavigation } from 'expo-router';
 
 type HeaderProps = {
   title?: string;
-  showNotifications?: boolean;
-  onNotificationsPress?: () => void;
+  showAchievements?: boolean;
+  onAchievementsPress?: () => void;
 };
 
 const Header = ({
   title = 'PageTurner',
-  showNotifications = false,
-  onNotificationsPress,
+  showAchievements = false,
+  onAchievementsPress,
 }: HeaderProps) => {
   const nav = useNavigation();
 
@@ -35,12 +35,14 @@ const Header = ({
           </Text>
         </View>
       </View>
-      {showNotifications && (
+      {showAchievements && (
         <TouchableOpacity
-          onPress={onNotificationsPress}
+          onPress={onAchievementsPress}
+          accessibilityRole="button"
+          accessibilityLabel="Open achievements"
           className="w-11 h-11 items-center justify-center rounded-full"
         >
-          <MaterialIcons name="notifications-none" size={22} color="#52443b" />
+          <MaterialIcons name="emoji-events" size={22} color="#52443b" />
         </TouchableOpacity>
       )}
       <TouchableOpacity

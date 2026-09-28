@@ -49,6 +49,13 @@ advanced capabilities.
 - **Achievement System:** Earn badges and points for hitting reading milestones,
   motivating you to read more consistently.
 
+- **Daily Reading Reminder:** A local notification that nudges you on days you
+  have not read yet. The copy adapts to your current streak, and the time and
+  on/off state are configurable from Profile → Daily Reading Reminder. The
+  reminder is cancelled automatically once you hit your daily goal. Local
+  notifications only; nothing is sent to a server, and they are unavailable on
+  web.
+
 - **Text-to-Speech (TTS):** Have your books read aloud with adjustable speech
   rate, pitch, and voice selection.
 

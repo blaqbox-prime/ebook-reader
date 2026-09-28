@@ -4,14 +4,20 @@ import { preferencesStorage } from '@/src/data';
 
 const REMINDER_NOTIFICATION_KEY = 'daily_read_reminder_notification_id';
 const REMINDER_CHANNEL_ID = 'daily-reading-reminder';
-const REMINDER_HOUR = 20;
-const REMINDER_MINUTE = 0;
+
+/** Fallbacks matching the shipped 8pm reminder, used when a caller omits a time. */
+const DEFAULT_REMINDER_HOUR = 20;
+const DEFAULT_REMINDER_MINUTE = 0;
 
 class NotificationsService {
   private storage = preferencesStorage;
 
-  /** `expo-notifications` is not supported on web, so every entry point bails. */
-  private get isSupported(): boolean {
+  /**
+   * `expo-notifications` is not supported on web, so every entry point bails.
+   * Public because the UI needs it to hide reminder controls rather than offer
+   * a setting that silently does nothing.
+   */
+  get isSupported(): boolean {
     return Platform.OS !== 'web';
   }
 
@@ -27,11 +33,14 @@ class NotificationsService {
     this.storage.remove(REMINDER_NOTIFICATION_KEY);
   }
 
-  private getNotificationTrigger(): Notifications.CalendarTriggerInput {
+  private getNotificationTrigger(
+    hour: number,
+    minute: number
+  ): Notifications.CalendarTriggerInput {
     return {
       type: Notifications.SchedulableTriggerInputTypes.CALENDAR,
-      hour: REMINDER_HOUR,
-      minute: REMINDER_MINUTE,
+      hour,
+      minute,
       repeats: true,
     };
   }
@@ -82,6 +91,33 @@ class NotificationsService {
     return finalStatus;
   }
 
+  /**
+   * Clears an already-delivered reminder from the tray.
+   *
+   * Cancelling a schedule only stops future deliveries, so without this a
+   * reminder the user has since turned off keeps sitting in the tray looking
+   * pending. Scoped to our own reminder type rather than using
+   * `dismissAllNotificationsAsync`, so a future notification kind is not
+   * collateral damage.
+   */
+  private async dismissDeliveredReminders(): Promise<void> {
+    try {
+      const presented = await Notifications.getPresentedNotificationsAsync();
+      const ours = presented.filter(
+        item => item.request.content.data?.type === 'daily-reading-reminder'
+      );
+      await Promise.all(
+        ours.map(item =>
+          Notifications.dismissNotificationAsync(item.request.identifier)
+        )
+      );
+    } catch (error) {
+      // Nothing scheduled means nothing to dismiss, and a failure here must
+      // never block cancelling the schedule itself.
+      console.warn('Failed to dismiss delivered reading reminder:', error);
+    }
+  }
+
   async cancelDailyReadingReminder(): Promise<void> {
     const storedId = this.getStoredNotificationId();
     if (!storedId) {
@@ -94,11 +130,14 @@ class NotificationsService {
       console.warn('Failed to cancel scheduled reading reminder:', error);
     } finally {
       this.removeStoredNotificationId();
+      await this.dismissDeliveredReminders();
     }
   }
 
   async scheduleDailyReadingReminder(
-    currentStreak = 0
+    currentStreak = 0,
+    hour = DEFAULT_REMINDER_HOUR,
+    minute = DEFAULT_REMINDER_MINUTE
   ): Promise<string | null> {
     if (!this.isSupported) return null;
 
@@ -113,7 +152,7 @@ class NotificationsService {
 
     const identifier = await Notifications.scheduleNotificationAsync({
       content: this.buildContent(currentStreak),
-      trigger: this.getNotificationTrigger(),
+      trigger: this.getNotificationTrigger(hour, minute),
     });
 
     this.setStoredNotificationId(identifier);
@@ -121,18 +160,41 @@ class NotificationsService {
   }
 
   /**
+   * Reads the hour/minute back off a scheduled notification's trigger.
+   *
+   * `NotificationTrigger` is a union that includes a catch-all
+   * `UnknownNotificationTrigger`, so it cannot be narrowed exhaustively. A
+   * structural read is the honest option here: the only trigger this service
+   * ever creates is a calendar trigger, and the fields are read-only.
+   */
+  private static getTriggerTime(
+    trigger: Notifications.NotificationTrigger
+  ): { hour?: number; minute?: number } | null {
+    const candidate = trigger as { hour?: number; minute?: number };
+    return typeof candidate.hour === 'number' && typeof candidate.minute === 'number'
+      ? candidate
+      : null;
+  }
+
+  /**
    * Re-evaluates the daily reminder. Self-heals: a stored id whose
    * notification no longer exists (OS cleared it on reboot/reinstall) is
    * rescheduled rather than trusted, which previously left users with no
    * reminder and no indication anything was wrong.
+   *
+   * Also re-arms when the chosen time no longer matches what the OS holds,
+   * because editing the preference is otherwise invisible until reinstall.
    */
   async refreshDailyReminder(
     hasReadToday: boolean,
-    currentStreak = 0
+    currentStreak = 0,
+    isEnabled = true,
+    hour = DEFAULT_REMINDER_HOUR,
+    minute = DEFAULT_REMINDER_MINUTE
   ): Promise<void> {
     if (!this.isSupported) return;
 
-    if (hasReadToday) {
+    if (!isEnabled || hasReadToday) {
       await this.cancelDailyReadingReminder();
       return;
     }
@@ -142,17 +204,23 @@ class NotificationsService {
       try {
         const scheduled =
           await Notifications.getAllScheduledNotificationsAsync();
-        const stillScheduled = scheduled.some(
+        const match = scheduled.find(
           notification => notification.identifier === storedId
         );
-        if (stillScheduled) return;
+
+        if (match) {
+          const triggerTime = NotificationsService.getTriggerTime(match.trigger);
+          if (triggerTime?.hour === hour && triggerTime.minute === minute) {
+            return;
+          }
+        }
       } catch (error) {
         console.warn('Failed to verify scheduled reminder:', error);
       }
       this.removeStoredNotificationId();
     }
 
-    await this.scheduleDailyReadingReminder(currentStreak);
+    await this.scheduleDailyReadingReminder(currentStreak, hour, minute);
   }
 
   async sendReminderImmediately(currentStreak = 0): Promise<string | null> {

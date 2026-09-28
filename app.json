@@ -65,7 +65,8 @@
           "color": "#5c2d00",
           "defaultChannel": "daily-reading-reminder"
         }
-      ]
+      ],
+      "@react-native-community/datetimepicker"
     ],
     "experiments": {
       "typedRoutes": true,

@@ -23,3 +23,23 @@ export function togglePageLayout(
 ): PageLayoutPreference {
   return preference === 'paginated' ? 'scroll' : 'paginated';
 }
+
+/**
+ * Formats a 24h clock reminder time as a 12h label, e.g. `8:00 PM`.
+ *
+ * Done by hand rather than via `toLocaleTimeString` so the output never varies
+ * with the device locale: this string is shown in settings and compared by eye,
+ * and a user who reads `8:00 PM` in one place should not see `20:00` in the
+ * next screen because their phone is set to a 24h region.
+ */
+export function formatReminderTime(hour: number, minute: number): string {
+  const safeHour = Math.min(23, Math.max(0, Math.trunc(hour)));
+  const safeMinute = Math.min(59, Math.max(0, Math.trunc(minute)));
+  const period = safeHour < 12 ? 'AM' : 'PM';
+  // Midnight and noon are the two hours that do not shift, so they are handled
+  // explicitly rather than by subtracting 12.
+  const displayHour =
+    safeHour % 12 === 0 ? 12 : safeHour % 12;
+  const displayMinute = String(safeMinute).padStart(2, '0');
+  return `${displayHour}:${displayMinute} ${period}`;
+}
