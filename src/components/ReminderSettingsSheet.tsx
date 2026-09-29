@@ -73,9 +73,8 @@ const ReminderSettingsSheet = ({
     setSending(true);
 
     try {
-      const identifier = await notificationsService.sendReminderImmediately(
-        currentStreak
-      );
+      const identifier =
+        await notificationsService.sendReminderImmediately(currentStreak);
 
       if (identifier) {
         onToast('Test reminder sent', 'notifications-active');
@@ -116,7 +115,9 @@ const ReminderSettingsSheet = ({
           <View className="w-full flex-row items-center gap-3 px-4 py-3.5 rounded-xl bg-m3-surface-mid mb-2">
             <View className="w-10 h-10 rounded-xl bg-m3-surface-highest items-center justify-center">
               <MaterialIcons
-                name={reminderEnabled ? 'notifications-active' : 'notifications-off'}
+                name={
+                  reminderEnabled ? 'notifications-active' : 'notifications-off'
+                }
                 size={20}
                 color={reminderEnabled ? '#5c2d00' : '#857469'}
               />

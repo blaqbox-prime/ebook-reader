@@ -31,4 +31,28 @@ module.exports = defineConfig([
       '**/android/**',
     ],
   },
+  {
+    // Test files live under src/ and are linted, so they need the Jest globals.
+    files: [
+      'src/**/*.test.{ts,tsx}',
+      'src/test/**/*.{ts,tsx}',
+      'jest.setup.ts',
+    ],
+    languageOptions: {
+      globals: {
+        afterAll: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        beforeEach: 'readonly',
+        describe: 'readonly',
+        expect: 'readonly',
+        it: 'readonly',
+        jest: 'readonly',
+        test: 'readonly',
+        xdescribe: 'readonly',
+        xit: 'readonly',
+        xtest: 'readonly',
+      },
+    },
+  },
 ]);

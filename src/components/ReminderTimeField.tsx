@@ -42,10 +42,7 @@ const ReminderTimeField = ({
   // it has to be mounted on demand rather than shown inline the way iOS does.
   const [isPickerOpen, setPickerOpen] = useState(false);
 
-  const handleChange = (
-    event: DateTimePickerEvent,
-    selected?: Date
-  ): void => {
+  const handleChange = (event: DateTimePickerEvent, selected?: Date): void => {
     // Android dismisses with no date; iOS fires this on every tick.
     if (Platform.OS === 'android') {
       setPickerOpen(false);

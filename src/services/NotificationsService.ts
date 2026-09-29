@@ -171,7 +171,8 @@ class NotificationsService {
     trigger: Notifications.NotificationTrigger
   ): { hour?: number; minute?: number } | null {
     const candidate = trigger as { hour?: number; minute?: number };
-    return typeof candidate.hour === 'number' && typeof candidate.minute === 'number'
+    return typeof candidate.hour === 'number' &&
+      typeof candidate.minute === 'number'
       ? candidate
       : null;
   }
@@ -209,7 +210,9 @@ class NotificationsService {
         );
 
         if (match) {
-          const triggerTime = NotificationsService.getTriggerTime(match.trigger);
+          const triggerTime = NotificationsService.getTriggerTime(
+            match.trigger
+          );
           if (triggerTime?.hour === hour && triggerTime.minute === minute) {
             return;
           }

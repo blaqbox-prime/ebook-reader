@@ -38,8 +38,7 @@ export function formatReminderTime(hour: number, minute: number): string {
   const period = safeHour < 12 ? 'AM' : 'PM';
   // Midnight and noon are the two hours that do not shift, so they are handled
   // explicitly rather than by subtracting 12.
-  const displayHour =
-    safeHour % 12 === 0 ? 12 : safeHour % 12;
+  const displayHour = safeHour % 12 === 0 ? 12 : safeHour % 12;
   const displayMinute = String(safeMinute).padStart(2, '0');
   return `${displayHour}:${displayMinute} ${period}`;
 }
